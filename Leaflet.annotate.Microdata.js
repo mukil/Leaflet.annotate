@@ -129,16 +129,12 @@ var Microdata = {
                 console.log("Administrative Area", this)
                 var groupElements = []
                 this._findSVGGroupElements(this, groupElements)
-                console.log("Group Elements", groupElements)
+                console.log("SVG Group Leaflet Objects", groupElements)
                 // --- Debug Statements
                 var layerElements =  this._layers
                 for (var le in this._layers) {
                     var layerElement = this._layers[le]
-                    console.log("    Root Layer Element", layerElement)
-                    for (var childLe in layerElement._layers) {
-                        var childLayerElement = layerElement._layers[childLe]
-                        console.log("        Child Layer Element", childLayerElement)
-                    }
+                    if (layerElement.hasOwnProperty("feature")) console.log("GeoJSON Feature Element", layerElement.feature)
                 }
 
                 var metadata = document.createElement('metadata')
