@@ -5,7 +5,7 @@ A plugin for [LeafletJS](http://github.com/Leaflet/Leaflet) based web-maps allow
 
 We furthermore aim to employ and revise the markup generated around core mapping elements (LeafletJS: Marker, Popup and Overlay) according to our investigations of the [Dublin Core Metadata Element Set](http://dublincore.org/documents/dcmi-terms/) and/or through relying on parts of the current [HTML Standard](https://html.spec.whatwg.org/multipage/semantics.html).
 
-The envisioned application for revised markup in geographic web maps is (besides all third-party use cases enabled through providing structured data):<br/> A digital map legend interactively assisting users in analyzing the contents and the scope of so called ``map mashups''.
+The envisioned application for revised markup in geographic web maps is (besides all third-party use cases enabled through providing structured data): A digital map legend interactively assisting users in analyzing the contents and the scope of so called ``map mashups''.
 
 ### Implementation Notes
 
@@ -17,7 +17,10 @@ Maps rendered in the **Internet Explorer** along with _VML_ is currently **not s
 
 | HTML Marker   |      SVG Marker and Geometric Overlays      |  HTML Popups |
 |----------|:-------------:|------:|
-| Place, City (with GeoCoordinates) |  AdministrativeArea (with GeoShape)<br/>CreativeWork, Place (with GeoCoordinates) | No |
+| [Place](http://schema.org/Place) (geo=GeoCoordinates) | [Administrative Area](http://schema.org/AdministrativeArea) (geo=[GeoShape](http://schema.org/GeoShape)) | None |
+| [City](http://schema.org/City) (geo=GeoCoordinates)  | [Creative Work](http://schema.org/CreativeWork) (geo=[GeoCoordinates](http://schema.org/GeoCoordinates)) |      |
+|                        | [Place](http://schema.org/Place) (geo=GeoCoordinates)	      |      |
+
 
 ### Building Annotations
 
