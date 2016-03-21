@@ -16,14 +16,25 @@ var Microdata = {
         }
         return this
     },
-    _findContainerElement: function(element, results) {
+    _findContainerElements: function(element, results) {
         if (element._container) {
             results.push(element._container)
         }
         if (element._layers) {
             for (var el in element._layers) {
                 var layer = element._layers[el]
-                this._findContainerElement(layer, results)
+                this._findContainerElements(layer, results)
+            }
+        }
+    },
+    _findSVGGroupElements: function(element, results) {
+        if (element._container) {
+            if (element._container.localName === "g") results.push(element)
+        }
+        if (element._layers) {
+            for (var el in element._layers) {
+                var layer = element._layers[el]
+                this._findSVGGroupElements(layer, results)
             }
         }
     },
@@ -69,14 +80,17 @@ var Microdata = {
         var isSVGGroup = (domObject.tagName === 'g') ? true : false
         var parentElement = domObject
 
-        if (this.options.itemtype === 'Place' && !isSVGGroup) { // --- Renders Simple Marker Annotations into DIVs
+        if ((this.options.itemtype === 'City' || this.options.itemtype === 'Place') && !isSVGGroup) {
+
+        // --- Renders Simple Marker Annotations into DIVs
+
             data = new Builder().element('div', {
-                'itemscope': '', 'itemtype': 'http://schema.org/Place'
+                'itemscope': '', 'itemtype': 'http://schema.org/' + this.options.itemtype
             }).children([
                 new Builder().element('meta', {
                     'itemprop': 'name', 'content': this.options.title
                 }), new Builder().element('div', {
-                    'itemprop': 'geo', 'itemtype': 'http://schema.org/GeoCoordinate'
+                    'itemprop': 'geo', 'itemtype': 'http://schema.org/GeoCoordinates'
                 }, parentElement).children([
                     new Builder().element('meta', {
                         'itemprop': 'latitude', 'content': this._latlng.lat
@@ -106,10 +120,27 @@ var Microdata = {
             parent.innerHTML = ''
             renderNode(parent, data)
 
-        } else if (isSVGGroup) { // --- Renders Metadata Element for SVG Polygon (e.g GeoJSON, Circle Marker)
+        } else if (isSVGGroup) {
+
+        // --- Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
 
             if (this.options.itemtype === 'Administrative Area') {
+
                 console.log("Administrative Area", this)
+                var groupElements = []
+                this._findSVGGroupElements(this, groupElements)
+                console.log("Group Elements", groupElements)
+                // --- Debug Statements
+                var layerElements =  this._layers
+                for (var le in this._layers) {
+                    var layerElement = this._layers[le]
+                    console.log("    Root Layer Element", layerElement)
+                    for (var childLe in layerElement._layers) {
+                        var childLayerElement = layerElement._layers[childLe]
+                        console.log("        Child Layer Element", childLayerElement)
+                    }
+                }
+
                 var metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/AdministrativeArea')
@@ -120,7 +151,9 @@ var Microdata = {
                         polygon.setAttribute('content', this.options._latlngs)
                     geoShape.appendChild(polygon)
                     metadata.appendChild(geoShape) // ### for each shape
+
             } else if (this.options.itemtype === 'Place') {
+
                 var metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/Place')
@@ -128,7 +161,7 @@ var Microdata = {
                         name.setAttribute('content', this.options.title)
                     metadata.appendChild(name)
                     var geoCoordinate = this._createMetaElement('itemprop', 'geo')
-                        geoCoordinate.setAttribute('itemtype', 'http://schema.org/GeoCoordinate')
+                        geoCoordinate.setAttribute('itemtype', 'http://schema.org/GeoCoordinates')
                     var latitude = this._createMetaElement('itemprop', 'latitude')
                         latitude.setAttribute('content', this._latlng.lat)
                     var longitude = this._createMetaElement('itemprop', 'longitude')
@@ -136,7 +169,9 @@ var Microdata = {
                     geoCoordinate.appendChild(latitude)
                     geoCoordinate.appendChild(longitude)
                     metadata.appendChild(geoCoordinate)
+
             } else if (this.options.itemtype === 'CreativeWork') {
+
                 var metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/CreativeWork')
@@ -147,7 +182,7 @@ var Microdata = {
                         place.setAttribute('itemscope','')
                         place.setAttribute('itemtype', 'http://schema.org/Place')
                         var geoCoordinate = this._createMetaElement('itemprop', 'geo')
-                            geoCoordinate.setAttribute('itemtype', 'http://schema.org/GeoCoordinate')
+                            geoCoordinate.setAttribute('itemtype', 'http://schema.org/GeoCoordinates')
                             var latitude = this._createMetaElement('itemprop', 'latitude')
                                 latitude.setAttribute('content', this._latlng.lat)
                             var longitude = this._createMetaElement('itemprop', 'longitude')
@@ -180,7 +215,7 @@ L.CircleMarker.include(Microdata)
 L.CircleMarker.include({
     _getTargetDOMElement: function() {
         var results = []
-        this._findContainerElement(this, results)
+        this._findContainerElements(this, results)
         return results.length > 0 ? results[0] : null
     }
 })
@@ -192,7 +227,7 @@ L.LayerGroup.include(Microdata)
 L.LayerGroup.include({
     _getTargetDOMElement: function() {
         var results = []
-        this._findContainerElement(this, results)
+        this._findContainerElements(this, results)
         return results.length > 0 ? results[0] : null
     }
 })
