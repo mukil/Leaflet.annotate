@@ -11,13 +11,14 @@
 
 		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
 		<link rel="stylesheet" href="css/example.css" />
-		<link rel="stylesheet" href="css/viewer-style.css" />
+		<!--link rel="stylesheet" href="css/foundation.min.css" /-->
+		<!--link rel="stylesheet" href="css/viewer-style.css" /-->
 		
 		<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet-src.js"></script>
 		<script src="//code.jquery.com/jquery-2.2.2.min.js"></script>
 
 		<script src="Leaflet.annotate.Microdata.js"></script>
-		<script src="Leaflet.annotate.Viewer.js"></script>
+		<!--script src="Leaflet.annotate.Viewer.js"></script-->
 
 	</head>
 
@@ -42,18 +43,17 @@
 					id: 'mapbox.light'
 				})
 
-				var newYorkCityMarker = L.marker([39.155800, -87.513970], { itemtype: 'Place',
-					title: 'New York City'})
-				var poemMarker = L.circleMarker([39.155800, -87.513970], { itemtype: 'CreativeWork',
-					title: 'The circle marker locating this meta poem geographically.'
-				})				
+				var newYorkCityMarker = L.marker([40.573112, -73.980740], { itemtype: 'City', title: 'New York City Center'})
+				var poemMarker = L.circleMarker([40.573112, -73.980740], { itemtype: 'CreativeWork', geoprop: 'locationCreated', // geoprop: 'contentLocation',
+					title: 'The circle marker indicating geographically where this meta poem was conceived.'
+				})
 				var featureGroup = L.featureGroup([newYorkCityMarker, poemMarker])
 				
 				tileLayer.addTo(map)
 				featureGroup.addTo(map)
 
 				$.getJSON('test-geometries/admin0_poly.json', function(response) {
-					var statesBoundaries = L.geoJson(response, { itemtype: 'Administrative Area',
+					var statesBoundaries = L.geoJson(response, { itemtype: 'AdministrativeArea', geotype: 'shape',
 						title: 'United States of America'
 					}).addTo(map)
 					statesBoundaries.annotate()
@@ -67,11 +67,6 @@
 
 				// --- Defused Work in Progress  ---
 				// L.readerPlugin(map)
-				// map.setMaxBounds(L.latLngBounds( L.latLng(52.443141053931114, -2.035388946533203), L.latLng(52.55224556690696, -1.748199462890625)))
-				/** featureGroup = L.featureGroup([marker1, poemMarker])
-					.bindPopup('Hello world!')
-					.on('click', function() { alert('Clicked on a group!'); })
-					.addTo(map); ***/
 
 				// --- Only jQuery Dependency
 				$('#map').css('height', window.innerHeight + 'px')

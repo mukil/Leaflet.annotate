@@ -80,11 +80,18 @@ var Microdata = {
         var isSVGGroup = (domObject.tagName === 'g') ? true : false
         var parentElement = domObject
 
-        if ((this.options.itemtype === 'City' || this.options.itemtype === 'Place') && !isSVGGroup) {
+        // Rendering HTML Element Annnotation
+        if ((this.options.itemtype === 'Place' || this.options.itemtype === 'City'
+             || this.options.itemtype === 'State' || this.options.itemtype === 'Country'
+             || this.options.itemtype === 'AdministrativeArea' || this.options.itemtype === 'LocalBusiness'
+             || this.options.itemtype === 'Residence' || this.options.itemtype === 'CivicStructure' || this.options.itemtype === 'Landform'
+             || this.options.itemtype === 'TouristAttraction' ) && !isSVGGroup) {
 
-        // --- Renders Simple Marker Annotations into DIVs
+            console.log("Annotating HTML Geo Type", geoType, this)
 
-            data = new Builder().element('div', {
+            // --- Renders Simple Marker Annotations into DIVs
+
+            data = new Builder().element('article', {
                 'itemscope': '', 'itemtype': 'http://schema.org/' + this.options.itemtype
             }).children([
                 new Builder().element('meta', {
@@ -122,41 +129,57 @@ var Microdata = {
 
         } else if (isSVGGroup) {
 
-        // --- Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
+            // --- Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
 
-            if (this.options.itemtype === 'Administrative Area') {
+            var geoType = (this.options.hasOwnProperty('geotype')) ? this.options.geotype : "point"
+            var geoPropertyName = (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo"
 
-                console.log("Administrative Area", this)
-                var groupElements = []
-                this._findSVGGroupElements(this, groupElements)
-                console.log("SVG Group Leaflet Objects", groupElements)
-                // --- Debug Statements
-                var layerElements =  this._layers
-                for (var le in this._layers) {
-                    var layerElement = this._layers[le]
-                    if (layerElement.hasOwnProperty("feature")) console.log("GeoJSON Feature Element", layerElement.feature)
-                }
+            var metadata = undefined
 
-                var metadata = document.createElement('metadata')
+            console.log("Annotating SVG Geo Type", geoType)
+
+            if (geoType === "shape") {
+
+                console.log(this.options.itemtype, "Shape", this)
+
+                if ((this.options.itemtype === 'Place' || this.options.itemtype === 'City' || this.options.itemtype === 'State' || this.options.itemtype === 'Country'
+                     || this.options.itemtype === 'AdministrativeArea' || this.options.itemtype === 'LocalBusiness'
+                     || this.options.itemtype === 'Residence' || this.options.itemtype === 'CivicStructure' || this.options.itemtype === 'Landform'
+                     || this.options.itemtype === 'TouristAttraction' ) && isSVGGroup) { // Areas in "geo" property (GeoShapes)
+                    var groupElements = []
+                    this._findSVGGroupElements(this, groupElements)
+                    console.log("SVG Group Leaflet Objects", groupElements)
+                    // --- Debug Statements
+                    var layerElements =  this._layers
+                    for (var le in this._layers) {
+                        var layerElement = this._layers[le]
+                        if (layerElement.hasOwnProperty("feature")) console.log("GeoJSON Feature Element", layerElement.feature)
+                    }
+
+                    metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
-                    metadata.setAttribute('itemtype', 'http://schema.org/AdministrativeArea')
+                    metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
                     metadata.appendChild(this._createMetaElement('itemprop', 'name'))
-                    var geoShape = this._createMetaElement('itemprop', 'geo')
+                    var geoShape = this._createMetaElement('itemprop', geoPropertyName)
                         geoShape.setAttribute('itemtype', 'http://schema.org/GeoShape')
                     var polygon = this._createMetaElement('itemprop', 'polygon')
                         polygon.setAttribute('content', this.options._latlngs)
                     geoShape.appendChild(polygon)
                     metadata.appendChild(geoShape) // ### for each shape
 
-            } else if (this.options.itemtype === 'Place') {
+                }
 
-                var metadata = document.createElement('metadata')
+            } else if (geoType === "point") {
+                //..
+                console.log(this.options.itemtype, "Point", this)
+                if (this.options.itemtype === 'Place') { // Pin-Point location in "geo" property (GeoCoordinates)
+                    metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/Place')
                     var name = this._createMetaElement("itemprop", "name")
                         name.setAttribute('content', this.options.title)
                     metadata.appendChild(name)
-                    var geoCoordinate = this._createMetaElement('itemprop', 'geo')
+                    var geoCoordinate = this._createMetaElement('itemprop', geoPropertyName)
                         geoCoordinate.setAttribute('itemtype', 'http://schema.org/GeoCoordinates')
                     var latitude = this._createMetaElement('itemprop', 'latitude')
                         latitude.setAttribute('content', this._latlng.lat)
@@ -166,15 +189,14 @@ var Microdata = {
                     geoCoordinate.appendChild(longitude)
                     metadata.appendChild(geoCoordinate)
 
-            } else if (this.options.itemtype === 'CreativeWork') {
-
-                var metadata = document.createElement('metadata')
+                } else if (this.options.itemtype === 'CreativeWork') {  // Pin-Point location in "contentLocation" (GeoCoordinates)
+                    metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/CreativeWork')
                     var name = this._createMetaElement("itemprop", "name")
                         name.setAttribute('content', this.options.title)
                     var place = document.createElement('meta')
-                        place.setAttribute('itemprop', 'contentLocation')
+                        place.setAttribute('itemprop', geoPropertyName) // "contentLocation" or "locationCreated"
                         place.setAttribute('itemscope','')
                         place.setAttribute('itemtype', 'http://schema.org/Place')
                         var geoCoordinate = this._createMetaElement('itemprop', 'geo')
@@ -188,9 +210,10 @@ var Microdata = {
                         place.appendChild(geoCoordinate)
                     metadata.appendChild(name)
                     metadata.appendChild(place)
+                }
             }
             // ### if not already available in the DOM
-            domObject.appendChild(metadata)
+            if (metadata) domObject.appendChild(metadata)
         }
     }
 }
