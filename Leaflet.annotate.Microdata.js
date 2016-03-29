@@ -87,9 +87,10 @@ var Microdata = {
              || this.options.itemtype === 'Residence' || this.options.itemtype === 'CivicStructure' || this.options.itemtype === 'Landform'
              || this.options.itemtype === 'TouristAttraction' ) && !isSVGGroup) {
 
-            console.log("Annotating HTML Geo Type", geoType, this)
+            // console.log("Annotating HTML Geo Element", this.options.itemtype, this)
+            console.log(this.options.itemtype, "HTML Point, LeafletID", leafletId, this)
 
-            // --- Renders Simple Marker Annotations into DIVs
+            // --- Renders Simple Marker Annotations into an ARTICLE and DIV element
 
             data = new Builder().element('article', {
                 'itemscope': '', 'itemtype': 'http://schema.org/' + this.options.itemtype
@@ -132,15 +133,14 @@ var Microdata = {
             // --- Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
 
             var geoType = (this.options.hasOwnProperty('geotype')) ? this.options.geotype : "point"
+            var hasLatLngValuePair = (this.hasOwnProperty('_latlng')) ? true : false
+            var leafletId = this['_leaflet_id']
             var geoPropertyName = (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo"
-
             var metadata = undefined
 
-            console.log("Annotating SVG Geo Type", geoType)
+            // console.log("Annotating SVG Geo Element", this.options.itemtype, hasLatLngValuePair, this)
 
             if (geoType === "shape") {
-
-                console.log(this.options.itemtype, "Shape", this)
 
                 if ((this.options.itemtype === 'Place' || this.options.itemtype === 'City' || this.options.itemtype === 'State' || this.options.itemtype === 'Country'
                      || this.options.itemtype === 'AdministrativeArea' || this.options.itemtype === 'LocalBusiness'
@@ -148,14 +148,19 @@ var Microdata = {
                      || this.options.itemtype === 'TouristAttraction' ) && isSVGGroup) { // Areas in "geo" property (GeoShapes)
                     var groupElements = []
                     this._findSVGGroupElements(this, groupElements)
-                    console.log("SVG Group Leaflet Objects", groupElements)
-                    // --- Debug Statements
+                    console.log(this.options.itemtype, "SVG Shape, LeafletID", leafletId, this, "SVG Geometry Leaflet Groups (possibly Polygon/Paths)", groupElements)
+                    for (var lg in groupElements) {
+                        var element = groupElements[lg]
+                        console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
+                    }
+                    // --- Debug GeoJSON Feature/Layer
                     var layerElements =  this._layers
                     for (var le in this._layers) {
                         var layerElement = this._layers[le]
-                        if (layerElement.hasOwnProperty("feature")) console.log("GeoJSON Feature Element", layerElement.feature)
+                        var internalId = this._leaflet_id
+                        var geometryType = layerElement.feature.geometry["type"]
+                        if (layerElement.hasOwnProperty("feature")) console.log("  Loaded GeoJSON " + geometryType + " Feature, LeafletID", internalId, layerElement.feature)
                     }
-
                     metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
@@ -171,7 +176,7 @@ var Microdata = {
 
             } else if (geoType === "point") {
                 //..
-                console.log(this.options.itemtype, "Point", this)
+                console.log(this.options.itemtype, "SVG Point, LeafletID", leafletId, this)
                 if (this.options.itemtype === 'Place') {    // Direct Pin-Point location, just a ``Place'' with a simple "geo" property (GeoCoordinates)
                     metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
