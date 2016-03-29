@@ -38,6 +38,14 @@ var Microdata = {
             }
         }
     },
+    _buildPolygonArray: function(wgsCoordinates) {
+        var array = []
+        for (var l in wgsCoordinates) {
+            array.push(wgsCoordinates[l]['lat'])
+            array.push(wgsCoordinates[l]['lng'])
+        }
+        return array
+    },
     _createMetaElement: function(key, value) {
         var el = document.createElement('meta')
             el.setAttribute(key, value)
@@ -93,7 +101,7 @@ var Microdata = {
             // --- Renders Simple Marker Annotations into an ARTICLE and DIV element
 
             data = new Builder().element('article', {
-                'itemscope': '', 'itemtype': 'http://schema.org/' + this.options.itemtype
+                'itemscope': '', 'itemtype': 'http://schema.org/' + this.options.itemtype, 'data-internal-leaflet-id': leafletId
             }).children([
                 new Builder().element('meta', {
                     'itemprop': 'name', 'content': this.options.title
@@ -142,18 +150,36 @@ var Microdata = {
 
             if (geoType === "shape") {
 
-                if ((this.options.itemtype === 'Place' || this.options.itemtype === 'City' || this.options.itemtype === 'State' || this.options.itemtype === 'Country'
+                if ((this.options.itemtype === 'Place' || this.options.itemtype === 'City'
+                     || this.options.itemtype === 'State' || this.options.itemtype === 'Country'
                      || this.options.itemtype === 'AdministrativeArea' || this.options.itemtype === 'LocalBusiness'
-                     || this.options.itemtype === 'Residence' || this.options.itemtype === 'CivicStructure' || this.options.itemtype === 'Landform'
-                     || this.options.itemtype === 'TouristAttraction' ) && isSVGGroup) { // Areas in "geo" property (GeoShapes)
+                     || this.options.itemtype === 'Residence' || this.options.itemtype === 'CivicStructure'
+                     || this.options.itemtype === 'Landform' || this.options.itemtype === 'TouristAttraction')
+                     && isSVGGroup) {
                     var groupElements = []
                     this._findSVGGroupElements(this, groupElements)
                     console.log(this.options.itemtype, "SVG Shape, LeafletID", leafletId, this, "SVG Geometry Leaflet Groups (possibly Polygon/Paths)", groupElements)
                     for (var lg in groupElements) {
                         var element = groupElements[lg]
+                        var containerElement = element._container
                         console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
+                        metadata = document.createElement('metadata')
+                        metadata.setAttribute('itemscope','')
+                        metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
+                        metadata.setAttribute('data-internal-leaflet-id', element['_leaflet_id'])
+                        var name = this._createMetaElement('itemprop', 'name')
+                            name.setAttribute('content', this.options.title)
+                        metadata.appendChild(name)
+                        var geoShape = this._createMetaElement('itemprop', geoPropertyName)
+                            geoShape.setAttribute('itemtype', 'http://schema.org/GeoShape')
+                        var polygon = this._createMetaElement('itemprop', 'polygon')
+                            polygon.setAttribute('content', this._buildPolygonArray(element._latlngs))
+                        geoShape.appendChild(polygon)
+                        metadata.appendChild(geoShape) // ### for each shape
+                        containerElement.appendChild(metadata)
                     }
-                    // --- Debug GeoJSON Feature/Layer
+                    metadata = undefined // notes that metadata elements have been already appended to the DOM
+                    // Some GeoJSON Feature/Layer Debug Experimentals
                     var layerElements =  this._layers
                     for (var le in this._layers) {
                         var layerElement = this._layers[le]
@@ -161,19 +187,6 @@ var Microdata = {
                         var geometryType = layerElement.feature.geometry["type"]
                         if (layerElement.hasOwnProperty("feature")) console.log("  Loaded GeoJSON " + geometryType + " Feature, LeafletID", internalId, layerElement.feature)
                     }
-                    metadata = document.createElement('metadata')
-                    metadata.setAttribute('itemscope','')
-                    metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
-                    var name = this._createMetaElement('itemprop', 'name')
-                        name.setAttribute('content', this.options.title)
-                    metadata.appendChild(name)
-                    var geoShape = this._createMetaElement('itemprop', geoPropertyName)
-                        geoShape.setAttribute('itemtype', 'http://schema.org/GeoShape')
-                    var polygon = this._createMetaElement('itemprop', 'polygon')
-                        polygon.setAttribute('content', this.options._latlngs)
-                    geoShape.appendChild(polygon)
-                    metadata.appendChild(geoShape) // ### for each shape
-
                 }
 
             } else if (geoType === "point") {
@@ -183,6 +196,7 @@ var Microdata = {
                     metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/Place')
+                    metadata.setAttribute('data-internal-leaflet-id', leafletId)
                     var name = this._createMetaElement("itemprop", "name")
                         name.setAttribute('content', this.options.title)
                     metadata.appendChild(name)
@@ -200,6 +214,7 @@ var Microdata = {
                     metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
+                    metadata.setAttribute('data-internal-leaflet-id', leafletId)
                     var name = this._createMetaElement("itemprop", "name")
                         name.setAttribute('content', this.options.title)
                     var place = document.createElement('meta')
