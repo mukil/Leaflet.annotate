@@ -47,8 +47,12 @@
 				var poemMarker = L.circleMarker([40.573112, -73.980740], { itemtype: 'CreativeWork', geoprop: 'locationCreated', // geoprop: 'contentLocation',
 					title: 'The circle marker indicating geographically where this meta poem was conceived.'
 				})
-				var featureGroup = L.featureGroup([newYorkCityMarker, poemMarker])
+				var bernieSanders = L.circleMarker([44.478344, -73.213295], { itemtype: 'Person',
+					geoprop: 'workLocation', title: 'Bernie Sanders.'
+				})
+				var googleInc = L.circleMarker([37.422436, -122.084057], { itemtype: 'Organization', title: 'Google Inc', geoprop: 'location' })
 				
+				var featureGroup = L.featureGroup([newYorkCityMarker, poemMarker, bernieSanders, googleInc])
 				tileLayer.addTo(map)
 				featureGroup.addTo(map)
 

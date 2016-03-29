@@ -172,7 +172,7 @@ var Microdata = {
             } else if (geoType === "point") {
                 //..
                 console.log(this.options.itemtype, "Point", this)
-                if (this.options.itemtype === 'Place') { // Pin-Point location in "geo" property (GeoCoordinates)
+                if (this.options.itemtype === 'Place') {    // Direct Pin-Point location, just a ``Place'' with a simple "geo" property (GeoCoordinates)
                     metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/Place')
@@ -189,10 +189,10 @@ var Microdata = {
                     geoCoordinate.appendChild(longitude)
                     metadata.appendChild(geoCoordinate)
 
-                } else if (this.options.itemtype === 'CreativeWork') {  // Pin-Point location in "contentLocation" (GeoCoordinates)
+                } else if (this.options.itemtype !== 'undefined') {  // Indirect Pin-Point location, a simple ``Place'' in given geo-property (geoprop) (GeoCoordinates)
                     metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
-                    metadata.setAttribute('itemtype', 'http://schema.org/CreativeWork')
+                    metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
                     var name = this._createMetaElement("itemprop", "name")
                         name.setAttribute('content', this.options.title)
                     var place = document.createElement('meta')
