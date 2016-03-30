@@ -57,124 +57,126 @@ var Microdata = {
             targets = [targets]
         }
 
-        var data = null
+        var metadata = undefined
         var domObject = targets[0]
+        var parentElement = domObject.parentNode
+        var geoPropertyName = (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo"
         var isSVGGroup = (domObject.tagName === 'g') ? true : false
-        var parentElement = domObject
+        var hasLatLngValuePair = (this.hasOwnProperty('_latlng')) ? true : false
+        var hasLayers = (this.hasOwnProperty('_layers')) ? true : false
+        var leafletId = this['_leaflet_id']
 
-        if ((this.options.itemtype === 'Place' || this.options.itemtype === 'City'
-             || this.options.itemtype === 'State' || this.options.itemtype === 'Country'
-             || this.options.itemtype === 'AdministrativeArea' || this.options.itemtype === 'LocalBusiness'
-             || this.options.itemtype === 'Residence' || this.options.itemtype === 'CivicStructure' || this.options.itemtype === 'Landform'
-             || this.options.itemtype === 'TouristAttraction' ) && !isSVGGroup) {
+        if (!isSVGGroup && this.options.hasOwnProperty('itemtype')) {
+
             // --- Renders Simple Marker Annotations into an ARTICLE and appends the original element
 
-            console.log(this.options.itemtype, "HTML Point, LeafletID", leafletId, this)
-            var parent = domObject.parentNode
-            var metadata = document.createElement('article')
-                metadata.setAttribute('data-internal-leaflet-id', leafletId)
-                this._buildGeoAnnotation(metadata, geoPropertyName, this)
-                metadata.appendChild(domObject)
-                parent.innerHTML = ''
-                parent.appendChild(metadata)
+            metadata = document.createElement('article')
+            metadata.setAttribute('itemscope','')
+            metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
+            metadata.setAttribute('data-internal-leaflet-id', leafletId)
+            var name = this._createMetaElement("itemprop", "name")
+                name.setAttribute('content', this.options.title)
+            var place = this._buildGeoAnnotation("meta", this, "point", geoPropertyName)
+            metadata.appendChild(name)
+            metadata.appendChild(place)
+            metadata.appendChild(domObject)
+            parentElement.innerHTML = ''
+            parentElement.appendChild(metadata)
 
-        } else if (isSVGGroup) {
+        } else if (isSVGGroup && this.options.hasOwnProperty('itemtype')) {
             // --- Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
-
-            var geoType = (this.options.hasOwnProperty('geotype')) ? this.options.geotype : "point"
-            var hasLatLngValuePair = (this.hasOwnProperty('_latlng')) ? true : false
-            var hasLayers = (this.hasOwnProperty('_layers')) ? true : false
-            var leafletId = this['_leaflet_id']
-            var geoPropertyName = (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo"
-            var metadata = undefined
-
             // console.log("Annotating SVG Geo Element", this.options.itemtype, hasLatLngValuePair, hasLayers, this)
 
             if (hasLayers) { // build annotations on many elements
-
-                // Layers are not "just a Place" but typed more specific
-                if ((this.options.itemtype === 'City' || this.options.itemtype === 'State' || this.options.itemtype === 'Country'
-                     || this.options.itemtype === 'AdministrativeArea' || this.options.itemtype === 'LocalBusiness'
-                     || this.options.itemtype === 'Residence' || this.options.itemtype === 'CivicStructure'
-                     || this.options.itemtype === 'Landform' || this.options.itemtype === 'TouristAttraction')) {
-                    var groupElements = []
-                    this._findSVGGroupElements(this, groupElements)
-                    console.log(this.options.itemtype, "SVG Shape, LeafletID", leafletId, this, "SVG Geometry Leaflet Groups (possibly Polygon/Paths)", groupElements)
-                    for (var lg in groupElements) {
-                        var element = groupElements[lg]
-                        var containerElement = element._container
-                        console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
-                        metadata = document.createElement('metadata')
-                        metadata.setAttribute('itemscope','')
-                        metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
-                        metadata.setAttribute('data-internal-leaflet-id', element['_leaflet_id'])
-                        var name = this._createMetaElement('itemprop', 'name')
-                            name.setAttribute('content', this.options.title)
-                        metadata.appendChild(name)
-                        this._buildGeoAnnotation(metadata, geoPropertyName, element, "shape")
-                        containerElement.appendChild(metadata)
-                    }
-                    metadata = undefined // notes that metadata elements have been already appended to the DOM
-                    // Some GeoJSON Feature/Layer Debug Experimentals
-                    var layerElements =  this._layers
-                    for (var le in this._layers) {
-                        var layerElement = this._layers[le]
-                        var internalId = this._leaflet_id
-                        var geometryType = layerElement.feature.geometry["type"]
-                        if (layerElement.hasOwnProperty("feature")) console.log("  Loaded GeoJSON " + geometryType + " Feature, LeafletID", internalId, layerElement.feature)
-                    }
-                }
-
-            } else { // build annotations for a single element
-
-                console.log(this.options.itemtype, "SVG " + geoType + ", LeafletID", leafletId, this)
-
-                if (this.options.itemtype === 'Place') {    // Direct Pin-Point location, just a ``Place'' with a simple "geo" property (GeoCoordinates)
-                    metadata = document.createElement('metadata')
-                    metadata.setAttribute('data-internal-leaflet-id', leafletId)
-                    var name = this._createMetaElement("itemprop", "name")
-                        name.setAttribute('content', this.options.title)
-                    metadata.appendChild(name)
-                    this._buildGeoAnnotation(metadata, geoPropertyName, this)
-                } else if (this.options.itemtype !== 'undefined') {  // Indirect Pin-Point location, a simple ``Place'' in given geo-property (geoprop) (GeoCoordinates)
+                var groupElements = []
+                this._findSVGGroupElements(this, groupElements)
+                console.log(this.options.itemtype, "SVG Layers, LeafletID", leafletId, this, "SVG Geometry Leaflet Groups (possibly Polygon/Paths)", groupElements)
+                for (var lg in groupElements) {
+                    var element = groupElements[lg]
+                    var containerElement = element._container
+                    console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
                     metadata = document.createElement('metadata')
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
-                    metadata.setAttribute('data-internal-leaflet-id', leafletId)
-                    var name = this._createMetaElement("itemprop", "name")
+                    metadata.setAttribute('data-internal-leaflet-id', element['_leaflet_id'])
+                    var name = this._createMetaElement('itemprop', 'name')
                         name.setAttribute('content', this.options.title)
-                    var place = this._buildGeoAnnotation("meta", geoPropertyName, this, geoType)
+                    var place = this._buildGeoAnnotation('meta', element, "shape", geoPropertyName)
                     metadata.appendChild(name)
                     metadata.appendChild(place)
+                    containerElement.appendChild(metadata)
                 }
+                metadata = undefined // notes that metadata elements have been already appended to the DOM
+                // ### Some GeoJSON Feature/Layer Debug Experimentals maybe there are GeoJSON "properties" to exploit
+                var layerElements =  this._layers
+                for (var le in this._layers) {
+                    var layerElement = this._layers[le]
+                    var internalId = this._leaflet_id
+                    var geometryType = layerElement.feature.geometry["type"]
+                    if (layerElement.hasOwnProperty("feature")) console.log("  Loaded GeoJSON " + geometryType + " Feature, LeafletID", internalId, layerElement.feature)
+                }
+            } else { // build annotations for a single element
+                console.log(this.options.itemtype, "SVG Element" + ", LeafletID", leafletId, this)
+                metadata = document.createElement('metadata')
+                metadata.setAttribute('itemscope','')
+                metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
+                metadata.setAttribute('data-internal-leaflet-id', leafletId)
+                var name = this._createMetaElement("itemprop", "name")
+                    name.setAttribute('content', this.options.title)
+                var place = this._buildGeoAnnotation("meta", this, "point", geoPropertyName)
+                metadata.appendChild(name)
+                metadata.appendChild(place)
             }
-            // ### if not already available in the DOM
             if (metadata) domObject.appendChild(metadata)
         }
     },
-    _buildGeoAnnotation: function(element, schemaPropertyName, object, geoType) {
+    _buildGeoAnnotation: function(element, object, geoType, geoPropertyName) {
         if (typeof element != "object") {
             element = document.createElement(element)
         }
-        element.setAttribute('itemscope','')
-        element.setAttribute('itemtype', 'http://schema.org/Place')
-        var geoElement = this._createMetaElement('itemprop', schemaPropertyName)
-            if (geoType === "shape") {
-                geoElement.setAttribute('itemtype', 'http://schema.org/GeoShape')
-                var polygon = this._createMetaElement('itemprop', 'polygon')
-                    polygon.setAttribute('content', this._buildPolygonArray(object._latlngs))
-                geoElement.appendChild(polygon)
-            } else {
-                geoElement.setAttribute('itemtype', 'http://schema.org/GeoCoordinates')
-                var latitude = this._createMetaElement('itemprop', 'latitude')
-                    latitude.setAttribute('content', object._latlng.lat)
-                var longitude = this._createMetaElement('itemprop', 'longitude')
-                    longitude.setAttribute('content', object._latlng.lng)
-                geoElement.appendChild(latitude)
-                geoElement.appendChild(longitude)
-            }
-        element.appendChild(geoElement)
+        // console.log("Building Geo Annotation", object.options.itemtype, geoType, geoPropertyName)
+        if (object.options.itemtype !== 'Person' && object.options.itemtype !== 'Organization' && object.options.itemtype !== 'Event'
+            && object.options.itemtype !== 'Product' && object.options.itemtype !== 'IndividualProduct' && object.options.itemtype !== 'CreativeWork'
+            && object.options.itemtype !== 'Sculpture' && object.options.itemtype !== 'Book' && object.options.itemtype !== 'Article'
+            && object.options.itemtype !== 'Blog' && object.options.itemtype !== 'Comment' && object.options.itemtype !== 'Corporation'
+            && object.options.itemtype !== 'GovernmentalOrganization' && object.options.itemtype !== 'EducationalOrganization'
+            && object.options.itemtype !== 'NGO' && object.options.itemtype !== 'LocalBusiness') {
+
+            // --- We assume the entity to annotate is a sub-type of Place (and therewith has the "geo"-property)
+            element.setAttribute('itemprop', geoPropertyName)
+            this._buildGeographicIndicators(element, geoType, object)
+
+        } else if (geoPropertyName) {
+
+            // --- We assume the entity to annotate is NOT a sub-type of Place (and therewith has NOT the "geo"-property)
+            element.setAttribute('itemscope','')
+            element.setAttribute('itemtype', 'http://schema.org/Place')
+            element.setAttribute('itemprop', geoPropertyName)
+            var geoElement = this._createMetaElement('itemprop', 'geo')
+            this._buildGeographicIndicators(geoElement, geoType, object)
+            element.appendChild(geoElement)
+        } else {
+            console.warn("Could not build up geo annotations for " + object.options.itemtype + " and an undefined \"geoproperty\" value ")
+        }
         return element
+    },
+    _buildGeographicIndicators: function (element, type, object) {
+        if (type === "shape") {
+            element.setAttribute('itemtype', 'http://schema.org/GeoShape')
+            var polygon = this._createMetaElement('itemprop', 'polygon')
+                polygon.setAttribute('content', this._buildPolygonArray(object._latlngs))
+            element.appendChild(polygon)
+        } else if (type === "point") {
+            element.setAttribute('itemtype', 'http://schema.org/GeoCoordinates')
+            var latitude = this._createMetaElement('itemprop', 'latitude')
+                latitude.setAttribute('content', object._latlng.lat)
+            var longitude = this._createMetaElement('itemprop', 'longitude')
+                longitude.setAttribute('content', object._latlng.lng)
+            element.appendChild(latitude)
+            element.appendChild(longitude)
+        } else {
+            throw new Error("Unsupported type of geographic value indication")
+        }
     }
 }
 
@@ -213,12 +215,3 @@ L.LayerGroup.include({
 L.LayerGroup.addInitHook(function () {
     this.annotate()
 })
-
-/** L.SVG.addInitHook({
-    console.log("SVG.addInitHook", this)
-}) **/
-
-// var superPathInitialize = L.Path.prototype.initialize
-/** L.Path.addInitHook({
-    console.log("Path.addInitHook", this)
-}) **/

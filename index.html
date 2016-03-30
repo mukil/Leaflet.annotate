@@ -57,8 +57,7 @@
 				featureGroup.addTo(map)
 
 				$.getJSON('test-geometries/admin0_poly.json', function(response) {
-					var statesBoundaries = L.geoJson(response, { itemtype: 'Country', geotype: 'shape',
-						title: 'United States of America'
+					var statesBoundaries = L.geoJson(response, { itemtype: 'Country', title: 'United States of America'
 					}).addTo(map)
 					statesBoundaries.annotate()
 					/** .setAuthor("Malte Reißig")
