@@ -55,8 +55,9 @@ statesBoundaries.annotate()
 
 0.3, *Upcoming*
 
- * Annotatables: Marker, CircleMarker, GeoJSON Layer (Popup, DivMarker)
- * Compatible with LeafletJS 0.7.3
+ * Annotatable Leaflet Items: UI Layers (Marker, Popup), Vector Layers (CircleMarker), Other Layers (GeoJSON)
+ * Compatible with the latest stable LeafletJS Release: 0.7.7
+ * Most probably also compatible from at least all versions of 0.7.3 and upwards
 
 Author:<br/>
 Malte Reißig (2016
