@@ -88,16 +88,14 @@ var Microdata = {
             metadata.setAttribute('itemscope','')
             metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
             metadata.setAttribute('data-internal-leaflet-id', leafletId)
-            var name = this._createMetaElement("itemprop", "name")
-                name.setAttribute('content', this.options.title)
+            this._buildGenericProperties(metadata, this)
             var place = this._buildGeoAnnotation("meta", this, "point", geoPropertyName)
-            metadata.appendChild(name)
             metadata.appendChild(place)
             metadata.appendChild(domObject)
             parentElement.innerHTML = ''
             parentElement.appendChild(metadata)
             // For closing popups (removing from DOM) we need to tell our object which is its new (uppermost) container
-            this._container = metadata
+            // this._container = metadata
 
         } else if (isSVGGroup && this.options.hasOwnProperty('itemtype')) {
             // --- Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
@@ -115,10 +113,8 @@ var Microdata = {
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
                     metadata.setAttribute('data-internal-leaflet-id', element['_leaflet_id'])
-                    var name = this._createMetaElement('itemprop', 'name')
-                        name.setAttribute('content', this.options.title)
+                    this._buildGenericProperties(metadata, this)
                     var place = this._buildGeoAnnotation('meta', element, "shape", geoPropertyName)
-                    metadata.appendChild(name)
                     metadata.appendChild(place)
                     containerElement.appendChild(metadata)
                 }
@@ -137,14 +133,37 @@ var Microdata = {
                 metadata.setAttribute('itemscope','')
                 metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
                 metadata.setAttribute('data-internal-leaflet-id', leafletId)
-                var name = this._createMetaElement("itemprop", "name")
-                    name.setAttribute('content', this.options.title)
+                this._buildGenericProperties(metadata, this)
                 var place = this._buildGeoAnnotation("meta", this, "point", geoPropertyName)
-                metadata.appendChild(name)
                 metadata.appendChild(place)
             }
             if (metadata) domObject.appendChild(metadata)
         }
+    },
+    _buildGenericProperties: function(parentElement, object) {
+        if (object.options.hasOwnProperty('title')) {
+            _appendMetaElementContent(parentElement, 'name', object.options.title)
+        }
+        if (object.options.hasOwnProperty('description')) {
+            _appendMetaElementContent(parentElement, 'description', object.options.description)
+        }
+        if (object.options.hasOwnProperty('url')) {
+            _appendMetaElementContent(parentElement, 'url', object.options.url)
+        }
+        if (object.options.hasOwnProperty('sameAs')) {
+            _appendMetaElementContent(parentElement, 'sameAs', object.options.sameAs)
+        }
+        if (object.options.hasOwnProperty('alternateName')) {
+            _appendMetaElementContent(parentElement, 'alternateName', object.options.alternateName)
+        }
+        if (object.options.hasOwnProperty('image')) {
+            _appendMetaElementContent(parentElement, 'image', object.options.image)
+        }
+    },
+    _appendMetaElementContent: function(parent, elementName, elementTextContent) {
+        var valueElement = this._createMetaElement('itemprop', elementName)
+            valueElement.setAttribute('content', elementTextContent)
+        parent.appendChild(url)
     },
     _buildGeoAnnotation: function(element, object, geoType, geoPropertyName) {
         if (typeof element != "object") {

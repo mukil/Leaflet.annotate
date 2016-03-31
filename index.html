@@ -9,13 +9,15 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="author" content="Malte Reißig, IfL Leipzig">
 
-		<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" />
+		<!--link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css" /-->
+		<link rel="stylesheet" href="vendor/Leaflet-0.7.7/dist/leaflet.css" />
 		<link rel="stylesheet" href="css/example.css" />
 		<!--link rel="stylesheet" href="css/foundation.min.css" /-->
 		<!--link rel="stylesheet" href="css/viewer-style.css" /-->
-		
-		<script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet-src.js"></script>
-		<script src="//code.jquery.com/jquery-2.2.2.min.js"></script>
+
+		<!--script src="//cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet-src.js"></script-->
+		<script src="vendor/Leaflet-0.7.7/dist/leaflet-src.js"></script>
+		<script src="vendor/jquery-2.2.2.min.js"></script>
 
 		<script src="Leaflet.annotate.Microdata.js"></script>
 		<!--script src="Leaflet.annotate.Viewer.js"></script-->
@@ -45,14 +47,17 @@
 
 				var newYorkCityMarker = L.marker([40.573112, -73.980740], { itemtype: 'City', title: 'New York City Center'})
 					.bindPopup("Coney Island - NYC", {
-						itemtype: 'Article', title: 'Quiet Coney Island', description: 'New York Today - Good Morning on this springlike Wednesday.',
+						itemtype: 'Article', title: 'Quiet Coney Island', geoprop: 'contentLocation',
+						description: 'New York Today - Good Morning on this springlike Wednesday.',
 						url: 'http://www.nytimes.com/2016/03/09/nyregion/new-york-today-coney-island-off-season.html?_r=0'
-					})
+					}).openPopup()
 				var poemMarker = L.circleMarker([40.573112, -73.980740], { itemtype: 'CreativeWork', geoprop: 'locationCreated', // geoprop: 'contentLocation',
 					title: 'The circle marker indicating geographically where this meta poem was conceived.'
 				})
 				var bernieSanders = L.circleMarker([44.478344, -73.213295], { itemtype: 'Person',
-					geoprop: 'workLocation', title: 'Bernie Sanders.'
+					geoprop: 'workLocation', title: 'Bernie Sanders.',
+					description: 'Running for the White House, USA - Democratic Presidential Candidate 2016',
+					sameAs: 'https://www.wikidata.org/wiki/Q359442'
 				})
 				var googleInc = L.circleMarker([37.422436, -122.084057], { itemtype: 'Organization', title: 'Google Inc', geoprop: 'location' })
 				
