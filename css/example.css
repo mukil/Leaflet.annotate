@@ -9,3 +9,6 @@ body {
     margin-top: 0px;
 }
 
+.leaflet-popup-pane article {
+	transform: none !important;
+}
