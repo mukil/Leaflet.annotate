@@ -9,14 +9,26 @@ var Microdata = {
                 target = this._getTargetDOMElement()
                 this._buildAnnotations(target)
             })
-            this.on('open', function() { // Popups
+            this.on('open', function() { // Opening Popup
                 target = this._getTargetDOMElement()
-                this._buildAnnotations(target._container)
+                this._buildAnnotations(target)
+            })
+            this.on('close', function() { // Closing Popup
+                var previousContainer = []
+                this._findPopupContainerElement(this, previousContainer)
+                this._container = previousContainer[0]
             })
         } else {
             this._buildAnnotations(target)
         }
         return this
+    },
+    _findPopupContainerElement: function(element, result) {
+        var childNodes = element._container.childNodes
+        for (var el in childNodes) {
+            var element = childNodes[el]
+            if (element.className.contains('leaflet-popup')) return element
+        }
     },
     _findContainerElements: function(element, results) {
         if (element._container) {
@@ -84,6 +96,8 @@ var Microdata = {
             metadata.appendChild(domObject)
             parentElement.innerHTML = ''
             parentElement.appendChild(metadata)
+            // For closing popups (removing from DOM) we need to tell our object which is its new (uppermost) container
+            this._container = metadata
 
         } else if (isSVGGroup && this.options.hasOwnProperty('itemtype')) {
             // --- Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
@@ -210,7 +224,7 @@ L.Popup.include(Microdata)
 L.Popup.include({
     _getTargetDOMElement: function() {
         if (this.hasOwnProperty('_container')) { // Popup Container is initialized
-            return this
+            return this._container
         }
     }
 })
