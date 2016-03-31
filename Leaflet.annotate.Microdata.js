@@ -75,14 +75,14 @@ var Microdata = {
         var domObject = targets[0]
         var parentElement = domObject.parentNode
         var geoPropertyName = (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo"
-        var isSVGGroup = (domObject.tagName === 'g') ? true : false
-        var hasLatLngValuePair = (this.hasOwnProperty('_latlng')) ? true : false
-        var hasLayers = (this.hasOwnProperty('_layers')) ? true : false
+        var targetIsSVGGroup = (domObject.tagName === 'g') ? true : false
+        var hasLatLngValuePair = this.hasOwnProperty('_latlng')
+        var hasLayers = this.hasOwnProperty('_layers')
         var leafletId = this['_leaflet_id']
 
-        if (!isSVGGroup && this.options.hasOwnProperty('itemtype')) {
+        if (!targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
 
-            // --- Renders Simple Marker Annotations into an ARTICLE and appends the original element
+            // --- Renders Simple Marker or Popup Annotations into an ARTICLE and append the original element
 
             metadata = document.createElement('article')
             metadata.setAttribute('itemscope','')
@@ -94,10 +94,8 @@ var Microdata = {
             metadata.appendChild(domObject)
             parentElement.innerHTML = ''
             parentElement.appendChild(metadata)
-            // For closing popups (removing from DOM) we need to tell our object which is its new (uppermost) container
-            // this._container = metadata
 
-        } else if (isSVGGroup && this.options.hasOwnProperty('itemtype')) {
+        } else if (targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
             // --- Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
             // console.log("Annotating SVG Geo Element", this.options.itemtype, hasLatLngValuePair, hasLayers, this)
 
@@ -142,28 +140,28 @@ var Microdata = {
     },
     _buildGenericProperties: function(parentElement, object) {
         if (object.options.hasOwnProperty('title')) {
-            _appendMetaElementContent(parentElement, 'name', object.options.title)
+            this._appendMetaElementContent(parentElement, 'name', object.options.title)
         }
         if (object.options.hasOwnProperty('description')) {
-            _appendMetaElementContent(parentElement, 'description', object.options.description)
+            this._appendMetaElementContent(parentElement, 'description', object.options.description)
         }
         if (object.options.hasOwnProperty('url')) {
-            _appendMetaElementContent(parentElement, 'url', object.options.url)
+            this._appendMetaElementContent(parentElement, 'url', object.options.url)
         }
         if (object.options.hasOwnProperty('sameAs')) {
-            _appendMetaElementContent(parentElement, 'sameAs', object.options.sameAs)
+            this._appendMetaElementContent(parentElement, 'sameAs', object.options.sameAs)
         }
         if (object.options.hasOwnProperty('alternateName')) {
-            _appendMetaElementContent(parentElement, 'alternateName', object.options.alternateName)
+            this._appendMetaElementContent(parentElement, 'alternateName', object.options.alternateName)
         }
         if (object.options.hasOwnProperty('image')) {
-            _appendMetaElementContent(parentElement, 'image', object.options.image)
+            this._appendMetaElementContent(parentElement, 'image', object.options.image)
         }
     },
     _appendMetaElementContent: function(parent, elementName, elementTextContent) {
         var valueElement = this._createMetaElement('itemprop', elementName)
             valueElement.setAttribute('content', elementTextContent)
-        parent.appendChild(url)
+        parent.appendChild(valueElement)
     },
     _buildGeoAnnotation: function(element, object, geoType, geoPropertyName) {
         if (typeof element != "object") {
@@ -217,10 +215,15 @@ var Microdata = {
 
 // --- Leaflet Item Wrapper
 
+var superMarkerOnRemove = L.Marker.prototype.onRemove
 L.Marker.include(Microdata)
 L.Marker.include({
     _getTargetDOMElement: function() {
         return this._icon
+    },
+    onRemove: function(map) {
+        this._icon = this._icon.parentNode
+        superMarkerOnRemove.call(this, map)
     }
 })
 L.Marker.addInitHook(function () {
@@ -239,12 +242,18 @@ L.CircleMarker.addInitHook(function () {
     this.annotate()
 })
 
+
+var superPopupOnRemove = L.Popup.prototype.onRemove
 L.Popup.include(Microdata)
 L.Popup.include({
     _getTargetDOMElement: function() {
         if (this.hasOwnProperty('_container')) { // Popup Container is initialized
             return this._container
         }
+    },
+    onRemove: function(map) {
+        this._container = this._container.parentNode
+        superPopupOnRemove.call(this, map)
     }
 })
 L.Popup.addInitHook(function () {
