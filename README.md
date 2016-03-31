@@ -23,8 +23,8 @@ A Leaflet _Marker_, a _CircleMarker_ and at least a _GeoJSON File_ can be annota
 
 | Option   | Expected Value |
 |----------|:-------------:|
-| `itemtype` (Mandatory) | A Schema.org Type Name (URL conform String value, without spaces):<br/> "[Place](http://schema.org/Place)", "[AdminstrativeArea](http://schema.org/AdministrativeArea)", "[City](http://schema.org/City)", "[Country](http://schema.org/Country)", "[State](http://schema.org/State)", "[Landform](http://schema.org/Landform)", "[CivicStructure](http://schema.org/CivicStructure)", "[Residence](http://schema.org/Residence)", "[TouristAttraction](http://schema.org/TouristAttraction)", "[LocalBusiness](http://schema.org/LocalBusiness)" |
-| `geoprop` (Optional) | "geo" (default, valid for all subtypes of _Place_), "location" (_Organisation_), "contentLocation" (_CreativeWork_), "locationCreated" (_CreativeWork_), ... |
+| `itemtype` (Mandatory) | A Schema.org Type Name (URL conform String value, without spaces):<br/>"[Place](http://schema.org/Place)" (including all subtypes)<br/>"[CreativeWork](http://schema.org/CreativeWork)" (Article, Blog, Book, Comment, Sculpture),<br/>"[Person](http://schema.org/Person)"<br/>"[Organization](http://schema.org/Organization) (Corporation, EducationalOrganization, GovernmentalOrganization, NGO, LocalBusiness)"<br/>"[Product](http://schema.org/Product) (IndividualProduct)"<br/>"[Event](http://schema.org/Event)" |
+| `geoprop` (Optional) | "geo" (default, valid for all subtypes of _Place_)<br/>"location" (_Organisation_)<br/>"contentLocation" (_CreativeWork_), "locationCreated" (_CreativeWork_)<br/>To be documented|
 
 ### Examples - Building anotations using the API
 
@@ -53,9 +53,12 @@ var statesBoundaries = L.geoJson(response, { itemtype: 'Administrative Area',
 statesBoundaries.annotate()
 </pre>
 
-### Status
+### Release History
 
- * Proof of concept integrated with the Leaflet API
+0.3, *Upcoming*
+
+ * Annotatables: Marker, CircleMarker, GeoJSON Layer (Popup, DivMarker)
+ * Compatible with LeafletJS 0.7.3
 
 Author:<br/>
 Malte Reißig (2016
