@@ -44,6 +44,10 @@
 				})
 
 				var newYorkCityMarker = L.marker([40.573112, -73.980740], { itemtype: 'City', title: 'New York City Center'})
+					.bindPopup("Coney Island - NYC", {
+						itemtype: 'Article', title: 'Quiet Coney Island', description: 'New York Today - Good Morning on this springlike Wednesday.',
+						url: 'http://www.nytimes.com/2016/03/09/nyregion/new-york-today-coney-island-off-season.html?_r=0'
+					})
 				var poemMarker = L.circleMarker([40.573112, -73.980740], { itemtype: 'CreativeWork', geoprop: 'locationCreated', // geoprop: 'contentLocation',
 					title: 'The circle marker indicating geographically where this meta poem was conceived.'
 				})

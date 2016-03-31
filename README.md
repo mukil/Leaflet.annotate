@@ -15,8 +15,6 @@ Maps rendered in the **Internet Explorer** along with _VML_ is currently **not s
 
 At the moment all geographic annotations (of types which are not a sub-type of _Place_) are done through introducing an extra _Place_ element (and are not possible using just a _GeoShape_).
 
-Curently all
-
 ### Terms Currently Supported
 
 A Leaflet _Marker_, a _CircleMarker_ and at least a _GeoJSON File_ can be annotated in HTML with metadata trough passing one or all of the following _key:value_ pairs into the elements resp. `options' object during creation:

@@ -5,11 +5,13 @@ var Microdata = {
     annotate: function() {
         var target = this._getTargetDOMElement()
         if (!target) {
-            // console.log("Leaflet Entity Not Yet Wrapped for Annotations", this)
-            // Catchs Markers when Added
-            this.on('add', function() {
+            this.on('add', function() { // Marker
                 target = this._getTargetDOMElement()
                 this._buildAnnotations(target)
+            })
+            this.on('open', function() { // Popups
+                target = this._getTargetDOMElement()
+                this._buildAnnotations(target._container)
             })
         } else {
             this._buildAnnotations(target)
@@ -201,6 +203,18 @@ L.CircleMarker.include({
     }
 })
 L.CircleMarker.addInitHook(function () {
+    this.annotate()
+})
+
+L.Popup.include(Microdata)
+L.Popup.include({
+    _getTargetDOMElement: function() {
+        if (this.hasOwnProperty('_container')) { // Popup Container is initialized
+            return this
+        }
+    }
+})
+L.Popup.addInitHook(function () {
     this.annotate()
 })
 
