@@ -139,6 +139,7 @@ var Microdata = {
         }
     },
     _buildGenericProperties: function(parentElement, object) {
+        // Schema.org
         if (object.options.hasOwnProperty('title')) {
             this._appendMetaElementContent(parentElement, 'name', object.options.title)
         }
@@ -157,6 +158,42 @@ var Microdata = {
         if (object.options.hasOwnProperty('image')) {
             this._appendMetaElementContent(parentElement, 'image', object.options.image)
         }
+        // Dublin Core Legacy Namespace: http://purl.org/dc/elements/1.1 "dc:xyz"
+        // Without: Title, Description, Subject, Type and Coverage) and a Duplicate with Thing: sameAs == identifier
+        if (object.options.hasOwnProperty('creator')) {
+            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/creator', object.options.creator)
+        }
+        if (object.options.hasOwnProperty('contributor')) {
+            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/contributor', object.options.contributor)
+        }
+        if (object.options.hasOwnProperty('publisher')) {
+            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/publisher', object.options.publisher)
+        }
+        if (object.options.hasOwnProperty('published')) {
+            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/date', object.options.published)
+        }
+        if (object.options.hasOwnProperty('identifier')) {
+            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/identifier', object.options.identifier)
+        }
+        if (object.options.hasOwnProperty('rights')) {
+            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/rights', object.options.rights)
+        }
+        if (object.options.hasOwnProperty('derivedFrom')) {
+            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/source', object.options.derivedFrom)
+        }
+        if (object.options.hasOwnProperty('format')) {
+            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/format', object.options.format)
+        }
+        if (object.options.hasOwnProperty('language')) {
+            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/language', object.options.language)
+        }
+        // Terms Namespace http://purl.org/dc/terms/    "dcterms:xyz"
+        if (object.options.hasOwnProperty('created')) {
+            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/terms/created', object.options.created)
+        }
+        if (object.options.hasOwnProperty('modified')) {
+            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/terms/modified', object.options.modified)
+        }
     },
     _appendMetaElementContent: function(parent, elementName, elementTextContent) {
         var valueElement = this._createMetaElement('itemprop', elementName)
@@ -174,13 +211,11 @@ var Microdata = {
             && object.options.itemtype !== 'Blog' && object.options.itemtype !== 'Comment' && object.options.itemtype !== 'Corporation'
             && object.options.itemtype !== 'GovernmentalOrganization' && object.options.itemtype !== 'EducationalOrganization'
             && object.options.itemtype !== 'NGO' && object.options.itemtype !== 'LocalBusiness') {
-
             // --- We assume the entity to annotate is a sub-type of Place (and therewith has the "geo"-property)
             element.setAttribute('itemprop', geoPropertyName)
             this._buildGeographicIndicators(element, geoType, object)
 
         } else if (geoPropertyName) {
-
             // --- We assume the entity to annotate is NOT a sub-type of Place (and therewith has NOT the "geo"-property)
             element.setAttribute('itemscope','')
             element.setAttribute('itemtype', 'http://schema.org/Place')
@@ -188,6 +223,7 @@ var Microdata = {
             var geoElement = this._createMetaElement('itemprop', 'geo')
             this._buildGeographicIndicators(geoElement, geoType, object)
             element.appendChild(geoElement)
+
         } else {
             console.warn("Could not build up geo annotations for " + object.options.itemtype + " and an undefined \"geoproperty\" value ")
         }
@@ -213,8 +249,6 @@ var Microdata = {
     }
 }
 
-// --- Leaflet Item Wrapper
-
 var superMarkerOnRemove = L.Marker.prototype.onRemove
 L.Marker.include(Microdata)
 L.Marker.include({
@@ -226,9 +260,7 @@ L.Marker.include({
         superMarkerOnRemove.call(this, map)
     }
 })
-L.Marker.addInitHook(function () {
-    this.annotate()
-})
+L.Marker.addInitHook(function () { this.annotate() })
 
 L.CircleMarker.include(Microdata)
 L.CircleMarker.include({
@@ -238,10 +270,7 @@ L.CircleMarker.include({
         return results.length > 0 ? results[0] : null
     }
 })
-L.CircleMarker.addInitHook(function () {
-    this.annotate()
-})
-
+L.CircleMarker.addInitHook(function () { this.annotate() })
 
 var superPopupOnRemove = L.Popup.prototype.onRemove
 L.Popup.include(Microdata)
@@ -256,9 +285,7 @@ L.Popup.include({
         superPopupOnRemove.call(this, map)
     }
 })
-L.Popup.addInitHook(function () {
-    this.annotate()
-})
+L.Popup.addInitHook(function () { this.annotate() })
 
 L.LayerGroup.include(Microdata)
 L.LayerGroup.include({
@@ -268,6 +295,4 @@ L.LayerGroup.include({
         return results.length > 0 ? results[0] : null
     }
 })
-L.LayerGroup.addInitHook(function () {
-    this.annotate()
-})
+L.LayerGroup.addInitHook(function () {  this.annotate() })
