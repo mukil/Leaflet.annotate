@@ -36,34 +36,34 @@ Note: Contrary to the standard specification, one option (`key`) can be annotate
 ### Examples - Building anotations using the API
 
 Include the following script from this repository in your HTML file:
-<pre>
+```
 	<script src="Leaflet.annotate.Microdata.js"></script>
-</pre>
+```
 
 After that, if you pass `itemtype` as an option to your map element during creation, it is configured for annotation. Annnotation will happen if you add the map element to your Leaflet `map` object.
 
 Example1: Annotating a *Marker* as map element representing a `City` looks like this:
-<pre>
+```
 var marker = L.marker([40.573112, -73.980740], { itemtype: 'City', title: 'New York City'})
-</pre>
+```
 This also exposes your markers location values as machine readable [GeoCoordinates](http://schema.org/GeoCoordinates) values in HTML.
 
 Example2: Annotating a *Circle Marker* (SVG) to represent a [Creative Work](http://schema.org/CreativeWork), a virtual Poem.
-<pre>
+```
 var circleMarker = L.circleMarker([40.573112, -73.980740], { itemtype: 'CreativeWork', geoprop: 'locationCreated'
     title: 'The circle marker stating where this meta poem was created.'
 })
+```
 This too exposes this markers location value as machine readable [GeoCoordinates](http://schema.org/GeoCoordinates) but more specifically, it exposes the location as the _Place_ where the poem was written (`locationCreated`).
-</pre>
 
 Example3: Annotating a group of geometries (SVG) which all represent the boundaries of one [Country](http://schema.org/Country), in this case the (formal) boundaries of the "Estados Unidos":
-<pre>
+```
 var statesBoundaries = L.geoJson(response, { itemtype: 'Country',
     title: 'Estados Unidos'
 }).addTo(map)
 // Note: Here we must call annotate() explicitly on geographical Overlays such as this GeoJSON Layer
 statesBoundaries.annotate()
-</pre>
+```
 
 Note: Here an additional and explicit call of _annotate()_ is necessary.<br/>
 This exposes the polygons location values (all GeoCoordinates of the boundaries) as a machine readable [GeoShape](http://schema.org/GeoShape).
