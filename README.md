@@ -18,12 +18,12 @@ The following API options are available on standard Leaflet *Marker*, *CircleMar
 |----------|:-------------:|:-------------:|
 | `itemtype` (Mandatory) | Text | A Schema.org type name. Must be an URL conform text value without spaces. | 
 | `geoprop` (Optional) | Text | Name of Schema.org property to use for the geographical indicator value of type _Place_. Default is "geo", which is valid for Place and all its subtypes. Other valid values consequently would be "location" (_Organisation_), "contentLocation" (_CreativeWork_), "locationCreated" (_CreativeWork_), etc. |
-| `title` (Optional) | Text | [name](http://schema.org/name) ([Thing](http://schema.org/Thing)), "The name of the item." |
+| `title` <br/>(Optional) | Text | [name](http://schema.org/name) ([Thing](http://schema.org/Thing)), "The name of the item." |
 | `description` (Optional) | Text | [description](http://schema.org/description) ([Thing](http://schema.org/Thing)), "A short description of the item." |
 | `alternateName` (Optional) | Text | [alternateName](http://schema.org/alternateName) ([Thing](http://schema.org/Thing)), "An alias for the item." |
-| `image` (Optional)| Text | [alternateName](http://schema.org/alternateName) ([Thing](http://schema.org/Thing)), "An image of the item." Currently this should be an URL. |
+| `image` <br/>(Optional)| Text | [alternateName](http://schema.org/alternateName) ([Thing](http://schema.org/Thing)), "An image of the item." Currently this should be an URL. |
 | `sameAs` (Optional) | Text | [sameAs](http://schema.org/sameAs) ([Thing](http://schema.org/Thing)), "URL of a reference Web page that unambiguously indicates the item's identity. E.g. the URL of the item's Wikipedia page, Freebase page, or official website." |
-| `url` (Optional) | Text | [url](http://schema.org/url) ([Thing](http://schema.org/Thing)), "URL of the item." |
+| `url` <br/>(Optional) | Text | [url](http://schema.org/url) ([Thing](http://schema.org/Thing)), "URL of the item." |
 | `creator` (Optional) | Text | [creator](http://purl.org/dc/elements/1.1/creator) (Dublin Core), "An entity primarily responsible for making the resource. Typically, the name of a Creator should be used to indicate the entity (e.g. person, organisation or service)." |
 | `contributor` (Optional) | Text | [contributor](http://purl.org/dc/elements/1.1/contributor) (Dublin Core), "An entity responsible for making contributions to the resource. Typically, the name of a Contributor should be used to indicate the entity (e.g. person, organisation or service)." |
 | `publisher` (Optional) | Text | [publisher](http://purl.org/dc/elements/1.1/publisher) (Dublin Core), "An entity responsible for making the resource available. Typically, the name of a Contributor should be used to indicate the entity (e.g. person, organisation or service)." |
@@ -55,7 +55,8 @@ This also exposes your markers location values as machine readable [GeoCoordinat
 
 Example2: Annotating a *Circle Marker* (SVG) to represent a [Creative Work](http://schema.org/CreativeWork), a virtual Poem.
 ```
-var circleMarker = L.circleMarker([40.573112, -73.980740], { itemtype: 'CreativeWork', geoprop: 'locationCreated'
+var circleMarker = L.circleMarker([40.573112, -73.980740], {
+	itemtype: 'CreativeWork', geoprop: 'locationCreated'
     title: 'The circle marker stating where this meta poem was created.'
 })
 ```
