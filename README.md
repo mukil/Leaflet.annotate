@@ -16,7 +16,7 @@ The following API options are available on standard Leaflet *Marker*, *CircleMar
 
 | Option Key   | Expected Value | Definition |
 |----------|:-------------:|:-------------:|
-| `itemtype` (Mandatory) | Text | A Schema.org type name. Must be an URL conform text value without spaces. | 
+| `itemtype` (Mandatory) | Text | A Schema.org type name. This must be an URL conform text value, so it must not contain any spaces. For example you can use [AdministrativeArea](http://schema.org/AdministrativeArea), or more specific [City](http://schema.org/City) and [State](http://schema.org/State). You can also declare a map element represents an [Organization](http://schema.org/Organization) or mark up a (public) [Person](http://schema.org/Person). Also supported are map elements which represent a [CreativeWork](http://schema.org/CreativeWork), or lets say an [Article](http://schema.org/Article) or [Comment](http://schema.org/Comment). This list is by no means exhaustive. Please follow the links to find all other possible types and let me know if your case is not supported yet. | 
 | `geoprop` (Optional) | Text | Name of Schema.org property to use for the geographical indicator value of type _Place_. Default is "geo", which is valid for Place and all its subtypes. Other valid values consequently would be "location" (_Organisation_), "contentLocation" (_CreativeWork_), "locationCreated" (_CreativeWork_), etc. |
 | `title` <br/>(Optional) | Text | [name](http://schema.org/name) ([Thing](http://schema.org/Thing)), "The name of the item." |
 | `description` (Optional) | Text | [description](http://schema.org/description) ([Thing](http://schema.org/Thing)), "A short description of the item." |
