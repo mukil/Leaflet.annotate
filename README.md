@@ -1,9 +1,14 @@
 
 ## Leaflet.annnotate
 
-A [LeafletJS](http://github.com/Leaflet/Leaflet) (0.7.x) extension for map mashups allowing authors to publish elements on their web map as structured data, accessible for major search engines and ultimately as re-usable parts of a composition (your geographical web map). We currently integrat the public [Schema.org vocabulary](http://schema.org) to expose your map elements as _typed_ information (e.g. as an [GovernmentOrganization](http://schema.org/GovernmentOrganization)) along with all latitude/longitude values of your _geo-referencing_.
+A [LeafletJS](http://github.com/Leaflet/Leaflet) (0.7.x) extension for map mashups allowing authors to publish elements on their web map as semi-structured data, accessible for major search engines. Using this, in the end, all annotated elements in your map become re-usable and independent items of information.
 
-Furthermore we allow you to refine your annotations of each map element through wrapping core elements of the [Dublin Core Metadata Element Set](http://dublincore.org/documents/dcmi-terms/) and/or through relying on parts of the current [HTML Standard](https://html.spec.whatwg.org/multipage/semantics.html).
+To expose your map elements as _typed_ and _geo-referenced_ information we're wrapping the public [Schema.org vocabulary](http://schema.org) for you into standard elements of the LeafletJS API. Furthermore we allow you to refine the markup of your map elements through wrapping the [Dublin Core Metadata Element Set](http://dublincore.org/documents/dcmi-terms/).
+
+In short: With this plugin your LeafletJS generates "more meaningful" markup. Its aim is to implement to the latest [HTML Standard](https://html.spec.whatwg.org/multipage/semantics.html), integrate resource descriptions like Schema.org and the Dublin Core into your HTML and subsequently (as it defines an API), it allows developers to build all kinds of crazy things for all kinds of LeafletJS based geographical web maps. And no, this is surely not intended for helping you to annotate elements of your next "statistical geovisualization" or your next "geovisual analytics" map. It is intended to support web map making as information organization practice.
+
+Feedback and contributions are very welcome and i am in the hope that this is of some use for you.<br/>
+Cheers!
 
 ### API
 
@@ -31,13 +36,13 @@ The following API options are available on standard Leaflet *Marker*, *CircleMar
 | `created` | Text and Integers | [created](http://purl.org/dc/terms/created) (Dublin Core Term), "Date of creation of the resource. Recommended best practice is to use an encoding scheme, such as the [W3CDTF](http://www.w3.org/TR/NOTE-datetime) profile of ISO 8601." |
 | `modified` | Text and Integers | [modified](http://purl.org/dc/terms/modified) (Dublin Core Term), "Date on which the resource was changed.. Recommended best practice is to use an encoding scheme, such as the [W3CDTF](http://www.w3.org/TR/NOTE-datetime) profile of ISO 8601." |
 
-Note: Contrary to the standard specification, one option (`key`) can be annotated just once, for example currently this API does not enable you two specify two `alternateNames` for your map element.
+Note: Contrary to the standard specification, an option (`key`) can be annotated just once. For example currently this API does not enable you two specify two `alternateNames` for your map element.
 
 ### Examples - Building anotations using the API
 
 Include the following script from this repository in your HTML file:
 ```
-	<script src="Leaflet.annotate.Microdata.js"></script>
+<script src="Leaflet.annotate.Microdata.js"></script>
 ```
 
 After that, if you pass `itemtype` as an option to your map element during creation, it is configured for annotation. Annnotation will happen if you add the map element to your Leaflet `map` object.
