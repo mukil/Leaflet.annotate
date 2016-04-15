@@ -5,7 +5,7 @@ A [LeafletJS](http://github.com/Leaflet/Leaflet) (0.7.x) extension for map mashu
 
 To expose your map elements as _typed_ and _geo-referenced_ information in HTML we've wrapped the public [Schema.org vocabulary](http://schema.org) for you into standard elements of the LeafletJS API. Furthermore we allow you to refine the markup of your map elements through wrapping the [Dublin Core Metadata Element Set](http://dublincore.org/documents/dcmi-terms/).
 
-In short: With this plugin your LeafletJS generates "more meaningful" markup. Its aim is to implement to the latest [HTML Standard](https://html.spec.whatwg.org/multipage/semantics.html), integrate resource descriptions like Schema.org and the Dublin Core into your HTML. Subsequently (as it defines an API) it allows developers to build all kinds of crazy things for all kinds of LeafletJS based geographical web maps. And no, this is not intended for helping you to annotate elements of your next "statistical geovisualization" or your next "geovisual analytics" map. It is intended to support web map making as an information organization practice.
+In short: With this plugin your LeafletJS generates "more meaningful" markup. Its aim is to implement to the latest [HTML Standard](https://html.spec.whatwg.org/multipage/semantics.html), integrate resource descriptions like Schema.org and the Dublin Core into your HTML. Subsequently (as it defines an API) it allows developers to build all kinds of crazy things for all kinds of LeafletJS based geographical web maps. And no, this is not intended for helping you to annotate elements of your next "statistical geovisual analytics" or your next "big data geoweb map" app. It is intended to support web map making as an information organization practice.
 
 Feedback and contributions are very welcome and i am in the hope that this is of some use for you.<br/>
 Cheers!
@@ -78,11 +78,19 @@ This exposes the polygons location values (all GeoCoordinates of the boundaries)
 
 The envisioned application for revised markup in geographic web maps is (besides all third-party use cases enabled through providing structured data):<br/>A digital map legend interactively assisting users in analyzing the contents and the scope of so called ``map mashups''.
 
+Answers to the following questions are implemented in this extension:
+- Which standard HTML Elements (Tags) match best to _structure_ HTML documents which are of composite nature, esp. regarding to many contributions from many people)? - Depends, but relying on `div` should "be the last resort".
+- Which standad HTML Elements (Tags) match best for _annotating_ core elements of a geographic web map (like Marker, Layer, Popup, etc.)? - Depends, but for Markers and Popups and the current microdata implementation i chose `article`.
+- Where and how to represent "multiple authors" in a single HTML document (while it is already safe to consider how to represent just a single author of a document in HTML "unspecified")? - Either completely relying on class names, as the HTML Standard does sugegst or through, e.g. using `meta` lements within the `body` of the document in conjunction with microdata and terms of a well supported vocabulary.
+- Where and how to represent `datetime` on variously authored fragements in HTML? - [W3CDTF](https://www.w3.org/TR/NOTE-datetime)
+- Which HTML Markup Extension Syntax to implement first? - [Microdata](https://www.w3.org/TR/microdata/)
+- Which RDF Vocabulary is widely used (could be considererd "well supported") and extensible for us? - [Schema.org](http://schema.org/version/2.2/)
+
 ### Implementation Notes
 
 To annotate SVG Elements we introduce a `metadata` Element next to the respective `path`. In practice both are often grouped within a `g` element. All Schema.org and Dublin Core based annotation values are attributes of a `meta` element.
 
-Maps rendered in the **Internet Explorer** along with _VML_ is currently **not supported** when deploying Leaflet.annnotate.
+Maps rendered in the **Internet Explorer** along with _VML_ is currently **not supported** when deploying Leaflet.annnotate. HTML `canvas` based rendering is also not supported, in fact, a `canvas` based approach is exactly the opposite of (HTML) markup (Elements) representing elements of geographical web maps.
 
 At the moment all geographic annotations (of types which are not a sub-type of _Place_) are done through introducing an extra _Place_ element (and are not possible using just a _GeoShape_).
 
