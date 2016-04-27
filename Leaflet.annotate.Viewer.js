@@ -1,6 +1,6 @@
 
 /**
-The following custom control is a friendly copy, based on the source code by Rene Rubalcava who published it on his blog.
+The following custom Leaflet control is a friendly copy, based on the source code by Rene Rubalcava who published it on his blog.
 URL: http://odoe.net/blog/custom-leaflet-control/
 */
 
@@ -20,31 +20,11 @@ L.Control.AnnotationViewer = L.Control.extend({
         // constructor
         L.Util.setOptions(this, options)
         // converts NodeList to Array
-        articleElements = Array.prototype.slice.call(document.querySelectorAll('article'))
-        metaElements = Array.prototype.slice.call(document.querySelectorAll('meta'))
-        metadataElements = Array.prototype.slice.call(document.querySelectorAll('metadata'))
+        articleElements = Array.from(document.querySelectorAll('article'))
+        metaElements = Array.from(document.querySelectorAll('meta'))
+        metadataElements = Array.from(document.querySelectorAll('metadata'))
         // build up client side model of annotated elements
         this._buildElementTypes()
-    },
-    _buildElementTypes: function() {
-        // unify annotated elements
-        for (var el in articleElements) {
-            if (typeof articleElements[el] === "object") { // Iterating NodeList
-                var articleType = articleElements[el].getAttribute('itemtype')
-                console.log("   AnnotationViewer identified element of type \"", articleType.slice(SCHEMA_ORG.length) + "\"")
-                annotatedElements.push(articleElements[el])
-            }
-        }
-        for (var l in metadataElements) {
-            if (typeof metadataElements[l] === "object") { // Iterating NodeList
-                var metadataType = metadataElements[l].getAttribute('itemtype')
-                console.log("   AnnotationViewer identified element of type \"", metadataType.slice(SCHEMA_ORG.length) + "\"")
-                annotatedElements.push(metadataElements[l])
-            }
-        }
-        console.log("AnnotationViewer Found", metaElements.length, "annotations over",
-            (articleElements.length + metadataElements.length), "elements overall (", articleElements.length,
-                "article and", metadataElements.length, "metadata elements)")
     },
     onAdd: function (map) {
         // happens after added to map
@@ -55,9 +35,7 @@ L.Control.AnnotationViewer = L.Control.extend({
         this.input.type = 'text'
         this.input.placeholder = this.options.placeholder
         this.results = L.DomUtil.create('div', 'list-group', group)
-        L.DomEvent.addListener(this.input, 'keyup', function() {
-            console.log("Searching", this.input.value)
-        }, this)
+        L.DomEvent.addListener(this.input, 'keyup', this.keyup, this)
         L.DomEvent.addListener(this.form, 'submit', this.submit, this)
         L.DomEvent.disableClickPropagation(container)
         return container
@@ -74,18 +52,17 @@ L.Control.AnnotationViewer = L.Control.extend({
             this.results.innerHTML = ''
             if (this.input.value.length > 2) {
                 var value = this.input.value
-                var results = _.take(_.filter(this.options.data, function(x) {
-                  return x.feature.properties.park.toUpperCase().indexOf(value.toUpperCase()) > -1
-                }).sort(sortParks), 10)
-                _.map(results, function(x) {
-                  var a = L.DomUtil.create('a', 'list-group-item')
-                  a.href = ''
-                  a.setAttribute('data-result-name', x.feature.properties.park)
-                  a.innerHTML = x.feature.properties.park
-                  this.results.appendChild(a)
-                  L.DomEvent.addListener(a, 'click', this.itemSelected, this)
-                  return a
-                }, this)
+                var results = this._findAnnotationsByName(value)
+                for (var r in results) {
+                    var a = L.DomUtil.create('a', 'list-group-item')
+                    a.href = ''
+                    a.setAttribute('data-result-parent-item-type', results[r].type)
+                    a.setAttribute('data-result-name', results[r].name)
+                    a.innerHTML = results[r].name + ' (' + results[r].type + ')'
+                    this.results.appendChild(a)
+                    L.DomEvent.addListener(a, 'click', this.itemSelected, this)
+                    return a
+                }
             }
         }
     },
@@ -94,17 +71,46 @@ L.Control.AnnotationViewer = L.Control.extend({
         var elem = e.target
         var value = elem.innerHTML
         this.input.value = elem.getAttribute('data-result-name')
-        var feature = _.find(this.options.data, function(x) {
-            return x.feature.properties.park === this.input.value
-        }, this)
-        if (feature) {
-            this._map.fitBounds(feature.getBounds())
-        }
+        console.log("Annotated elememt selected")
+        /** var feature =
+        if (feature) this._map.fitBounds(feature.getBounds())*/
         this.results.innerHTML = ''
     },
     submit: function(e) {
         console.log("Submitted Query", e)
         L.DomEvent.preventDefault(e)
+    },
+    _buildElementTypes: function() {
+        // unify annotated elements
+        for (var el in articleElements) {
+            var articleType = articleElements[el].getAttribute('itemtype')
+            console.log("   AnnotationViewer identified element of type \"", articleType.slice(SCHEMA_ORG.length) + "\"")
+            annotatedElements.push(articleElements[el])
+        }
+        for (var l in metadataElements) {
+            var metadataType = metadataElements[l].getAttribute('itemtype')
+            console.log("   AnnotationViewer identified element of type \"", metadataType.slice(SCHEMA_ORG.length) + "\"")
+            annotatedElements.push(metadataElements[l])
+        }
+        console.log("AnnotationViewer Found", metaElements.length, "annotations over",
+            (articleElements.length + metadataElements.length), "elements overall (", articleElements.length,
+                "article and", metadataElements.length, "metadata elements)")
+    },
+    _findAnnotationsByName: function(query) {
+        var results = []
+        for (var l in metaElements) {
+            var meta = metaElements[l]
+            var metaProp = metaElements[l].getAttribute("itemprop")
+            if (metaProp === "name") {
+                var content = metaElements[l].getAttribute("content").toLowerCase()
+                if (content.indexOf(query) != -1) {
+                    meta.type = metaElements[l].parentNode.getAttribute("itemtype").slice(SCHEMA_ORG.length)
+                    meta.name = metaElements[l].getAttribute("content")
+                    results.push(meta)
+                }
+            }
+        }
+        return results
     }
 })
 
