@@ -75,6 +75,7 @@ var Microdata = {
         var domObject = targets[0]
         var parentElement = domObject.parentNode
         var geoPropertyName = (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo"
+        var domId = (this.options.hasOwnProperty('domId')) ? this.options.domId : undefined
         var targetIsSVGGroup = (domObject.tagName === 'g') ? true : false
         var hasLatLngValuePair = this.hasOwnProperty('_latlng')
         var hasLayers = this.hasOwnProperty('_layers')
@@ -85,6 +86,7 @@ var Microdata = {
             // --- Renders Simple Marker or Popup Annotations into an ARTICLE and append the original element
 
             metadata = document.createElement('article')
+            if (domId) metadata.setAttribute('id', domId)
             metadata.setAttribute('itemscope','')
             metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
             metadata.setAttribute('data-internal-leaflet-id', leafletId)
@@ -102,12 +104,13 @@ var Microdata = {
             if (hasLayers) { // build annotations on many elements
                 var groupElements = []
                 this._findSVGGroupElements(this, groupElements)
-                console.log(this.options.itemtype, "SVG Layers, LeafletID", leafletId, this, "SVG Geometry Leaflet Groups (possibly Polygon/Paths)", groupElements)
+                console.log(this.options.itemtype, "SVG Layers, domId", domId, this, "SVG Geometry Leaflet Groups (possibly Polygon/Paths)", groupElements)
                 for (var lg in groupElements) {
                     var element = groupElements[lg]
                     var containerElement = element._container
                     console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
                     metadata = document.createElement('metadata')
+                    if (domId) metadata.setAttribute('id', domId)
                     metadata.setAttribute('itemscope','')
                     metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
                     metadata.setAttribute('data-internal-leaflet-id', element['_leaflet_id'])
@@ -128,6 +131,7 @@ var Microdata = {
             } else { // build annotations for a single element
                 console.log(this.options.itemtype, "SVG Element" + ", LeafletID", leafletId, this)
                 metadata = document.createElement('metadata')
+                if (domId) metadata.setAttribute('id', domId)
                 metadata.setAttribute('itemscope','')
                 metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
                 metadata.setAttribute('data-internal-leaflet-id', leafletId)
@@ -287,6 +291,7 @@ L.Popup.include({
 })
 L.Popup.addInitHook(function () { this.annotate() })
 
+// ### Todo: implement onRemove for GeoJSON Layer/LayerGroup
 L.LayerGroup.include(Microdata)
 L.LayerGroup.include({
     _getTargetDOMElement: function() {
