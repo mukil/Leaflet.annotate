@@ -29,15 +29,14 @@ L.Control.AnnotationViewer = L.Control.extend({
     onAdd: function (map) {
         // happens after added to map
         var container = L.DomUtil.create('div', 'annotation-viewer search-container')
-        this.form = L.DomUtil.create('form', 'form', container)
-        var group = L.DomUtil.create('div', 'form-group', this.form)
-        this.input = L.DomUtil.create('input', 'form-control input-sm', group)
-        this.input.type = 'text'
-        this.input.placeholder = this.options.placeholder
-        this.results = L.DomUtil.create('div', 'list-group', group)
-        L.DomEvent.addListener(this.input, 'keyup', this.keyup, this)
-        L.DomEvent.addListener(this.form, 'submit', this.submit, this)
-        L.DomEvent.disableClickPropagation(container)
+        this.a = L.DomUtil.create('a', 'leaflet-control-annotation-viewer')
+        this.a.innerHTML = "?"
+        var renderAnnotationViewer = this._toggleAnnotationViewer
+        var _context = this
+        this.a.onclick = function(e) {
+            renderAnnotationViewer(_context, container)
+        }
+        container.appendChild(this.a)
         return container
     },
     onRemove: function (map) {
@@ -71,7 +70,7 @@ L.Control.AnnotationViewer = L.Control.extend({
         var elem = e.target
         var value = elem.innerHTML
         this.input.value = elem.getAttribute('data-result-name')
-        console.log("Annotated elememt selected")
+        console.log("Annotated element selected:", value, elem)
         /** var feature =
         if (feature) this._map.fitBounds(feature.getBounds())*/
         this.results.innerHTML = ''
@@ -80,16 +79,35 @@ L.Control.AnnotationViewer = L.Control.extend({
         console.log("Submitted Query", e)
         L.DomEvent.preventDefault(e)
     },
+    _toggleAnnotationViewer: function(context, container) {
+        if (container.children.length === 1) {
+            container.children[0].innerHTML = "x"
+            context.form = L.DomUtil.create('form', 'form', container)
+            var group = L.DomUtil.create('div', 'form-group', context.form)
+            context.input = L.DomUtil.create('input', 'form-control input-sm', group)
+            context.input.type = 'text'
+            context.input.placeholder = context.options.placeholder
+            context.results = L.DomUtil.create('div', 'list-group', group)
+            L.DomEvent.addListener(context.input, 'keyup', context.keyup, context)
+            L.DomEvent.addListener(context.form, 'submit', context.submit, context)
+            L.DomEvent.disableClickPropagation(container)
+        } else {
+            container.children[0].innerHTML = "?"
+            for (var c in container.children) {
+                if (container.children[c].localName === "form") container.removeChild(container.children[c])
+            }
+        }
+    },
     _buildElementTypes: function() {
         // unify annotated elements
         for (var el in articleElements) {
             var articleType = articleElements[el].getAttribute('itemtype')
-            console.log("   AnnotationViewer identified element of type \"", articleType.slice(SCHEMA_ORG.length) + "\"")
+            console.log("   AnnotationViewer identified element of type \"" + articleType.slice(SCHEMA_ORG.length) + "\"")
             annotatedElements.push(articleElements[el])
         }
         for (var l in metadataElements) {
             var metadataType = metadataElements[l].getAttribute('itemtype')
-            console.log("   AnnotationViewer identified element of type \"", metadataType.slice(SCHEMA_ORG.length) + "\"")
+            console.log("   AnnotationViewer identified element of type \"" + metadataType.slice(SCHEMA_ORG.length) + "\"")
             annotatedElements.push(metadataElements[l])
         }
         console.log("AnnotationViewer Found", metaElements.length, "annotations over",
@@ -103,7 +121,7 @@ L.Control.AnnotationViewer = L.Control.extend({
             var metaProp = metaElements[l].getAttribute("itemprop")
             if (metaProp === "name") {
                 var content = metaElements[l].getAttribute("content").toLowerCase()
-                if (content.indexOf(query) != -1) {
+                if (content.indexOf(query.toLowerCase()) != -1) {
                     meta.type = metaElements[l].parentNode.getAttribute("itemtype").slice(SCHEMA_ORG.length)
                     meta.name = metaElements[l].getAttribute("content")
                     results.push(meta)
