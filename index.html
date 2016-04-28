@@ -13,7 +13,7 @@
 		<!-- link rel="stylesheet" href="vendor/Leaflet-0.7.7/dist/leaflet.css" /-->
 		<link rel="stylesheet" href="css/example.css" />
 		<!-- link rel="stylesheet" href="css/foundation.min.css" /-->
-		<!-- link rel="stylesheet" href="css/viewer-style.css" /-->
+		<link rel="stylesheet" href="css/viewer-style.css" />
 
 		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
 		<script src="https://code.jquery.com/jquery-2.2.3.min.js"
@@ -21,8 +21,9 @@
 		<!-- script src="vendor/Leaflet-0.7.7/dist/leaflet-src.js"></script-->
 		<!-- script src="vendor/jquery-2.2.2.min.js"></script-->
 
+		<!-- Microdata.js needs to be loaded before Leaflet.annotate.Viewer.js due to a CONSTANT-->
 		<script src="Leaflet.annotate.Microdata.js"></script>
-		<!-- script src="Leaflet.annotate.Viewer.js"></script-->
+		<script src="Leaflet.annotate.Viewer.js"></script>
 
 	</head>
 
@@ -49,7 +50,7 @@
 					id: 'mapbox.light'
 				})
 
-				newYorkCityMarker = L.marker([40.573112, -73.980740], { itemtype: 'City', title: 'New York City Center'})
+				newYorkCityMarker = L.marker([40.573112, -73.980740], { itemtype: 'City', title: 'New York City Center', domId: 'nyc'})
 					.bindPopup("Coney Island - NYC", {
 						itemtype: 'Article', title: 'Quiet Coney Island', geoprop: 'contentLocation',
 						description: 'New York Today - Good Morning on this springlike Wednesday.',
@@ -83,6 +84,7 @@
 
 				// --- Defused Work in Progress  ---
 				// L.readerPlugin(map)
+				map.addControl(L.control.annotationViewer())
 
 				// --- Only jQuery Dependency
 				$('#map').css('height', window.innerHeight + 'px')
