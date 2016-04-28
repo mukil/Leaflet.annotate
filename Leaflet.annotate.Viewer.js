@@ -9,6 +9,7 @@ var articleElements = []
 var metaElements = []
 var metadataElements = []
 var annotatedElements = []
+var typeCount = []
 
 L.Control.AnnotationViewer = L.Control.extend({
     options: {
@@ -19,12 +20,8 @@ L.Control.AnnotationViewer = L.Control.extend({
     initialize: function (options /*{ data: {...}  }*/) {
         // constructor
         L.Util.setOptions(this, options)
-        // converts NodeList to Array
-        articleElements = Array.from(document.querySelectorAll('article'))
-        metaElements = Array.from(document.querySelectorAll('meta'))
-        metadataElements = Array.from(document.querySelectorAll('metadata'))
         // build up client side model of annotated elements
-        this._buildElementTypes()
+        // this._buildElementTypes()
     },
     onAdd: function (map) {
         // happens after added to map
@@ -48,29 +45,36 @@ L.Control.AnnotationViewer = L.Control.extend({
         if (e.keyCode === 38 || e.keyCode === 40) {
             // do nothing
         } else {
-            this.results.innerHTML = ''
             if (this.input.value.length > 2) {
                 var value = this.input.value
-                var results = this._findAnnotationsByName(value)
-                for (var r in results) {
-                    var a = L.DomUtil.create('a', 'list-group-item')
-                    a.href = ''
-                    a.setAttribute('data-result-parent-item-type', results[r].type)
-                    a.setAttribute('data-result-name', results[r].name)
-                    a.innerHTML = results[r].name + ' (' + results[r].type + ')'
-                    this.results.appendChild(a)
-                    L.DomEvent.addListener(a, 'click', this.itemSelected, this)
-                    return a
-                }
+                var topics = this._findAnnotationsByName(value)
+                this._renderResultItems(topics, this)
             }
         }
+    },
+    typeGroupSelected: function(e) {
+        var topics = this._buildElementTypeInstances(e.target['data-type-uri'])
+        this.results = document.querySelector('.list-group')
+        this._renderResultItems(topics, this)
     },
     itemSelected: function(e) {
         L.DomEvent.preventDefault(e)
         var elem = e.target
         var value = elem.innerHTML
+        var leafletId = elem.getAttribute('data-result-leaflet-id')
+        var leafletElement = document.querySelector('[data-internal-leaflet-id="' + leafletId + '"]')
         this.input.value = elem.getAttribute('data-result-name')
-        console.log("Annotated element selected:", value, elem)
+        var coordinateValuePair = elem.getAttribute('data-geo-coordinates')
+        // ### focus map to geo-coordinate value
+        console.log("Annotated element selected:", leafletElement, "Focus", coordinateValuePair, this)
+        if (typeof coordinateValuePair !== "undefined") {
+            var lat = parseFloat(coordinateValuePair.split(":")[0])
+            var lng = parseFloat(coordinateValuePair.split(":")[1])
+            this._map.setView(L.latLng(lat, lng))
+            if (this._map.getZoom() <= 7) {
+                this._map.setZoom(this._map.getZoom() + 2)
+            }
+        }
         /** var feature =
         if (feature) this._map.fitBounds(feature.getBounds())*/
         this.results.innerHTML = ''
@@ -79,40 +83,164 @@ L.Control.AnnotationViewer = L.Control.extend({
         console.log("Submitted Query", e)
         L.DomEvent.preventDefault(e)
     },
+    _renderResultItems: function(results, context) {
+        this.results.innerHTML = ''
+        if (results.length > 0) {
+            var firstResult = results[0]
+            this.results.innerHTML = '<span class="header">'+ results.length + 'x ' + firstResult.type+'</span>'
+        }
+        for (var r in results) {
+            // console.log("Render Result List Item for Map Element", results[r].node, results[r]  )
+            var a = L.DomUtil.create('a', 'list-group-item')
+            a.href = ''
+            a.title = 'Show \"' + results[r].name + '\" in map'
+            a.setAttribute('data-result-parent-item-type', results[r].type)
+            a.setAttribute('data-result-name', results[r].name)
+            a.setAttribute('data-result-leaflet-id', results[r].leafletId)
+            if (results[r].hasOwnProperty("center") && typeof results[r].center !== "undefined") {
+                a.setAttribute('data-geo-coordinates', "" + results[r].center.lat + ":" + results[r].center.lng + "")
+            }
+            a.innerHTML = results[r].name //  + ' (' + results[r].type + ')'
+            context.results.appendChild(a)
+            L.DomEvent.addListener(a, 'click', context.itemSelected, context)
+            L.DomEvent.disableClickPropagation(a)
+            return a
+        }
+    },
     _toggleAnnotationViewer: function(context, container) {
         if (container.children.length === 1) {
-            container.children[0].innerHTML = "x"
+            // re-build model of annotations
+            context._buildElementTypes()
+            // render annotation list dialog
+            container.children[0].innerHTML = "X"
+            for (var t in typeCount) {
+                var typeName = t.slice(SCHEMA_ORG.length)
+                var a = L.DomUtil.create('a', 'type-group-item')
+                    a.href = '#' + typeName
+                    a['data-type-uri'] = t
+                    a.title = 'Show all items of type \"' + typeName + '\"'
+                    a.innerHTML = typeCount[t].count
+                container.appendChild(a)
+                L.DomEvent.addListener(a, 'click', context.typeGroupSelected, context)
+                L.DomEvent.disableClickPropagation(a)
+                // return a
+            }
             context.form = L.DomUtil.create('form', 'form', container)
             var group = L.DomUtil.create('div', 'form-group', context.form)
             context.input = L.DomUtil.create('input', 'form-control input-sm', group)
             context.input.type = 'text'
             context.input.placeholder = context.options.placeholder
             context.results = L.DomUtil.create('div', 'list-group', group)
+            L.DomUtil.addClass(container, 'selected')
             L.DomEvent.addListener(context.input, 'keyup', context.keyup, context)
             L.DomEvent.addListener(context.form, 'submit', context.submit, context)
             L.DomEvent.disableClickPropagation(container)
         } else {
             container.children[0].innerHTML = "?"
-            for (var c in container.children) {
-                if (container.children[c].localName === "form") container.removeChild(container.children[c])
+            var childElements = Array.from(container.children)
+            for (var c in childElements) {
+                console.log("AnnotationViewer Dialog Children", childElements[c])
+                if (childElements[c].localName === "form" || childElements[c].className.indexOf('type-group-item') != -1) {
+                    container.removeChild(childElements[c])
+                }
             }
+            L.DomUtil.removeClass(container, 'selected')
         }
     },
     _buildElementTypes: function() {
+        // converts NodeList to Array
+        articleElements = Array.from(document.querySelectorAll('article'))
+        metaElements = Array.from(document.querySelectorAll('meta'))
+        metadataElements = Array.from(document.querySelectorAll('metadata'))
+        typeCount = []
         // unify annotated elements
         for (var el in articleElements) {
             var articleType = articleElements[el].getAttribute('itemtype')
             console.log("   AnnotationViewer identified element of type \"" + articleType.slice(SCHEMA_ORG.length) + "\"")
             annotatedElements.push(articleElements[el])
+            this._countItemType(articleType)
         }
         for (var l in metadataElements) {
             var metadataType = metadataElements[l].getAttribute('itemtype')
             console.log("   AnnotationViewer identified element of type \"" + metadataType.slice(SCHEMA_ORG.length) + "\"")
             annotatedElements.push(metadataElements[l])
+            this._countItemType(metadataType)
         }
         console.log("AnnotationViewer Found", metaElements.length, "annotations over",
             (articleElements.length + metadataElements.length), "elements overall (", articleElements.length,
                 "article and", metadataElements.length, "metadata elements)")
+    },
+    _countItemType: function(typeName) {
+        if (typeCount[typeName] === undefined){
+            typeCount[typeName] = { "count": 1 }
+        } else {
+            typeCount[typeName] = { "count": typeCount[typeName].count + 1 }
+        }
+    },
+    _buildElementTypeInstances: function(typeUri) {
+        console.log("Fetching all instances in document of itemtype=" + typeUri)
+        var results = []
+        var typedElements = Array.from(document.querySelectorAll('[itemtype="'+typeUri+'"]'))
+        for (var t in typedElements) {
+            var elementAnnotations = Array.from(typedElements[t].children)
+            var topic = { "name" : "Unknown", "type": typeUri.slice(SCHEMA_ORG.length),
+                "node": typedElements[t], "leafletId": typedElements[t].getAttribute("data-internal-leaflet-id")}
+            for (var l in elementAnnotations) {
+                var metaProp = elementAnnotations[l].getAttribute("itemprop")
+                // console.log("Meta Prop Name", metaProp)
+                if (elementAnnotations[l].attributes.hasOwnProperty('content')) {
+                    var content = elementAnnotations[l].getAttribute("content")
+                    if (metaProp === "name") {
+                        topic.name = content
+                    } else if (metaProp === "http://purl.org/dc/terms/created") {
+                        topic.created = new Date(content)
+                    } else if (metaProp === "http://purl.org/dc/terms/modified") {
+                        topic.modified = new Date(content)
+                    } else if (metaProp === "http://purl.org/dc/terms/creator") {
+                        topic.creator = content
+                    } else if (metaProp === "http://purl.org/dc/terms/publisher") {
+                        topic.publisher = content
+                    } else if (metaProp === "description") {
+                        topic.description = content
+                    } else if (metaProp === "sameAs") {
+                        topic.sameAs = content
+                    } else if (metaProp === "url") {
+                        topic.url = content
+                    }
+                    // ### TODO: Map the rest of our fifteen metadata terms
+                } else if (metaProp === "geo" || metaProp === "location" || metaProp === "birthPlace" || metaProp === "deathPlace"
+                    || metaProp === "contentLocation" || metaProp === "locationCreated" || metaProp === "homeLocation" || metaProp === "workLocation") {
+                    topic.geoProp = metaProp
+                    topic.center = this._getGeoCoordinates(elementAnnotations[l])
+                    // console.log(" Item Located At ", topic.location)
+                }
+            }
+            results.push(topic)
+        }
+        return results
+    },
+    _getGeoCoordinates: function(metaElement) {
+        console.log("Fetching Coordinates, Geographic Reference Values", metaElement)
+        var itemType = metaElement.getAttribute("itemtype")
+        var values = []
+        if (itemType === "http://schema.org/GeoCoordinates") {
+            values = Array.from(metaElement.children)
+        } else if (itemType === "http://schema.org/Place") {
+            values = Array.from(metaElement.children[0].children)
+        } else {
+            console.warn("Focussing Geo Shape values or other itemtypes than Place and GeoCoordinates - NOT YET IMPLEMENTED")
+            return undefined
+        }
+        var coordinates = {}
+        for (var g in values) {
+            var node = values[g]
+            if (node.getAttribute("itemprop") === "latitude") {
+                coordinates.lat = node.getAttribute("content")
+            } else if (node.getAttribute("itemprop") === "longitude") {
+                coordinates.lng = node.getAttribute("content")
+            }
+        }
+        return coordinates
     },
     _findAnnotationsByName: function(query) {
         var results = []
