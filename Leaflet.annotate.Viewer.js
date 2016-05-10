@@ -27,7 +27,7 @@ L.Control.AnnotationViewer = L.Control.extend({
         // happens after added to map
         var container = L.DomUtil.create('div', 'annotation-viewer search-container')
         this.a = L.DomUtil.create('a', 'leaflet-control-annotation-viewer')
-        this.a.innerHTML = "?"
+        this.a.innerHTML = '<img src="readerView-Icon-decentblue-transparent.png" title="Launch Annotation Reader">'
         var renderAnnotationViewer = this._toggleAnnotationViewer
         var _context = this
         this.a.onclick = function(e) {
@@ -136,7 +136,7 @@ L.Control.AnnotationViewer = L.Control.extend({
             L.DomEvent.addListener(context.form, 'submit', context.submit, context)
             L.DomEvent.disableClickPropagation(container)
         } else {
-            container.children[0].innerHTML = "?"
+            container.children[0].innerHTML = '<img src="readerView-Icon-decentblue-transparent.png" title="Launch Annotation Reader">'
             var childElements = Array.from(container.children)
             for (var c in childElements) {
                 console.log("AnnotationViewer Dialog Children", childElements[c])
