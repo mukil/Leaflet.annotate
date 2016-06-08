@@ -1,6 +1,8 @@
 
 // --- Implementation for building annnotations in Microdata Syntax
 
+var SCHEMA_ORG = "http://schema.org/"
+
 var Microdata = {
     annotate: function() {
         var target = this._getTargetDOMElement()
@@ -273,6 +275,7 @@ L.CircleMarker.include({
         this._findContainerElements(this, results)
         return results.length > 0 ? results[0] : null
     }
+
 })
 L.CircleMarker.addInitHook(function () { this.annotate() })
 

@@ -1,13 +1,11 @@
 
 ## Leaflet.annnotate
 
-A [LeafletJS](http://github.com/Leaflet/Leaflet) (0.7.x) extension for map mashups allowing authors to publish elements on their web map as semi-structured data, accessible for major search engines. Using this, in the end, all annotated elements in your map become re-usable and independent items of information.
+A [LeafletJS](http://github.com/Leaflet/Leaflet) (0.7.x) extension for map makers facilitating the accessible publication of elements in geographical web maps. Using the functionality of this plugin will m(ake the contents of your map more accessible for major search engine algorithms and other applications. Emplying Leaflet.annotate, in the end, will allow you to easily annotate elements in your map with Schema.org and thus make them re-usable and independent items of information ("Things").
 
-To expose your map elements as _typed_ and _geo-referenced_ information in HTML we've wrapped the public [Schema.org vocabulary](http://schema.org) for you into standard elements of the LeafletJS API. Furthermore we allow you to refine the markup of your map elements through wrapping the [Dublin Core Metadata Element Set](http://dublincore.org/documents/dcmi-terms/).
+In other words: With this plugin your LeafletJS generates "more meaningful" markup and has the potential to integrate its elements into the web of data. It frees you writing markup that is compliant with the latest [HTML](https://html.spec.whatwg.org/multipage/semantics.html) [SVG Standard 1.1. 2nd Edition](https://www.w3.org/TR/SVG/) while integrating resource descriptions like [Schema.org](http://schema.org) and the Dublin Core into your web map. Furthermore (as it defines an API) it allows developers to build all kinds of crazy things for all kinds of LeafletJS based geographical web maps. And no, this is not intended for helping you to annotate elements of your next "statistical geovisual analytics" or your next "big data geoweb map" app. It is intended to support web map making as an information organization practice.
 
-In short: With this plugin your LeafletJS generates "more meaningful" markup. Its aim is to implement to the latest [HTML Standard](https://html.spec.whatwg.org/multipage/semantics.html), integrate resource descriptions like Schema.org and the Dublin Core into your HTML. Subsequently (as it defines an API) it allows developers to build all kinds of crazy things for all kinds of LeafletJS based geographical web maps. And no, this is not intended for helping you to annotate elements of your next "statistical geovisual analytics" or your next "big data geoweb map" app. It is intended to support web map making as an information organization practice.
-
-Feedback and contributions are very welcome and i am in the hope that this is of some use for you.<br/>
+Feedback and contributions are very welcome.<br/>
 Cheers!
 
 ### API
@@ -102,6 +100,8 @@ At the moment all geographic annotations (of types which are not a sub-type of _
  * Compatible with the latest stable LeafletJS Release: 0.7.7
  * Most probably also compatible from at least all versions of 0.7.3 and upwards
 
+License: [FreeBSD License](https://www.freebsd.org/copyright/freebsd-license.html)
+
 Author:<br/>
-Malte Reißig (2016
+(C) Malte Reißig (2016)
 
