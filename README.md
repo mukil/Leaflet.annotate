@@ -5,6 +5,34 @@ A [LeafletJS](http://github.com/Leaflet/Leaflet) (0.7.x) extension for map maker
 
 Leaflet.annotate can translate your geodata into "more meaningful" hypertext markup and thus has the potential to integrate elements of your geographical web map into the web of data. It frees you to write markup that is compliant with the latest of [Living HTML](https://html.spec.whatwg.org/multipage/semantics.html), [SVG Standard 1.1. 2nd Edition](https://www.w3.org/TR/SVG/) while integrating the general resource descriptions vocabularies Schema.org and the [Dublin Core Metadata Element Set](http://dublincore.org/documents/dces/) into your web map. Furthermore (as it defines an API) it allows developers to build all kinds of crazy things for all kinds of LeafletJS based geographical web maps. And no, this is not intended for helping you to annotate elements of your next "statistical geovisual analytics" or your next "big data geoweb map" app. It is intended to support web map making as an information organization practice.
 
+## Overview: This Leaflet plugin consists of two components
+
+### 1. Schema.org Microdata Syntax Implementation: Improves the HTML of your geographic web map
+
+An implementation hooking into the standard LeafletJS API enabling you to improve your markup using the Microdata Syntax. To use it include the following script in your HTML document containing a LeafletJS based map:
+
+```
+<script src="Leaflet.annotate.Microdata.js"></script>
+```
+
+To annotate single map elements please check out the API documentation below.
+
+### 2. Leaflet Control: Improves the user experience of reading and interpretating the contents of your geographic web map.
+
+The following script ships a generic new Leaflet.Control (Icon: `?`) supporting users of your web map to search & identify contents stored in your annotated map elements.
+
+```
+<script src="Leaflet.annotate.Viewer.js"></script>
+```
+
+To use this control you must explicitly add it to your map, like any other custom Leaflet Control.
+
+```
+map.addControl(L.control.annotationViewer())
+```
+
+### Contact
+
 Feedback and contributions are very welcome.<br/>
 Cheers!
 
