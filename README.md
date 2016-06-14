@@ -7,31 +7,31 @@ Leaflet.annotate can translate your geodata into "more meaningful" hypertext mar
 
 ## Overview: This Leaflet plugin consists of two components
 
-### 1. Schema.org Microdata Syntax Implementation: Improves the HTML of your geographic web map
+### 1. Schema.org Microdata Syntax Implementation
 
-An implementation hooking into the standard LeafletJS API enabling you to improve your markup using the Microdata Syntax. To use it include the following script in your HTML document containing a LeafletJS based map:
+Advances the markup of your geographic web map according to standards and the geospatial domain present in the public Schema.org vocabulary. This makes your web map accessible. This implementation hooks into the standard LeafletJS API enabling you to improve your markup when using _Marker_, _CircleMarker_ or _GeoJSON_ elements from Leaflet. To use it include the following script tag in your HTML document:
 
 ```
 <script src="Leaflet.annotate.Microdata.js"></script>
 ```
 
-To annotate single map elements please check out the API documentation below.
+To annotate single map elements please check out the API documentation below. Basically your LeafletJS standard `options` object now can handle a simple `itemtype`. The plugin expects the value of such an itemtype be the name of a Schema.org type, e.g. _City_, or _Organisation_. All itemtypes which allow (by their type definition) you the expression of a property with a geographical extent or location as their value/s, are supported.
 
-### 2. Leaflet Control: Improves the user experience of reading and interpretating the contents of your geographic web map.
+### 2. Markup Viewer - A new Leaflet Control
 
-The following script ships a generic new Leaflet.Control (Icon: `?`) supporting users of your web map to search & identify contents stored in your annotated map elements.
+The AnnotationViewer is a new user dialog aimed at improving the experience for users who want to reading and interpretate the contents of your geographic web map systematically.
+
+The following script included in this repository ships it (Icon: `?`) to your document:
 
 ```
 <script src="Leaflet.annotate.Viewer.js"></script>
 ```
 
-To use this control you must explicitly add it to your map, like any other custom Leaflet Control.
+And to use this control you must explicitly add it to your map, like any other custom Leaflet Control.
 
 ```
 map.addControl(L.control.annotationViewer())
 ```
-
-### Contact
 
 Feedback and contributions are very welcome.<br/>
 Cheers!
