@@ -4,14 +4,25 @@
 var SCHEMA_ORG = "http://schema.org/"
 
 var Microdata = {
+    /**
+     * This is called via the "addInitHook" leaflet provides us, for each Leaflet item we translate.
+     * This either annotates an element directly when it is added to the map or listens to the
+     * event signifying us that Leaflet has completed the buildup of its DOM representation for the geodata.
+     */
     annotate: function() {
         var target = this._getTargetDOMElement()
+        // 1) Check if Leaflet already created the corresponding DOM Element
         if (!target) {
+            // 1.1) Register listeners for when this is done
             this.on('add', function() { // Marker
                 target = this._getTargetDOMElement()
                 this._buildAnnotations(target)
             })
             this.on('open', function() { // Opening Popup
+                target = this._getTargetDOMElement()
+                this._buildAnnotations(target)
+            })
+            this.on('load', function(e) { // Image Overlay Element Available
                 target = this._getTargetDOMElement()
                 this._buildAnnotations(target)
             })
@@ -21,6 +32,7 @@ var Microdata = {
                 this._container = previousContainer[0]
             })
         } else {
+            // 1.2) Build annotations for all items we already know the DOM element
             this._buildAnnotations(target)
         }
         return this
@@ -73,6 +85,11 @@ var Microdata = {
             targets = [targets]
         }
 
+        // Useful for debugging when adding support for new items, such as L.ImageOverlay here
+        // if (this.hasOwnProperty("_image")) {
+            // console.log("Bulding Image Overlay Annotations Parent", parentElement, "Has Lat/Lng Pair", hasLatLngValuePair, "Has Bounding Box", hasBoundingBox)
+        // }
+
         var metadata = undefined
         var domObject = targets[0]
         var parentElement = domObject.parentNode
@@ -80,12 +97,12 @@ var Microdata = {
         var domId = (this.options.hasOwnProperty('domId')) ? this.options.domId : undefined
         var targetIsSVGGroup = (domObject.tagName === 'g') ? true : false
         var hasLatLngValuePair = this.hasOwnProperty('_latlng')
+        var hasBoundingBox = this.hasOwnProperty('_bounds')
         var hasLayers = this.hasOwnProperty('_layers')
         var leafletId = this['_leaflet_id']
 
         if (!targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
-
-            // --- Renders Simple Marker or Popup Annotations into an ARTICLE and append the original element
+            // 1) Renders "Marker", "Popup" (Point Style) and "Image Overlay" (Bounding Box Style) Annotations into an ARTICLE and append the original element
 
             metadata = document.createElement('article')
             if (domId) metadata.setAttribute('id', domId)
@@ -93,24 +110,41 @@ var Microdata = {
             metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
             metadata.setAttribute('data-internal-leaflet-id', leafletId)
             this._buildGenericProperties(metadata, this)
-            var place = this._buildGeoAnnotation("meta", this, "point", geoPropertyName)
+            // 1.1) Allow our graphic indicator values to be either representing a schema.org "GeoCoordinate" or a "Geo Shape" -> "box"
+            var place = undefined
+            if (hasLatLngValuePair && !hasBoundingBox) {
+                place = this._buildGeoAnnotation("meta", this, "point", geoPropertyName)
+            } else if (hasBoundingBox) {
+                place = this._buildGeoAnnotation("meta", this, "box", geoPropertyName)
+            } else {
+                console.warn("Invalid argument provided: Neither a BoundingBox nor a Coordinate Pair could be detected to build a geographic annotation.")
+            }
+            // 1.2) Check if Annotation Build Up Has Succeed
+            if (!place) {
+                console.warn("Skipping semantic annotation of the follwing Leaflet item due to a previous error", this)
+                return
+            }
+            // 1.3) Place the newly created Element into either a) its existing container or b) just append it to the overlay-pane DOM
             metadata.appendChild(place)
             metadata.appendChild(domObject)
-            parentElement.innerHTML = ''
+            if (parentElement.className.indexOf("overlay-pane") == -1) { // If Parent DOM Element is NOT our Overlay Pane clear it up
+                parentElement.innerHTML = ''
+            }
             parentElement.appendChild(metadata)
 
         } else if (targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
-            // --- Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
+            // 2.) Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
             // console.log("Annotating SVG Geo Element", this.options.itemtype, hasLatLngValuePair, hasLayers, this)
 
-            if (hasLayers) { // build annotations on many elements
+            if (hasLayers) {
+                // 2.1) Build annotations an SVG Element which is going to represent MANY LAYERS
                 var groupElements = []
                 this._findSVGGroupElements(this, groupElements)
-                console.log(this.options.itemtype, "SVG Layers, domId", domId, this, "SVG Geometry Leaflet Groups (possibly Polygon/Paths)", groupElements)
+                // console.log(this.options.itemtype, "SVG Layers, domId", domId, this, "SVG Geometry Leaflet Groups (possibly Polygon/Paths)", groupElements)
                 for (var lg in groupElements) {
                     var element = groupElements[lg]
                     var containerElement = element._container
-                    console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
+                    //console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
                     metadata = document.createElement('metadata')
                     if (domId) metadata.setAttribute('id', domId)
                     metadata.setAttribute('itemscope','')
@@ -122,16 +156,19 @@ var Microdata = {
                     containerElement.appendChild(metadata)
                 }
                 metadata = undefined // notes that metadata elements have been already appended to the DOM
-                // ### Some GeoJSON Feature/Layer Debug Experimentals maybe there are GeoJSON "properties" to exploit
-                var layerElements =  this._layers
-                for (var le in this._layers) {
+                // ### Not Yet Further Implemented: TOOD: On a GeoJSON Feature (or Layer) there maybe GeoJSON "properties" to exploit
+                /** var layerElements =  this._layers
+                for  (var le in this._layers) {
                     var layerElement = this._layers[le]
                     var internalId = this._leaflet_id
                     var geometryType = layerElement.feature.geometry["type"]
-                    if (layerElement.hasOwnProperty("feature")) console.log("  Loaded GeoJSON " + geometryType + " Feature, LeafletID", internalId, layerElement.feature)
-                }
-            } else { // build annotations for a single element
-                console.log(this.options.itemtype, "SVG Element" + ", LeafletID", leafletId, this)
+                    if (layerElement.hasOwnProperty("feature")) { // ### 
+                        console.log("  Loaded \"" + geometryType + "\" Feature (GeoJSON), LeafletID", internalId, layerElement.feature)
+                    }
+                } **/
+            } else {
+                // 2.2) Build annotations for an SVG Based Element (ONE WITHOUT MULTIPLE LAYERS)
+                // console.log("Single SVG Element Annotations", this.options.itemtype, "SVG Element" + ", LeafletID", leafletId, this)
                 metadata = document.createElement('metadata')
                 if (domId) metadata.setAttribute('id', domId)
                 metadata.setAttribute('itemscope','')
@@ -217,12 +254,12 @@ var Microdata = {
             && object.options.itemtype !== 'Blog' && object.options.itemtype !== 'Comment' && object.options.itemtype !== 'Corporation'
             && object.options.itemtype !== 'GovernmentalOrganization' && object.options.itemtype !== 'EducationalOrganization'
             && object.options.itemtype !== 'NGO' && object.options.itemtype !== 'LocalBusiness') {
-            // --- We assume the entity to annotate is a sub-type of Place (and therewith has the "geo"-property)
+            // --- Here we assume the entity to annotate is a sub-type of Place (and therewith has the "geo"-property)
             element.setAttribute('itemprop', geoPropertyName)
             this._buildGeographicIndicators(element, geoType, object)
 
         } else if (geoPropertyName) {
-            // --- We assume the entity to annotate is NOT a sub-type of Place (and therewith has NOT the "geo"-property)
+            // --- Here we assume the entity to annotate is NOT a sub-type of Place (and therewith has NOT the "geo"-property)
             element.setAttribute('itemscope','')
             element.setAttribute('itemtype', 'http://schema.org/Place')
             element.setAttribute('itemprop', geoPropertyName)
@@ -249,14 +286,22 @@ var Microdata = {
                 longitude.setAttribute('content', object._latlng.lng)
             element.appendChild(latitude)
             element.appendChild(longitude)
+        } else if (type === "box") {
+            element.setAttribute('itemtype', 'http://schema.org/GeoShape')
+            var polygon = this._createMetaElement('itemprop', 'box')
+                polygon.setAttribute('content', object._bounds._southWest.lat +"," + object._bounds._southWest.lng + " "
+                    + object._bounds._northEast.lat + "," + object._bounds._northEast.lng)
+            element.appendChild(polygon)
         } else {
-            throw new Error("Unsupported type of geographic value indication")
+            console.warn("Unsupported type of geographic value indication, currently supported are 'point', 'box' and 'polygon'")
         }
     }
 }
 
+// ---- Simple Marker ---- //
 var superMarkerOnRemove = L.Marker.prototype.onRemove
 L.Marker.include(Microdata)
+L.Marker.addInitHook(function () { this.annotate() })
 L.Marker.include({
     _getTargetDOMElement: function() {
         return this._icon
@@ -266,9 +311,10 @@ L.Marker.include({
         superMarkerOnRemove.call(this, map)
     }
 })
-L.Marker.addInitHook(function () { this.annotate() })
 
+// ---- Circle Marker ---- //
 L.CircleMarker.include(Microdata)
+L.CircleMarker.addInitHook(function () { this.annotate() })
 L.CircleMarker.include({
     _getTargetDOMElement: function() {
         var results = []
@@ -277,10 +323,11 @@ L.CircleMarker.include({
     }
 
 })
-L.CircleMarker.addInitHook(function () { this.annotate() })
 
-var superPopupOnRemove = L.Popup.prototype.onRemove
+// ---- Popup Item ---- //
 L.Popup.include(Microdata)
+L.Popup.addInitHook(function () { this.annotate() })
+var superPopupOnRemove = L.Popup.prototype.onRemove
 L.Popup.include({
     _getTargetDOMElement: function() {
         if (this.hasOwnProperty('_container')) { // Popup Container is initialized
@@ -292,10 +339,10 @@ L.Popup.include({
         superPopupOnRemove.call(this, map)
     }
 })
-L.Popup.addInitHook(function () { this.annotate() })
 
-// ### Todo: implement onRemove for GeoJSON Layer/LayerGroup
+// ---- Layer Group (GeoJSON Layer) ---- //
 L.LayerGroup.include(Microdata)
+L.LayerGroup.addInitHook(function () {  this.annotate() })
 L.LayerGroup.include({
     _getTargetDOMElement: function() {
         var results = []
@@ -303,4 +350,14 @@ L.LayerGroup.include({
         return results.length > 0 ? results[0] : null
     }
 })
-L.LayerGroup.addInitHook(function () {  this.annotate() })
+
+// ---- Layer Group (GeoJSON Layer) ---- //
+L.ImageOverlay.include(Microdata)
+L.ImageOverlay.addInitHook(function () { this.annotate() })
+L.ImageOverlay.include({
+    _getTargetDOMElement: function() {
+        if (this.hasOwnProperty('_image')) { // Image Overlay Container is initialized
+            return this._image
+        }
+    }
+})
