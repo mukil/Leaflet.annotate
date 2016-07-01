@@ -79,6 +79,11 @@ var Microdata = {
             el.setAttribute(key, value)
         return el
     },
+    _createContainerElement: function(key, value) {
+        var el = document.createElement('div')
+            el.setAttribute(key, value)
+        return el
+    },
     _buildAnnotations: function(targets) {
 
         if (Object.prototype.toString.call(targets) !== '[object Array]') {
@@ -113,15 +118,15 @@ var Microdata = {
             // 1.1) Allow our graphic indicator values to be either representing a schema.org "GeoCoordinate" or a "Geo Shape" -> "box"
             var place = undefined
             if (hasLatLngValuePair && !hasBoundingBox) {
-                place = this._buildGeoAnnotation("meta", this, "point", geoPropertyName)
+                place = this._buildGeoAnnotation("div", this, "point", geoPropertyName)
             } else if (hasBoundingBox) {
-                place = this._buildGeoAnnotation("meta", this, "box", geoPropertyName)
+                place = this._buildGeoAnnotation("div", this, "box", geoPropertyName)
             } else {
                 console.warn("Invalid argument provided: Neither a BoundingBox nor a Coordinate Pair could be detected to build a geographic annotation.")
             }
             // 1.2) Check if Annotation Build Up Has Succeed
             if (!place) {
-                console.warn("Skipping semantic annotation of the follwing Leaflet item due to a previous error", this)
+                console.warn("Skipping semantic annotation of the following Leaflet item due to a previous error", this)
                 return
             }
             // 1.3) Place the newly created Element into either a) its existing container or b) just append it to the overlay-pane DOM
@@ -151,7 +156,7 @@ var Microdata = {
                     metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
                     metadata.setAttribute('data-internal-leaflet-id', element['_leaflet_id'])
                     this._buildGenericProperties(metadata, this)
-                    var place = this._buildGeoAnnotation('meta', element, "shape", geoPropertyName)
+                    var place = this._buildGeoAnnotation('div', element, "shape", geoPropertyName)
                     metadata.appendChild(place)
                     containerElement.appendChild(metadata)
                 }
@@ -175,7 +180,7 @@ var Microdata = {
                 metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
                 metadata.setAttribute('data-internal-leaflet-id', leafletId)
                 this._buildGenericProperties(metadata, this)
-                var place = this._buildGeoAnnotation("meta", this, "point", geoPropertyName)
+                var place = this._buildGeoAnnotation("div", this, "point", geoPropertyName)
                 metadata.appendChild(place)
             }
             if (metadata) domObject.appendChild(metadata)
@@ -263,7 +268,8 @@ var Microdata = {
             element.setAttribute('itemscope','')
             element.setAttribute('itemtype', 'http://schema.org/Place')
             element.setAttribute('itemprop', geoPropertyName)
-            var geoElement = this._createMetaElement('itemprop', 'geo')
+            // the property container of a type can not be a meta element as such is not allowed to have children
+            var geoElement = this._createContainerElement('itemprop', 'geo')
             this._buildGeographicIndicators(geoElement, geoType, object)
             element.appendChild(geoElement)
 
@@ -275,11 +281,13 @@ var Microdata = {
     _buildGeographicIndicators: function (element, type, object) {
         if (type === "shape") {
             element.setAttribute('itemtype', 'http://schema.org/GeoShape')
+            element.setAttribute('itemscope', '')
             var polygon = this._createMetaElement('itemprop', 'polygon')
                 polygon.setAttribute('content', this._buildPolygonArray(object._latlngs))
             element.appendChild(polygon)
         } else if (type === "point") {
             element.setAttribute('itemtype', 'http://schema.org/GeoCoordinates')
+            element.setAttribute('itemscope', '')
             var latitude = this._createMetaElement('itemprop', 'latitude')
                 latitude.setAttribute('content', object._latlng.lat)
             var longitude = this._createMetaElement('itemprop', 'longitude')
@@ -288,6 +296,7 @@ var Microdata = {
             element.appendChild(longitude)
         } else if (type === "box") {
             element.setAttribute('itemtype', 'http://schema.org/GeoShape')
+            element.setAttribute('itemscope', '')
             var polygon = this._createMetaElement('itemprop', 'box')
                 polygon.setAttribute('content', object._bounds._southWest.lat +"," + object._bounds._southWest.lng + " "
                     + object._bounds._northEast.lat + "," + object._bounds._northEast.lng)
