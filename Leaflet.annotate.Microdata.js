@@ -189,61 +189,67 @@ var Microdata = {
     _buildGenericProperties: function(parentElement, object) {
         // Schema.org
         if (object.options.hasOwnProperty('title')) {
-            this._appendMetaElementContent(parentElement, 'name', object.options.title)
+            this._appendMetaItempropContent(parentElement, 'name', object.options.title)
         }
         if (object.options.hasOwnProperty('description')) {
-            this._appendMetaElementContent(parentElement, 'description', object.options.description)
+            this._appendMetaItempropContent(parentElement, 'description', object.options.description)
         }
         if (object.options.hasOwnProperty('url')) {
-            this._appendMetaElementContent(parentElement, 'url', object.options.url)
+            this._appendMetaItempropContent(parentElement, 'url', object.options.url)
         }
         if (object.options.hasOwnProperty('sameAs')) {
-            this._appendMetaElementContent(parentElement, 'sameAs', object.options.sameAs)
+            this._appendMetaItempropContent(parentElement, 'sameAs', object.options.sameAs)
         }
         if (object.options.hasOwnProperty('alternateName')) {
-            this._appendMetaElementContent(parentElement, 'alternateName', object.options.alternateName)
+            this._appendMetaItempropContent(parentElement, 'alternateName', object.options.alternateName)
         }
         if (object.options.hasOwnProperty('image')) {
-            this._appendMetaElementContent(parentElement, 'image', object.options.image)
+            this._appendMetaItempropContent(parentElement, 'image', object.options.image)
         }
         // Dublin Core Legacy Namespace: http://purl.org/dc/elements/1.1 "dc:xyz"
         // Without: Title, Description, Subject, Type and Coverage) and a Duplicate with Thing: sameAs == identifier
         if (object.options.hasOwnProperty('creator')) {
-            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/creator', object.options.creator)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/creator', object.options.creator)
         }
         if (object.options.hasOwnProperty('contributor')) {
-            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/contributor', object.options.contributor)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/contributor', object.options.contributor)
         }
         if (object.options.hasOwnProperty('publisher')) {
-            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/publisher', object.options.publisher)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/publisher', object.options.publisher)
         }
         if (object.options.hasOwnProperty('published')) {
-            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/date', object.options.published)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/date', object.options.published)
         }
         if (object.options.hasOwnProperty('identifier')) {
-            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/identifier', object.options.identifier)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/identifier', object.options.identifier)
         }
         if (object.options.hasOwnProperty('rights')) {
-            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/rights', object.options.rights)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/rights', object.options.rights)
         }
         if (object.options.hasOwnProperty('derivedFrom')) {
-            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/source', object.options.derivedFrom)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/source', object.options.derivedFrom)
         }
         if (object.options.hasOwnProperty('format')) {
-            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/format', object.options.format)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/format', object.options.format)
         }
         if (object.options.hasOwnProperty('language')) {
-            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/elements/1.1/language', object.options.language)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/language', object.options.language)
         }
         // Terms Namespace http://purl.org/dc/terms/    "dcterms:xyz"
         if (object.options.hasOwnProperty('created')) {
-            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/terms/created', object.options.created)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/terms/created', object.options.created)
         }
         if (object.options.hasOwnProperty('modified')) {
-            this._appendMetaElementContent(parentElement, 'http://purl.org/dc/terms/modified', object.options.modified)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/terms/modified', object.options.modified)
         }
     },
-    _appendMetaElementContent: function(parent, elementName, elementTextContent) {
+    // See section 4.5.1 at http://dublincore.org/documents/dc-html/
+    _appendMetaNameContent: function(parent, elementName, elementTextContent) {
+        var valueElement = this._createMetaElement('name', elementName)
+            valueElement.setAttribute('content', elementTextContent)
+        parent.appendChild(valueElement)
+    },
+    _appendMetaItempropContent: function(parent, elementName, elementTextContent) {
         var valueElement = this._createMetaElement('itemprop', elementName)
             valueElement.setAttribute('content', elementTextContent)
         parent.appendChild(valueElement)
