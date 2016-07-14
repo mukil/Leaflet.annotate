@@ -24,6 +24,7 @@
 		<!-- Microdata.js needs to be loaded before Leaflet.annotate.Viewer.js due to a CONSTANT-->
 		<script src="Leaflet.annotate.Microdata.js"></script>
 		<script src="Leaflet.annotate.Viewer.js"></script>
+		<script src="wikidata_queries.js"></script>
 
 	</head>
 
@@ -86,16 +87,17 @@
 				// L.readerPlugin(map)
 				map.addControl(L.control.annotationViewer())
 
-				// --- Only jQuery Dependency
+				// --- Layout Helpers ---
 				$('#map').css('height', window.innerHeight + 'px')
-				$(window).resize(function(e) {
-					$('#map').css('height', window.innerHeight + 'px')
-				})
+				$(window).resize(function(e) { $('#map').css('height', window.innerHeight + 'px') })
+				// --- Debug Helpers
+				// map.on('click', function(e) { console.log("Map Clicked", e.latlng) })
+				// setTimeout(function(e){  map.removeLayer(statesBoundaries) }, 5000) */
 
 				var imageUrl = 'http://www.lib.utexas.edu/maps/historical/newark_nj_1922.jpg',
 					imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]];
 
-				L.imageOverlay(imageUrl, imageBounds, {"itemtype": "CreativeWork"}).addTo(map);
+				L.imageOverlay(imageUrl, imageBounds, {"itemtype": "CreativeWork", "geoprop": "contentLocation"}).addTo(map);
 
 			}
 
@@ -107,6 +109,17 @@
 
 			setup_map()
 			adjust_map_view()
+			wd.load_public_sculptures_in_paris(function(sculpturesInParis) {
+				console.log("Wikidata SPARQL Query Successfull", sculpturesInParis)
+				for (var scidx in sculpturesInParis.results.bindings) {
+					var wikidataSculptureData = sculpturesInParis.results.bindings[scidx]
+					if (wikidataSculptureData.coord) {
+						console.log("Public Sculpture Geocoded:", sculpturesInParis.results.bindings[scidx].title)
+					}
+				}
+			}, function(error) {
+				console.warn("Wikidata SPARQL Query FAILED", error)
+			})
 
 		</script>
 
