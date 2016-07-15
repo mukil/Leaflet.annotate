@@ -135,7 +135,7 @@ var Microdata = {
             metadata.appendChild(place)
             metadata.appendChild(domObject)
             // If Parent DOM Element is NOT the "Overlay" or "Marker" Pane clear it up. ### Double check this for all Leaflet items we annotate
-            if ( (parentElement.className.indexOf("overlay-pane") == -1) && (parentElement.className.indexOf("marker-pane") == -1)) {
+            if (parentElement.className.indexOf("overlay-pane") == -1 && parentElement.className.indexOf("marker-pane") == -1) {
                 parentElement.innerHTML = ''
             }
             parentElement.appendChild(metadata)
@@ -359,7 +359,6 @@ L.Popup.include({
     },
     onRemove: function(map) {
         if (this._annotated) {
-            console.log("Remove Annotated Popup", this)
             this._container = this._container.parentNode
         }
         superPopupOnRemove.call(this, map)
