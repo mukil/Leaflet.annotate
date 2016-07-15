@@ -71,9 +71,13 @@ L.Control.AnnotationViewer = L.Control.extend({
         for (var ael in annotatedMapElements) {
             var metaElement = annotatedMapElements[ael]
             coordinateValuePairs = this._getCoordinatesOfFirstGeoChildProperty(metaElement)
+            if (coordinateValuePairs) break
         }
         // focus elements if coordinate values were found
-        if (coordinateValuePairs.coordinates.length === 1) {
+        if (!coordinateValuePairs || coordinateValuePairs.coordinates.length >= 3) {
+            console.warn("Unsupported Coordinate Value Pair", coordinateValuePairs.coordinates,
+                "currently just buonding box (2 values) or a Point (1 value) are supported")
+        } else if (coordinateValuePairs.coordinates.length === 1) {
             var coords = coordinateValuePairs.coordinates[0]
             this._map.panTo(L.latLng(coords.lat, coords.lng))
         } else if (coordinateValuePairs.coordinates.length === 2) {
@@ -81,8 +85,6 @@ L.Control.AnnotationViewer = L.Control.extend({
             var secondCoords = coordinateValuePairs.coordinates[1]
             var boundingBox = L.latLngBounds(firstCoords, secondCoords)
             this._map.fitBounds(boundingBox)
-        } else {
-            console.warn("Coordinate Value Pairs Longer Than Two", coordinateValuePairs.coordinates)
         }
         this.results.innerHTML = ''
     },
@@ -134,6 +136,7 @@ L.Control.AnnotationViewer = L.Control.extend({
             context.input = L.DomUtil.create('input', 'form-control input-sm', group)
             context.input.type = 'text'
             context.input.placeholder = context.options.placeholder
+            context.input.focus()
             context.results = L.DomUtil.create('div', 'list-group', group)
             L.DomUtil.addClass(container, 'selected')
             L.DomEvent.addListener(context.input, 'keyup', context.keyup, context)
@@ -280,6 +283,7 @@ L.Control.AnnotationViewer = L.Control.extend({
                 if (content.toLowerCase().indexOf(query.toLowerCase()) != -1) {
                     meta.type = meta.parentNode.getAttribute("itemtype").slice(SCHEMA_ORG.length)
                     meta.name = content
+                    meta.leafletId = meta.parentNode.getAttribute("data-internal-leaflet-id")
                     results.push(meta)
                 }
             }
