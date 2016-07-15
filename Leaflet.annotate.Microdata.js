@@ -136,6 +136,7 @@ var Microdata = {
                 parentElement.innerHTML = ''
             }
             parentElement.appendChild(metadata)
+            this.options._annotated = true
 
         } else if (targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
             // 2.) Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
@@ -183,7 +184,10 @@ var Microdata = {
                 var place = this._buildGeoAnnotation("div", this, "point", geoPropertyName)
                 metadata.appendChild(place)
             }
-            if (metadata) domObject.appendChild(metadata)
+            if (metadata) {
+                domObject.appendChild(metadata)
+                this.options._annotated = true
+            }
         }
     },
     _buildGenericProperties: function(parentElement, object) {
@@ -243,7 +247,6 @@ var Microdata = {
             this._appendMetaNameContent(parentElement, 'http://purl.org/dc/terms/modified', object.options.modified)
         }
     },
-    // See section 4.5.1 at http://dublincore.org/documents/dc-html/
     _appendMetaNameContent: function(parent, elementName, elementTextContent) {
         var valueElement = this._createMetaElement('name', elementName)
             valueElement.setAttribute('content', elementTextContent)
@@ -322,7 +325,9 @@ L.Marker.include({
         return this._icon
     },
     onRemove: function(map) {
-        this._icon = this._icon.parentNode
+        if (this._annotated) {
+            this._icon = this._icon.parentNode
+        }
         superMarkerOnRemove.call(this, map)
     }
 })
@@ -350,7 +355,10 @@ L.Popup.include({
         }
     },
     onRemove: function(map) {
-        this._container = this._container.parentNode
+        if (this._annotated) {
+            console.log("Remove Annotated Popup", this)
+            this._container = this._container.parentNode
+        }
         superPopupOnRemove.call(this, map)
     }
 })
