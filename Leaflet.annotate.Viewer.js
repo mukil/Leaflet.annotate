@@ -86,13 +86,17 @@ L.Control.AnnotationViewer = L.Control.extend({
             var boundingBox = L.latLngBounds(firstCoords, secondCoords)
             this._map.fitBounds(boundingBox)
         }
-        this.results.innerHTML = ''
+        // this.results.innerHTML = ''
     },
     submit: function(e) {
         console.log("Submitted Query", e)
         L.DomEvent.preventDefault(e)
     },
     _renderResultItems: function(topics, context) {
+        var containerHeight = (window.innerHeight - 35)
+        var listHeight = (containerHeight - 35)
+        context.containerRef.setAttribute("style", "height:" + containerHeight + "px")
+        context.results.setAttribute("style", "height:" + listHeight + "px")
         context.results.innerHTML = ''
         // write out list header
         if (topics.length > 0) {
@@ -104,7 +108,7 @@ L.Control.AnnotationViewer = L.Control.extend({
             var topic = topics[r]
             var a = L.DomUtil.create('a', 'list-group-item')
             a.href = ''
-            a.title = 'Show \"' + topic.name + '\" in map'
+            a.title = 'Focus \"' + topic.name + '\" (' +  topic.leafletId +') in map'
             a.setAttribute('data-result-parent-item-type', topic.type)
             a.setAttribute('data-result-name', topic.name)
             a.setAttribute('data-result-list-id', topic.leafletId)
@@ -113,6 +117,14 @@ L.Control.AnnotationViewer = L.Control.extend({
             L.DomEvent.addListener(a, 'click', context.itemSelected, context)
             L.DomEvent.disableClickPropagation(a)
         }
+        L.DomEvent.addListener(context.results, 'wheel', function(e) {
+            if (e.target.className.indexOf("list-group-item") != -1) { // Scroll list element manually
+                e.target.parentNode.scrollTop += e.deltaY
+            }
+            // and prevent map from scroll-zooming
+            L.DomEvent.preventDefault(e)
+            L.DomEvent.stopPropagation(e)
+        }, context)
     },
     _toggleAnnotationViewer: function(context, container) {
         if (container.children.length === 1) {
@@ -138,10 +150,10 @@ L.Control.AnnotationViewer = L.Control.extend({
             context.input.placeholder = context.options.placeholder
             context.input.focus()
             context.results = L.DomUtil.create('div', 'list-group', group)
+            context.containerRef = container
             L.DomUtil.addClass(container, 'selected')
             L.DomEvent.addListener(context.input, 'keyup', context.keyup, context)
             L.DomEvent.addListener(context.form, 'submit', context.submit, context)
-            L.DomEvent.disableClickPropagation(container)
         } else {
             container.children[0].innerHTML = '<img src="readerView-Icon-decentblue-transparent.png" title="Launch Annotation Reader">'
             var childElements = Array.from(container.children)
