@@ -12,8 +12,11 @@ var Microdata = {
     annotate: function() {
         var target = this._getTargetDOMElement()
         // 1) Check if Leaflet already created the corresponding DOM Element
-        if (!target) {
-            // 1.1) Register listeners for when this is done
+        if (target) {
+            // 1.1) Build annotations for all items we already know the DOM element
+            this._buildAnnotations(target)
+        } else {
+            // 1.2) Register listeners for when this is done
             this.on('add', function() { // Marker
                 target = this._getTargetDOMElement()
                 this._buildAnnotations(target)
@@ -22,7 +25,7 @@ var Microdata = {
                 target = this._getTargetDOMElement()
                 this._buildAnnotations(target)
             })
-            this.on('load', function(e) { // Image Overlay Element Available
+            this.on('load', function(e) { // When Image Overlay Element is Available
                 target = this._getTargetDOMElement()
                 this._buildAnnotations(target)
             })
@@ -31,9 +34,6 @@ var Microdata = {
                 this._findPopupContainerElement(this, previousContainer)
                 this._container = previousContainer[0]
             })
-        } else {
-            // 1.2) Build annotations for all items we already know the DOM element
-            this._buildAnnotations(target)
         }
         return this
     },
