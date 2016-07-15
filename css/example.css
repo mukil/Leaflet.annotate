@@ -13,10 +13,21 @@ body {
 	transform: none !important;
 }
 
-/** Parix Example */
-.leaflet-popup-pane .leaflet-popup-content img {
+.leaflet-control-container .annotation-viewer a.leaflet-control-annotation-viewer,
+.leaflet-bar,
+.leaflet-popup-content-wrapper {
+	border-radius: 0px;
+}
+
+/** Public Sculptures in Peris Example **/
+
+.leaflet-popup.sculpture-photo img {
 	max-width: 280px !important;
 	height: auto;
+}
+
+.leaflet-popup.sculpture-photo h3 {
+	margin-bottom: 0px;
 }
 
 .leaflet-popup.sculpture-photo {
