@@ -9,8 +9,8 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="author" content="Malte Reißig, IfL Leipzig">
 
-		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-		<!-- link rel="stylesheet" href="vendor/Leaflet-0.7.7/dist/leaflet.css" /-->
+		<!--link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" /-->
+		<link rel="stylesheet" href="vendor/Leaflet-0.7.7/dist/leaflet.css" />
 		<link rel="stylesheet" href="css/example.css" />
 		<!-- link rel="stylesheet" href="css/foundation.min.css" /-->
 		<link rel="stylesheet" href="css/viewer-style.css" />
@@ -62,6 +62,8 @@
 				$('#map').css('height', window.innerHeight + 'px')
 				$(window).resize(function(e) { $('#map').css('height', window.innerHeight + 'px') })
 
+				featureGroup = L.featureGroup().addTo(map)
+
 				// --- Map Data Setup
 				wd.load_public_sculptures_in_paris(function(sculpturesInParis) {
 					console.log("Wikidata SPARQL Query Successfull", sculpturesInParis)
@@ -72,18 +74,25 @@
 							var coordinates = L.latLng(geosparqlPoint.split(" ")[1], geosparqlPoint.split(" ")[0])
 							var imagePath = wikidataSculptureData.image
 							var imageUrl = imagePath.value
-							var sculpture = L.circleMarker(coordinates, { // ### improve new colors for angebote rendering
-					            weight: 2, opacity: 0.6, fillColor: "#a9a9a9", fillOpacity: 0.2, lineCap: 'square',
-					            color : "#8f1414", title: wikidataSculptureData.title.value,
-					            alt: "Place of a sculpture named " + wikidataSculptureData.title.value })
-							sculpture.addTo(map)
+							/** var sculpture = L.circleMarker(coordinates, { // ### improve new colors for angebote rendering
+						            weight: 2, opacity: 0.6, fillColor: "#a9a9a9", fillOpacity: 0.2, lineCap: 'square',
+						            color : "#8f1414", title: wikidataSculptureData.title.value, itemtype: 'CreativeWork',
+						            alt: "Place of a sculpture named " + wikidataSculptureData.title.value })
+								.bindPopup('<h3>' + wikidataSculptureData.title.value + '</h3>' + '<p><img src="'+imageUrl+'"></p>',
+									{ keepInView: true, className: 'sculpture-photo', maxWidth: "auto", minWidth: 320}) */
+							var sculpture = L.marker(coordinates,
+									{ title: wikidataSculptureData.title.value, itemtype: 'CreativeWork'})
+								.bindPopup('<h3>' + wikidataSculptureData.title.value + '</h3>' + '<p><img src="'+imageUrl+'"></p>',
+									{ keepInView: true, className: 'sculpture-photo', maxWidth: "auto"})
 							/** imageBounds = [[40.712216, -74.22655], [40.773941, -74.12544]]; */
 							// L.imageOverlay(imageUrl, imageBounds, {"itemtype": "CreativeWork", "geoprop": "contentLocation"}).addTo(map); */
+							sculpture.addTo(featureGroup)
 						}
 					}
 				}, function(error) {
 					console.warn("Wikidata SPARQL Query FAILED", error)
 				})
+
 
 			}
 

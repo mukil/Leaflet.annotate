@@ -12,3 +12,13 @@ body {
 .leaflet-popup-pane article {
 	transform: none !important;
 }
+
+/** Parix Example */
+.leaflet-popup-pane .leaflet-popup-content img {
+	max-width: 280px !important;
+	height: auto;
+}
+
+.leaflet-popup.sculpture-photo {
+	min-width: 320px;
+}
