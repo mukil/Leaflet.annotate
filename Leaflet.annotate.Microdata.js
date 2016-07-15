@@ -90,11 +90,6 @@ var Microdata = {
             targets = [targets]
         }
 
-        // Useful for debugging when adding support for new items, such as L.ImageOverlay here
-        // if (this.hasOwnProperty("_image")) {
-            // console.log("Bulding Image Overlay Annotations Parent", parentElement, "Has Lat/Lng Pair", hasLatLngValuePair, "Has Bounding Box", hasBoundingBox)
-        // }
-
         var metadata = undefined
         var domObject = targets[0]
         var parentElement = domObject.parentNode
@@ -105,6 +100,13 @@ var Microdata = {
         var hasBoundingBox = this.hasOwnProperty('_bounds')
         var hasLayers = this.hasOwnProperty('_layers')
         var leafletId = this['_leaflet_id']
+
+        // Useful for debugging when adding support for new items, such as L.ImageOverlay here
+        /** if (this.hasOwnProperty("_image")) {
+            console.log("Bulding Image Overlay Annotations Parent", parentElement, "Has Lat/Lng Pair", hasLatLngValuePair, "Has Bounding Box", hasBoundingBox)
+        } else {
+            console.log("Bulding Overlay Annotations Parent", parentElement, "Has Lat/Lng Pair", hasLatLngValuePair, "Has Bounding Box", hasBoundingBox, this)
+        } **/
 
         if (!targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
             // 1) Renders "Marker", "Popup" (Point Style) and "Image Overlay" (Bounding Box Style) Annotations into an ARTICLE and append the original element
@@ -132,7 +134,8 @@ var Microdata = {
             // 1.3) Place the newly created Element into either a) its existing container or b) just append it to the overlay-pane DOM
             metadata.appendChild(place)
             metadata.appendChild(domObject)
-            if (parentElement.className.indexOf("overlay-pane") == -1) { // If Parent DOM Element is NOT our Overlay Pane clear it up
+            // If Parent DOM Element is NOT the "Overlay" or "Marker" Pane clear it up. ### Double check this for all Leaflet items we annotate
+            if ( (parentElement.className.indexOf("overlay-pane") == -1) && (parentElement.className.indexOf("marker-pane") == -1)) {
                 parentElement.innerHTML = ''
             }
             parentElement.appendChild(metadata)
