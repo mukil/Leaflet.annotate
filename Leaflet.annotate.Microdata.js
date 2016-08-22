@@ -108,42 +108,35 @@ var Microdata = {
             console.log("Bulding Overlay Annotations Parent", parentElement, "Has Lat/Lng Pair", hasLatLngValuePair, "Has Bounding Box", hasBoundingBox, this)
         } **/
 
+        // 1) Annotating "Marker", "Popup" (Point Style) and "Image Overlay" into a new ARTICLE element
         if (!targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
-            // 1) Renders "Marker", "Popup" (Point Style) and "Image Overlay" (Bounding Box Style) Annotations into an ARTICLE and append the original element
 
-            metadata = document.createElement('article')
-            if (domId) metadata.setAttribute('id', domId)
-            metadata.setAttribute('itemscope','')
-            metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
-            metadata.setAttribute('data-internal-leaflet-id', leafletId)
+            metadata = this._buildAnnotationsElement('article', domId, leafletId)
             this._buildGenericProperties(metadata, this)
-            // 1.1) Allow our graphic indicator values to be either representing a schema.org "GeoCoordinate" or a "Geo Shape" -> "box"
-            var place = undefined
+            var placeAnnotation = undefined
             if (hasLatLngValuePair && !hasBoundingBox) {
-                place = this._buildGeoAnnotation("div", this, "point", geoPropertyName)
+                placeAnnotation = this._buildGeoAnnotation("div", this, "point", geoPropertyName)
             } else if (hasBoundingBox) {
-                place = this._buildGeoAnnotation("div", this, "box", geoPropertyName)
+                placeAnnotation = this._buildGeoAnnotation("div", this, "box", geoPropertyName)
             } else {
                 console.warn("Invalid argument provided: Neither a BoundingBox nor a Coordinate Pair could be detected to build a geographic annotation.")
-            }
-            // 1.2) Check if Annotation Build Up Has Succeed
-            if (!place) {
                 console.warn("Skipping semantic annotation of the following Leaflet item due to a previous error", this)
                 return
             }
-            // 1.3) Place the newly created Element into either a) its existing container or b) just append it to the overlay-pane DOM
-            metadata.appendChild(place)
+            // Place the newly created Element into either
+            // a) its existing container
+            metadata.appendChild(placeAnnotation)
             metadata.appendChild(domObject)
-            // If Parent DOM Element is NOT the "Overlay" or "Marker" Pane clear it up. ### Double check this for all Leaflet items we annotate
+            // Note: If Parent DOM Element is NOT the "Overlay" or "Marker" Pane clear it up. ### Double check this for all Leaflet items we annotate
             if (parentElement.className.indexOf("overlay-pane") == -1 && parentElement.className.indexOf("marker-pane") == -1) {
                 parentElement.innerHTML = ''
             }
+            // b) .. or just append it to the overlay-pane DOM
             parentElement.appendChild(metadata)
             this.options._annotated = true
 
+        // 2.) Annotations into SVG Metadata Element, currently just for geoJSON or circleMarker overlays
         } else if (targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
-            // 2.) Renders HTML Elements as Annotations into SVG Metadata Element for GeoJSON or Circle Marker
-            // console.log("Annotating SVG Geo Element", this.options.itemtype, hasLatLngValuePair, hasLayers, this)
 
             if (hasLayers) {
                 // 2.1) Build annotations an SVG Element which is going to represent MANY LAYERS
@@ -154,11 +147,7 @@ var Microdata = {
                     var element = groupElements[lg]
                     var containerElement = element._container
                     //console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
-                    metadata = document.createElement('metadata')
-                    if (domId) metadata.setAttribute('id', domId)
-                    metadata.setAttribute('itemscope','')
-                    metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
-                    metadata.setAttribute('data-internal-leaflet-id', element['_leaflet_id'])
+                    metadata = this._buildAnnotationsElement('metadata', domId, element['_leaflet_id'])
                     this._buildGenericProperties(metadata, this)
                     var place = this._buildGeoAnnotation('div', element, "shape", geoPropertyName)
                     metadata.appendChild(place)
@@ -178,11 +167,7 @@ var Microdata = {
             } else {
                 // 2.2) Build annotations for an SVG Based Element (ONE WITHOUT MULTIPLE LAYERS)
                 // console.log("Single SVG Element Annotations", this.options.itemtype, "SVG Element" + ", LeafletID", leafletId, this)
-                metadata = document.createElement('metadata')
-                if (domId) metadata.setAttribute('id', domId)
-                metadata.setAttribute('itemscope','')
-                metadata.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
-                metadata.setAttribute('data-internal-leaflet-id', leafletId)
+                metadata = this._buildAnnotationsElement('metadata', domId, leafletId)
                 this._buildGenericProperties(metadata, this)
                 var place = this._buildGeoAnnotation("div", this, "point", geoPropertyName)
                 metadata.appendChild(place)
@@ -192,6 +177,14 @@ var Microdata = {
                 this.options._annotated = true
             }
         }
+    },
+    _buildAnnotationsElement: function(elementName, domId, leafletId) {
+        var article = document.createElement(elementName)
+        if (domId) article.setAttribute('id', domId)
+        article.setAttribute('itemscope','')
+        article.setAttribute('itemtype', 'http://schema.org/' + this.options.itemtype)
+        article.setAttribute('data-internal-leaflet-id', leafletId)
+        return article
     },
     _buildGenericProperties: function(parentElement, object) {
         // Schema.org
@@ -361,6 +354,8 @@ L.Popup.include({
         if (this._annotated) {
             this._container = this._container.parentNode
         }
+        // ### throws a NotFoundError: Failed to execute 'removeChild' on 'Node'
+        // ... The node to be removed is not a child of this node.onRemove @ leaflet.js:7onRemove @ Leaflet.annotate.Microdata.js:370removeLayer @ leaflet.js:6closePopup @ leaflet.js:7_close @ leaflet.js:7fireEvent @ leaflet.js:6_onMouseClick @ leaflet.js:6s @ leaflet.js:8
         superPopupOnRemove.call(this, map)
     }
 })
@@ -376,7 +371,7 @@ L.LayerGroup.include({
     }
 })
 
-// ---- Layer Group (GeoJSON Layer) ---- //
+// ---- Image Overlay ---- //
 L.ImageOverlay.include(Microdata)
 L.ImageOverlay.addInitHook(function () { this.annotate() })
 L.ImageOverlay.include({
