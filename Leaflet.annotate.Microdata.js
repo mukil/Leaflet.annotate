@@ -41,7 +41,7 @@ var Microdata = {
         var childNodes = element._container.childNodes
         for (var el in childNodes) {
             var element = childNodes[el]
-            if (element.className.contains('leaflet-popup')) return element
+            if (element.className.indexOf('leaflet-popup') != -1) return element
         }
     },
     _findContainerElements: function(element, results) {
@@ -321,7 +321,7 @@ L.Marker.include({
         return this._icon
     },
     onRemove: function(map) {
-        if (this._annotated) {
+        if (this.options._annotated) {
             this._icon = this._icon.parentNode
         }
         superMarkerOnRemove.call(this, map)
@@ -351,11 +351,9 @@ L.Popup.include({
         }
     },
     onRemove: function(map) {
-        if (this._annotated) {
+        if (this.options._annotated) {
             this._container = this._container.parentNode
         }
-        // ### throws a NotFoundError: Failed to execute 'removeChild' on 'Node':
-        // ... The node to be removed is not a child of this node.onRemove @ leaflet.js:7onRemove @ Leaflet.annotate.Microdata.js:370removeLayer @ leaflet.js:6closePopup @ leaflet.js:7_close @ leaflet.js:7fireEvent @ leaflet.js:6_onMouseClick @ leaflet.js:6s @ leaflet.js:8
         superPopupOnRemove.call(this, map)
     }
 })
