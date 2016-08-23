@@ -57,13 +57,13 @@ The following API options are available on standard Leaflet *Marker*, *CircleMar
 | `creator` (Optional) | Text | [creator](http://purl.org/dc/elements/1.1/creator) (Dublin Core), "An entity primarily responsible for making the resource. Typically, the name of a Creator should be used to indicate the entity (e.g. person, organisation or service)." |
 | `contributor` (Optional) | Text | [contributor](http://purl.org/dc/elements/1.1/contributor) (Dublin Core), "An entity responsible for making contributions to the resource. Typically, the name of a Contributor should be used to indicate the entity (e.g. person, organisation or service)." |
 | `publisher` (Optional) | Text | [publisher](http://purl.org/dc/elements/1.1/publisher) (Dublin Core), "An entity responsible for making the resource available. Typically, the name of a Contributor should be used to indicate the entity (e.g. person, organisation or service)." |
-| `published` (Optional) | Text and Integers | [date](http://purl.org/dc/elements/1.1/date) (Dublin Core), "A point or period of time. May be used to express temporal information at any level of granularity. Recommended best practice is to use an encoding scheme, such as the [W3CDTF](http://www.w3.org/TR/NOTE-datetime) profile of ISO 8601." |
 | `rights` (Optional) | Text | [rights](http://purl.org/dc/elements/1.1/rights) (Dublin Core), "Information about rights held in and over the resource. Typically, rights information includes a statement about various property rights associated with the resource, including intellectual property rights." |
 | `derivedFrom` (Optional) | Text | [source](http://purl.org/dc/elements/1.1/source) (Dublin Core), "A related resource from which the described resource is derived. The described resource may be derived from the related resource in whole or in part. Recommended best practice is to identify the related resource by means of a string conforming to a formal identification system." |
 | `format` (Optional) | Text | [format](http://purl.org/dc/elements/1.1/format) (Dublin Core), "The file format, physical medium, or dimensions of the resource. Recommended best practice is to use a controlled vocabulary such as the list of Internet Media Types [MIME](http://www.iana.org/assignments/media-types/)." |
 | `language` (Optional) | Text | [language](http://purl.org/dc/elements/1.1/language) (Dublin Core), "A language of the resource. Recommended best practice is to use a controlled vocabulary such as RFC 4646 [RFC4646](http://www.ietf.org/rfc/rfc4646.txt)." |
 | `created` (Optional) | Text and Integers | [created](http://purl.org/dc/terms/created) (Dublin Core Term), "Date of creation of the resource. Recommended best practice is to use an encoding scheme, such as the [W3CDTF](http://www.w3.org/TR/NOTE-datetime) profile of ISO 8601." |
 | `modified` (Optional) | Text and Integers | [modified](http://purl.org/dc/terms/modified) (Dublin Core Term), "Date on which the resource was changed.. Recommended best practice is to use an encoding scheme, such as the [W3CDTF](http://www.w3.org/TR/NOTE-datetime) profile of ISO 8601." |
+| `published` (Optional) | Text and Integers | [date](http://purl.org/dc/elements/1.1/date) (Dublin Core), "A point or period of time. May be used to express temporal information at any level of granularity. Recommended best practice is to use an encoding scheme, such as the [W3CDTF](http://www.w3.org/TR/NOTE-datetime) profile of ISO 8601." |
 
 Note: Contrary to the standard specification an option (`key`) can be annotated just once. For example currently this API does not enable you two specify two `alternateNames` for your map element.
 
@@ -127,7 +127,8 @@ At the moment all geographic annotations (of types which are not a sub-type of _
 
 0.3, *Upcoming*
 
- * Annotatable Leaflet Items: UI Layers (Marker, Popup), Vector Layers (CircleMarker), Other Layers (GeoJSON)
+ * Release Candidate, Aug 23, 2016
+ * Annotatable Leaflet Items: UI Layers (Marker, Popup), Vector Layers (CircleMarker), Other Layers (GeoJSON, ImageOverlay)
  * Compatible with the latest stable LeafletJS Release: 0.7.7
  * Most probably also compatible from at least all versions of 0.7.3 and upwards
 
