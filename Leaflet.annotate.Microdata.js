@@ -354,7 +354,7 @@ L.Popup.include({
         if (this._annotated) {
             this._container = this._container.parentNode
         }
-        // ### throws a NotFoundError: Failed to execute 'removeChild' on 'Node'
+        // ### throws a NotFoundError: Failed to execute 'removeChild' on 'Node':
         // ... The node to be removed is not a child of this node.onRemove @ leaflet.js:7onRemove @ Leaflet.annotate.Microdata.js:370removeLayer @ leaflet.js:6closePopup @ leaflet.js:7_close @ leaflet.js:7fireEvent @ leaflet.js:6_onMouseClick @ leaflet.js:6s @ leaflet.js:8
         superPopupOnRemove.call(this, map)
     }

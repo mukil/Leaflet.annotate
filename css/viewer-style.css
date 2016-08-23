@@ -10,10 +10,50 @@ body {
 }
 
 .annotation-viewer {
+    /** font-size: 16px; */
     background-color: transparent;
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
     padding: 0px;
+    overflow: hidden;
+    max-width: 350px;
+}
+
+.annotation-viewer input {
+    font-size: 16px;
+}
+
+.annotation-viewer .list-group {
+    overflow-y: scroll;
+}
+
+.annotation-viewer .metadata-group {
+    position: relative;
+    border-top: 1px solid #eee;
+    overflow-y: scroll;
+    /** max-width: 300px; **/
+}
+
+.annotation-viewer .metadata-group .metadata-field {
+    margin-top: 0px; margin-bottom: 0px;
+    display: inline-block;
+}
+
+.annotation-viewer .metadata-group .metadata-field p,
+.annotation-viewer .metadata-group a.metadata-field  {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.annotation-viewer .metadata-group a.datasource.metadata-field {
+    text-decoration: none;
+    background-color: #eee;
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.annotation-viewer .metadata-group a.datasource:hover {
+    text-decoration: underline;
 }
 
 .annotation-viewer.selected {
@@ -29,7 +69,7 @@ body {
     padding: 4px 6px;
     padding-left: 8px;
     border: 0px solid transparent;
-    width: 90%;
+    width: 95%;
 }
 
 .annotation-viewer input:focus {

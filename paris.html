@@ -113,8 +113,8 @@
 				var popupContent = '<h3>' + popupTitle + '</h3>' + popupSubtitle + '<p><img src="'+photo.value+'"><br/>'+popupSourceLink+'</p>'
 				var sculpture = L.circleMarker(coordinates, sculptureMarkerOptions).setRadius(3)
 					.bindPopup(popupContent, { keepInView: true, className: 'sculpture-photo', maxWidth: "auto"})
-				L.Util.setOptions(sculpture, { alt: "Place of a sculpture named " + wikidataSculptureData.title.value,
-					itemtype: 'CreativeWork', geoprop: 'contentLocation', title: wikidataSculptureData.title.value })
+				L.Util.setOptions(sculpture, { alt: "Place of a sculpture named " + popupTitle,
+					itemtype: 'CreativeWork', geoprop: 'contentLocation', title: popupTitle })
 				return sculpture
 				/** L.Marker: var sculpture = L.marker(coordinates, { title: wikidataSculptureData.title.value,
 						itemtype: 'CreativeWork', geoprop: 'contentLocation'

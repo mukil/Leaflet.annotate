@@ -48,7 +48,7 @@ L.Control.AnnotationViewer = L.Control.extend({
         } else {
             if (this.input.value.length > 2) {
                 var value = this.input.value
-                var topics = this._findAnnotationsByName(value)
+                var topics = this._searchAnnotationsByName(value)
                 this._renderResultItems(topics, this)
             }
         }
@@ -86,15 +86,105 @@ L.Control.AnnotationViewer = L.Control.extend({
             var boundingBox = L.latLngBounds(firstCoords, secondCoords)
             this._map.fitBounds(boundingBox)
         }
+        this._renderItemInfoFields(annotatedMapElements)
         // this.results.innerHTML = ''
     },
     submit: function(e) {
         console.log("Submitted Query", e)
         L.DomEvent.preventDefault(e)
     },
+    _renderItemInfoFields: function(annotatedMapElements) {
+        console.log("Show Metadata for Map Element", annotatedMapElements)
+        var annotationViewerArea = document.querySelector('div.form-group')
+        var details = document.querySelector('div.metadata-group')
+        var listArea = document.querySelector('div.list-group')
+        if (details == null && annotatedMapElements[0].childNodes.length > 0) {
+            // show details ### refactor
+            details = L.DomUtil.create('div', 'metadata-group', annotationViewerArea)
+            var containerHeight = (window.innerHeight - 35)
+            var listHeight = (containerHeight / 2)
+            listArea.setAttribute("style", "height:" + (listHeight - 35) + "px")
+            details.setAttribute("style", "height: " + listHeight + "px; min-height: " + listHeight + "px")
+            L.DomEvent.addListener(details, 'wheel', function(e) {
+                // and prevent map from scroll-zooming
+                console.log("WheelScroll", e)
+                L.DomEvent.preventDefault(e)
+                L.DomEvent.stopPropagation(e)
+            })
+            L.DomEvent.addListener(details, 'drag', function(e) {
+                // and prevent map from scroll-zooming
+                L.DomEvent.preventDefault(e)
+                L.DomEvent.stopPropagation(e)
+            })
+        }
+        details.innerHTML = ""
+        var datasourceUrl = undefined
+        for (var cidx in annotatedMapElements[0].childNodes) {
+            var annotation = annotatedMapElements[0].childNodes[cidx]
+            // console.log("Web Map Element Annotation", annotation)
+            if (annotation.attributes && annotation.attributes.hasOwnProperty('content')) {
+                var keyName = annotation.getAttribute("name")
+                var keyPropertyName = annotation.getAttribute("itemprop")
+                var value = annotation.getAttribute("content")
+                var field = undefined
+                if (keyName === "http://purl.org/dc/terms/created") {
+                    field = this._createSpanInfoField('Created', new Date(value))
+                } else if (keyName === "http://purl.org/dc/terms/modified") {
+                    field = this._createSpanInfoField('Modified', new Date(value))
+                } else if (keyName === "http://purl.org/dc/elements/1.1/creator") {
+                    field = this._createSpanInfoField('Creator', value)
+                } else if (keyName === "http://purl.org/dc/elements/1.1/publisher") {
+                    field = this._createSpanInfoField('Publisher', value)
+                } else if (keyName === "http://purl.org/dc/elements/1.1/rights") {
+                    field = this._createSpanInfoField('Usage Right', value)
+                } else if (keyName === "http://purl.org/dc/elements/1.1/source") {
+                    field = this._createSpanInfoField('Derived From', value)
+                } else if (keyPropertyName === "url") {
+                    datasourceUrl = value
+                } else if (keyPropertyName === "description") {
+                    field = this._createSpanInfoField(undefined, '<p>' + value + '</p>')
+                } else if (keyPropertyName === "derivedFrom") {
+                    field = this._createSpanInfoField('Source', value)
+                }
+                //
+                if (field) {
+                    details.appendChild(field)
+                    details.appendChild(document.createElement("br"))
+                }
+            }
+        }
+        if (datasourceUrl) {
+            field = document.createElement("a")
+            field.text = "Datasource"
+            field.setAttribute("href", datasourceUrl)
+            field.setAttribute("class", "metadata-field datasource")
+            field.setAttribute("title", "Visit the source of information for this web map element")
+            details.appendChild(field)
+            details.appendChild(document.createElement("br"))
+        }
+    },
+    _createSpanInfoField: function(label, value) {
+        field = document.createElement("div")
+        field.setAttribute("class", "metadata-field")
+        if (label) {
+            var labelElement = document.createElement("span")
+                labelElement.setAttribute("class", "header")
+                labelElement.innerHTML = label
+            field.appendChild(labelElement)
+        }
+        var valueElement = document.createElement("span")
+            valueElement.setAttribute("class", "value")
+            valueElement.innerHTML = value
+        field.appendChild(valueElement)
+        return field
+    },
     _renderResultItems: function(topics, context) {
         var containerHeight = (window.innerHeight - 35)
         var listHeight = (containerHeight - 35)
+        var details = document.querySelector('div.metadata-group')
+        if (details != null) {
+            listHeight = listHeight - (containerHeight / 2)
+        }
         context.containerRef.setAttribute("style", "height:" + containerHeight + "px")
         context.results.setAttribute("style", "height:" + listHeight + "px")
         context.results.innerHTML = ''
@@ -117,6 +207,7 @@ L.Control.AnnotationViewer = L.Control.extend({
             L.DomEvent.addListener(a, 'click', context.itemSelected, context)
             L.DomEvent.disableClickPropagation(a)
         }
+        // prevening map interactions on scrollwheel on annotation viewers result list
         L.DomEvent.addListener(context.results, 'wheel', function(e) {
             if (e.target.className.indexOf("list-group-item") != -1) { // Scroll list element manually
                 e.target.parentNode.scrollTop += e.deltaY
@@ -174,11 +265,13 @@ L.Control.AnnotationViewer = L.Control.extend({
         // unify annotated elements
         for (var el in articleElements) {
             var articleType = articleElements[el].getAttribute('itemtype')
+            // ### just count unique elements
             annotatedElements.push(articleElements[el])
             this._countTypeInstances(articleType)
         }
         for (var l in metadataElements) {
             var metadataType = metadataElements[l].getAttribute('itemtype')
+            // ### just count unique elements
             annotatedElements.push(metadataElements[l])
             this._countTypeInstances(metadataType)
         }
@@ -203,30 +296,22 @@ L.Control.AnnotationViewer = L.Control.extend({
             for (var l in elementAnnotations) {
                 var metaElement = elementAnnotations[l]
                 var metaPropValue = metaElement.getAttribute("itemprop")
+                var metaPropName = metaElement.getAttribute("name")
                 // console.log("Meta Prop Name", metaPropValue)
                 if (metaElement.attributes.hasOwnProperty('content')) {
                     var content = metaElement.getAttribute("content")
                     if (metaPropValue === "name" && content.length > 0) {
                         topic.name = content
-                    } else if (metaPropValue === "http://purl.org/dc/terms/created") {
-                        topic.created = new Date(content)
-                    } else if (metaPropValue === "http://purl.org/dc/terms/modified") {
-                        topic.modified = new Date(content)
-                    } else if (metaPropValue === "http://purl.org/dc/terms/creator") {
-                        topic.creator = content
-                    } else if (metaPropValue === "http://purl.org/dc/terms/publisher") {
-                        topic.publisher = content
-                    } else if (metaPropValue === "description") {
-                        topic.description = content
                     } else if (metaPropValue === "sameAs") {
                         topic.sameAs = content
                     } else if (metaPropValue === "url") {
                         topic.url = content
+                    } else if (metaPropValue === "identifier") {
+                        // #### topic.identifier
                     }
-                    // ### TODO: Map the rest of our fifteen metadata terms
                 }
             }
-            results.push(topic)
+            this._addToResults(results, topic)
         }
         return results
     },
@@ -285,22 +370,43 @@ L.Control.AnnotationViewer = L.Control.extend({
         }
         return coordinates
     },
-    _findAnnotationsByName: function(query) {
+    _searchAnnotationsByName: function(query) {
         var results = []
         for (var l in metaElements) {
             var meta = metaElements[l]
             var metaPropValue = meta.getAttribute("itemprop")
-            if (metaPropValue === "name") {
+            var metaName = meta.getAttribute("name")
+            if (metaPropValue === "name" || metaPropValue === "description" || metaName === "http://purl.org/dc/elements/1.1/creator") {
                 var content = meta.getAttribute("content")
                 if (content.toLowerCase().indexOf(query.toLowerCase()) != -1) {
                     meta.type = meta.parentNode.getAttribute("itemtype").slice(SCHEMA_ORG.length)
                     meta.name = content
+                    // ### use URL, sameAs and identifier for building up unique resultsets
                     meta.leafletId = meta.parentNode.getAttribute("data-internal-leaflet-id")
-                    results.push(meta)
                 }
             }
+            this._addToResults(results, meta)
         }
         return results
+    },
+    // ### TODO: getAnnotatedURLValue, getAnnotatedSameAsValue, getAnnotatedIdentifierValue
+    _addToResults: function(resultset, item) {
+        // add just if leafletId, identifier, sameAs or urls do not match
+        for (var r in resultset) {
+            var result = resultset[r]
+            if (result.leafletId === item.leafletId) return
+            if (result.hasOwnProperty("url") && item.hasOwnProperty("url")) {
+                if (result["url"] === item["url"]) return
+            }
+            if (result.hasOwnProperty("identifier") && item.hasOwnProperty("identifier")) {
+                if (result["identifier"] === item["identifier"]) return
+            }
+            if (result.hasOwnProperty("sameAs") && item.hasOwnProperty("sameAs")) {
+                if (result["sameAs"] === item["sameAs"]) return
+            }
+        }
+        console.log("Adding", item, "to resultset", resultset)
+        resultset.push(item)
     }
 })
 
