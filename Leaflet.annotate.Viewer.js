@@ -137,6 +137,8 @@ L.Control.AnnotationViewer = L.Control.extend({
                     field = this._createSpanInfoField('Created', new Date(value))
                 } else if (keyName === "http://purl.org/dc/terms/modified") {
                     field = this._createSpanInfoField('Modified', new Date(value))
+                } else if (keyName === "http://purl.org/dc/elements/1.1/date") {
+                    field = this._createSpanInfoField('Published', new Date(value))
                 } else if (keyName === "http://purl.org/dc/elements/1.1/creator") {
                     field = this._createSpanInfoField('Creator', value)
                 } else if (keyName === "http://purl.org/dc/elements/1.1/contributor") {
@@ -144,15 +146,14 @@ L.Control.AnnotationViewer = L.Control.extend({
                 } else if (keyName === "http://purl.org/dc/elements/1.1/publisher") {
                     field = this._createSpanInfoField('Publisher', value)
                 } else if (keyName === "http://purl.org/dc/elements/1.1/rights") {
-                    field = this._createSpanInfoField('Usage Right', value)
+                    field = this._createSpanInfoField('Usage Rights', value)
                 } else if (keyName === "http://purl.org/dc/elements/1.1/source") {
-                    field = this._createSpanInfoField('Derived From', value)
+                    field = this._createSpanInfoField('Source', value)
+                // ### image, sameAs, alternateName
                 } else if (keyPropertyName === "url") {
                     datasourceUrl = value
                 } else if (keyPropertyName === "description") {
                     field = this._createSpanInfoField(undefined, '<p>' + value + '</p>')
-                } else if (keyPropertyName === "derivedFrom") {
-                    field = this._createSpanInfoField('Source', value)
                 }
                 //
                 if (field) {
@@ -163,12 +164,11 @@ L.Control.AnnotationViewer = L.Control.extend({
         }
         if (datasourceUrl) {
             field = document.createElement("a")
-            field.text = "Datasource"
+            field.text = "Browse Source"
             field.setAttribute("href", datasourceUrl)
             field.setAttribute("class", "metadata-field datasource")
             field.setAttribute("title", "Visit the source of information for this web map element")
             details.appendChild(field)
-            details.appendChild(document.createElement("br"))
         }
     },
     _createSpanInfoField: function(label, value) {

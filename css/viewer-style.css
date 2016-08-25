@@ -31,7 +31,7 @@ body {
     position: relative;
     border-top: 1px solid #eee;
     overflow-y: scroll;
-    /** max-width: 300px; **/
+    padding-top: 10px;
 }
 
 .annotation-viewer .metadata-group .metadata-field {
@@ -48,12 +48,15 @@ body {
 .annotation-viewer .metadata-group a.datasource.metadata-field {
     text-decoration: none;
     background-color: #eee;
+    border: 1px solid #fff;
     padding: 5px;
-    margin-bottom: 10px;
+    margin-bottom: 3em;
 }
 
 .annotation-viewer .metadata-group a.datasource:hover {
     text-decoration: underline;
+    border: 1px solid #eee;
+    background-color: #fff;
 }
 
 .annotation-viewer.selected {
