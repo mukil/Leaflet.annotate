@@ -119,9 +119,15 @@ L.Control.AnnotationViewer = L.Control.extend({
         }
         details.innerHTML = ""
         var datasourceUrl = undefined
+        var itemType = annotatedMapElements[0].getAttribute("itemtype")
+        if (itemType) {
+            var itemLabel = itemType.substr(SCHEMA_ORG.length)
+            var typeField = this._createSpanInfoField('Type', itemLabel)
+            details.appendChild(typeField)
+            details.appendChild(document.createElement("br"))
+        }
         for (var cidx in annotatedMapElements[0].childNodes) {
             var annotation = annotatedMapElements[0].childNodes[cidx]
-            // console.log("Web Map Element Annotation", annotation)
             if (annotation.attributes && annotation.attributes.hasOwnProperty('content')) {
                 var keyName = annotation.getAttribute("name")
                 var keyPropertyName = annotation.getAttribute("itemprop")
@@ -133,6 +139,8 @@ L.Control.AnnotationViewer = L.Control.extend({
                     field = this._createSpanInfoField('Modified', new Date(value))
                 } else if (keyName === "http://purl.org/dc/elements/1.1/creator") {
                     field = this._createSpanInfoField('Creator', value)
+                } else if (keyName === "http://purl.org/dc/elements/1.1/contributor") {
+                    field = this._createSpanInfoField('Contributor', value)
                 } else if (keyName === "http://purl.org/dc/elements/1.1/publisher") {
                     field = this._createSpanInfoField('Publisher', value)
                 } else if (keyName === "http://purl.org/dc/elements/1.1/rights") {
@@ -191,7 +199,11 @@ L.Control.AnnotationViewer = L.Control.extend({
         // write out list header
         if (topics.length > 0) {
             var firstResult = topics[0]
-            context.results.innerHTML = '<span class="header">'+ topics.length + 'x ' + firstResult.type+'</span>'
+            if (firstResult.type) {
+                context.results.innerHTML = '<span class="header">'+ topics.length + 'x ' + firstResult.type+'</span>'
+            } else {
+                context.results.innerHTML = '<span class="header">'+ topics.length + ' items found</span>'
+            }
         }
         // write out list elements
         for (var r in topics) {
@@ -405,7 +417,7 @@ L.Control.AnnotationViewer = L.Control.extend({
                 if (result["sameAs"] === item["sameAs"]) return
             }
         }
-        console.log("Adding", item, "to resultset", resultset)
+        // console.log("Adding", item, "to resultset", resultset)
         resultset.push(item)
     }
 })
