@@ -127,7 +127,8 @@ At the moment all geographic annotations (of types which are not a sub-type of _
 
 0.3, *Upcoming*
 
- * Release Candidate, Aug 23, 2016
+0.3-RC, Aug 24, 2016 (Release Candidate)
+
  * Annotatable Leaflet Items: UI Layers (Marker, Popup), Vector Layers (CircleMarker), Other Layers (GeoJSON, ImageOverlay)
  * Compatible with the latest stable LeafletJS Release: 0.7.7
  * Most probably also compatible from at least all versions of 0.7.3 and upwards

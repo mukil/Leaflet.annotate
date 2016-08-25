@@ -79,8 +79,8 @@ var Microdata = {
             el.setAttribute(key, value)
         return el
     },
-    _createContainerElement: function(key, value) {
-        var el = document.createElement('div')
+    _createContainerElement: function(elementName, key, value) {
+        var el = document.createElement(elementName)
             el.setAttribute(key, value)
         return el
     },
@@ -115,11 +115,11 @@ var Microdata = {
             this._buildGenericProperties(metadata, this)
             var placeAnnotation = undefined
             if (hasLatLngValuePair && !hasBoundingBox) {
-                placeAnnotation = this._buildGeoAnnotation("div", this, "point", geoPropertyName)
+                placeAnnotation = this._buildGeoAnnotation('div', this, 'point', geoPropertyName)
             } else if (hasBoundingBox) {
-                placeAnnotation = this._buildGeoAnnotation("div", this, "box", geoPropertyName)
+                placeAnnotation = this._buildGeoAnnotation('div', this, 'box', geoPropertyName)
             } else {
-                console.warn("Invalid argument provided: Neither a BoundingBox nor a Coordinate Pair could be detected to build a geographic annotation.")
+                console.log("Invalid argument provided: Neither a BoundingBox nor a Coordinate Pair could be detected to build a geographic annotation.")
                 console.warn("Skipping semantic annotation of the following Leaflet item due to a previous error", this)
                 return
             }
@@ -149,7 +149,7 @@ var Microdata = {
                     //console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
                     metadata = this._buildAnnotationsElement('metadata', domId, element['_leaflet_id'])
                     this._buildGenericProperties(metadata, this)
-                    var place = this._buildGeoAnnotation('div', element, "shape", geoPropertyName)
+                    var place = this._buildGeoAnnotation('g', element, 'shape', geoPropertyName)
                     metadata.appendChild(place)
                     containerElement.appendChild(metadata)
                 }
@@ -169,7 +169,7 @@ var Microdata = {
                 // console.log("Single SVG Element Annotations", this.options.itemtype, "SVG Element" + ", LeafletID", leafletId, this)
                 metadata = this._buildAnnotationsElement('metadata', domId, leafletId)
                 this._buildGenericProperties(metadata, this)
-                var place = this._buildGeoAnnotation("div", this, "point", geoPropertyName)
+                var place = this._buildGeoAnnotation('g', this, 'point', geoPropertyName)
                 metadata.appendChild(place)
             }
             if (metadata) {
@@ -254,7 +254,7 @@ var Microdata = {
         parent.appendChild(valueElement)
     },
     _buildGeoAnnotation: function(element, object, geoType, geoPropertyName) {
-        if (typeof element != "object") {
+        if (typeof element != 'object') {
             element = document.createElement(element)
         }
         // console.log("Building Geo Annotation", object.options.itemtype, geoType, geoPropertyName)
@@ -274,7 +274,7 @@ var Microdata = {
             element.setAttribute('itemtype', 'http://schema.org/Place')
             element.setAttribute('itemprop', geoPropertyName)
             // the property container of a type can not be a meta element as such is not allowed to have children
-            var geoElement = this._createContainerElement('itemprop', 'geo')
+            var geoElement = this._createContainerElement(element.localName, 'itemprop', 'geo')
             this._buildGeographicIndicators(geoElement, geoType, object)
             element.appendChild(geoElement)
 
@@ -341,6 +341,7 @@ L.CircleMarker.include({
 })
 
 // ---- Popup Item ---- //
+
 L.Popup.include(Microdata)
 L.Popup.addInitHook(function () { this.annotate() })
 var superPopupOnRemove = L.Popup.prototype.onRemove
