@@ -85,11 +85,9 @@ var Microdata = {
         return el
     },
     _buildAnnotations: function(targets) {
-
         if (Object.prototype.toString.call(targets) !== '[object Array]') {
             targets = [targets]
         }
-
         var metadata = undefined
         var domObject = targets[0]
         var parentElement = domObject.parentNode
@@ -100,17 +98,10 @@ var Microdata = {
         var hasBoundingBox = this.hasOwnProperty('_bounds')
         var hasLayers = this.hasOwnProperty('_layers')
         var leafletId = this['_leaflet_id']
-
         // Useful for debugging when adding support for new items, such as L.ImageOverlay here
-        /** if (this.hasOwnProperty("_image")) {
-            console.log("Bulding Image Overlay Annotations Parent", parentElement, "Has Lat/Lng Pair", hasLatLngValuePair, "Has Bounding Box", hasBoundingBox)
-        } else {
-            console.log("Bulding Overlay Annotations Parent", parentElement, "Has Lat/Lng Pair", hasLatLngValuePair, "Has Bounding Box", hasBoundingBox, this)
-        } **/
-
+        // console.log("Bulding Overlay Annotations Parent", parentElement, "Has Lat/Lng Pair", hasLatLngValuePair, "Has Bounding Box", hasBoundingBox, this)
         // 1) Annotating "Marker", "Popup" (Point Style) and "Image Overlay" into a new ARTICLE element
         if (!targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
-
             metadata = this._buildAnnotationsElement('article', domId, leafletId)
             this._buildGenericProperties(metadata, this)
             var placeAnnotation = undefined
@@ -123,7 +114,7 @@ var Microdata = {
                 console.warn("Skipping semantic annotation of the following Leaflet item due to a previous error", this)
                 return
             }
-            // Place the newly created Element into either
+            // Place the newly created Element into either ...
             // a) its existing container
             metadata.appendChild(placeAnnotation)
             metadata.appendChild(domObject)
@@ -134,15 +125,12 @@ var Microdata = {
             // b) .. or just append it to the overlay-pane DOM
             parentElement.appendChild(metadata)
             this.options._annotated = true
-
         // 2.) Annotations into SVG Metadata Element, currently just for geoJSON or circleMarker overlays
         } else if (targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
-
             if (hasLayers) {
                 // 2.1) Build annotations an SVG Element which is going to represent MANY LAYERS
                 var groupElements = []
                 this._findSVGGroupElements(this, groupElements)
-                // console.log(this.options.itemtype, "SVG Layers, domId", domId, this, "SVG Geometry Leaflet Groups (possibly Polygon/Paths)", groupElements)
                 for (var lg in groupElements) {
                     var element = groupElements[lg]
                     var containerElement = element._container
@@ -154,16 +142,6 @@ var Microdata = {
                     containerElement.appendChild(metadata)
                 }
                 metadata = undefined // notes that metadata elements have been already appended to the DOM
-                // ### Not Yet Further Implemented: TOOD: On a GeoJSON Feature (or Layer) there maybe GeoJSON "properties" to exploit
-                /** var layerElements =  this._layers
-                for  (var le in this._layers) {
-                    var layerElement = this._layers[le]
-                    var internalId = this._leaflet_id
-                    var geometryType = layerElement.feature.geometry["type"]
-                    if (layerElement.hasOwnProperty("feature")) { // ### 
-                        console.log("  Loaded \"" + geometryType + "\" Feature (GeoJSON), LeafletID", internalId, layerElement.feature)
-                    }
-                } **/
             } else {
                 // 2.2) Build annotations for an SVG Based Element (ONE WITHOUT MULTIPLE LAYERS)
                 // console.log("Single SVG Element Annotations", this.options.itemtype, "SVG Element" + ", LeafletID", leafletId, this)
