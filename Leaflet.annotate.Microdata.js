@@ -358,3 +358,45 @@ L.ImageOverlay.include({
         }
     }
 })
+
+// ---- Assistant for building dialogs managing annotation of web map elements. List of valid 'itemtype' values with their resp. 'geoprop' values. ---- //
+
+// TODO: Object is yet incomplete.
+var validItemTypes = {
+    "Organization": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] },
+    "CreativeWork": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] },
+    "Person": { "birthPlace": [], "deathPlace": [], "hasPOS": [], "homeLocation": [], "workLocation": [] },
+    "Place": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "Accommodation": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "AdministrativeArea": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "City": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "Country": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "State": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "CivicStructure": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "Airport": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "Aquarium": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "Beach": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "Bridge": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "BusStation": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "BusStop": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "Campground": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "Cemetery": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "LandmarksOrHistoricalBuildings": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "Landform": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "LocalBusiness": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "Residence": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "TouristAttraction": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+    "JobPosting": { "jobLocation": [] },
+    "Action": { "location": [] },
+    "Event": { "location": [] },
+    "ExerciseAction": { "fromLocation": [], "toLocation": [] },
+    "MoveAction": { "fromLocation": [], "toLocation": [] },
+    "TransferAction": { "fromLocation": [], "toLocation": [] },
+    "ServiceChannel": { "serviceLocation": [] },
+    "Game": { "gameLocation": [] },
+    "RentalCarReservation": { "dropoffLocation": [], "pickupLocation": [] },
+    "Demand": { "areaServed": [], "availableAtOrFrom": [], "eligibleRegion": [], "ineligibleRegion": [] },
+    "Offer": { "areaServed": [], "availableAtOrFrom": [], "eligibleRegion": [], "ineligibleRegion": [] },
+    "Service": { "areaServed": [] },
+    "ContactPoint": { "areaServed": [] }
+}
