@@ -1,0 +1,219 @@
+
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+#map {
+    width: 100%; height: 100px;
+    margin-top: 0px;
+}
+
+.annotation-viewer {
+    /** font-size: 16px; */
+    background-color: transparent;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    padding: 0px;
+    overflow: hidden;
+    max-width: 350px;
+}
+
+.annotation-viewer input {
+    font-size: 16px;
+}
+
+.annotation-viewer .list-group {
+    overflow-y: scroll;
+}
+
+.annotation-viewer .metadata-group {
+    position: relative;
+    border-top: 1px solid #eee;
+    overflow-y: scroll;
+    padding-top: 10px;
+}
+
+.annotation-viewer .metadata-group .metadata-field {
+    margin-top: 0px; margin-bottom: 0px;
+    display: inline-block;
+}
+
+.annotation-viewer .metadata-group .metadata-field p,
+.annotation-viewer .metadata-group a.metadata-field  {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.annotation-viewer .metadata-group a.datasource.metadata-field {
+    text-decoration: none;
+    background-color: #eee;
+    border: 1px solid #fff;
+    padding: 5px;
+    margin-bottom: 3em;
+}
+
+.annotation-viewer .metadata-group a.datasource:hover {
+    text-decoration: underline;
+    border: 1px solid #eee;
+    background-color: #fff;
+}
+
+.annotation-viewer.selected {
+    background-color: #fff;
+}
+
+.annotation-viewer .header {
+    padding: 4px 8px;
+    color: #999;
+}
+
+.annotation-viewer input {
+    padding: 4px 6px;
+    padding-left: 8px;
+    border: 0px solid transparent;
+    width: 95%;
+}
+
+.annotation-viewer input:focus {
+    background-color: #eee;
+    border: 0px solid #0078A8;
+}
+
+.annotation-viewer a.leaflet-control-annotation-viewer {
+    padding: 3px 0px 0px 0px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    cursor: pointer;
+    display: inline-block;
+    width: 26px; height: 20px;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+    background-color: #fff;
+    /* font: bold 18px 'Lucida Console', Monaco, monospace; */
+}
+
+.annotation-viewer.selected a {
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
+}
+
+.annotation-viewer.selected a.leaflet-control-annotation-viewer {
+    padding-top: 4px;
+    color: #999;
+    background-color: #eee;
+    border-top-left-radius: 4px;
+    padding-bottom: 2px;
+}
+
+.annotation-viewer a.type-group-item {
+    display: inline-block;
+    height: 26px;
+    width: 26px;
+    line-height: 26px;
+    text-align: center;
+    text-decoration: none;
+    color: black;
+}
+
+.annotation-viewer a.list-group-item {
+    padding: 2px 8px;
+    cursor: pointer;
+    display: block;
+    overflow: hidden;
+    height: 26px;
+    line-height: 26px;
+    text-decoration: none;
+    color: black;
+    background-color: #fff;
+    /* font: bold 18px 'Lucida Console', Monaco, monospace; */
+}
+
+.annotation-viewer a:hover {
+    background-color: #eee;
+}
+
+/** From here on are all style definitions potentially outdated */
+
+.inspection-panel {
+    position: fixed;
+    top: 0px; left: 0px;
+    width: 100%;
+    z-index: 2001;
+    max-height: 45%;
+    background-color: #444;
+    cursor: auto;
+    padding: 15px;
+    overflow-y: scroll;
+}
+
+.inspection-panel div {
+    width: 23%;
+    display: inline-block;
+    color: #fff;
+    vertical-align: top;
+    text-align: center;
+}
+
+.inspection-panel div ul {
+    text-align: left;
+    margin-top: 10px;
+    list-style-type: none;
+}
+
+.inspection-panel div ul li {
+    border: 1px solid #a9a9a9;
+    border-top: 0px solid #fff;
+    padding: 5px;
+    margin: 5px;
+}
+
+.inspection-panel ul a:link {
+    text-decoration: underline;
+    color: #fff;
+}
+
+.inspection-panel a.button {
+    color: #fff;
+    display: inline-block;
+    margin: auto;
+}
+
+/** Leaflet Overrides **/
+
+.leaflet-control-scale .leaflet-control-scale-line {
+    font-size: 16px;
+}
+
+.leaflet-bottom.leaflet-left {
+    left: 10px;
+    bottom: 10px;
+}
+
+.leaflet-popup-content {
+    font-size: 1.2em;
+}
+
+.leaflet-marker-pane .leaflet-label {
+    z-index: 2001; font-weight: normal;  background: rgba(255, 255, 255, 0.51); border-width: 1px;
+    background: transparent;
+    border: none;
+}
+
+.leaflet-marker-pane .leaflet-label-right::before {
+    content: none;
+}
+
+.leaflet-control-attribution.leaflet-control {
+    font-size: 1em !important;
+}
+
+/** .leaflet-tile {
+    transform: scale(0);
+}
+
+.leaflet-tile.leaflet-tile-loaded {
+    transform: scale(1);
+    transition: 0.5s transform ease-in;
+} **/
