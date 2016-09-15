@@ -89,8 +89,9 @@ L.marker(coordinates, {
           Regarding the schema.org type you use you might be required to explicitly specify the desired <code>geoprop</code> option
         </p>
 <pre>
-L.circleMarker(coordinates, { title: „...“
-  itemtype: 'CreativeWork', <b>geoprop: 'locationCreated'</b>
+L.circleMarker(coordinates, { title: 'The Catcher in the Rye',
+  itemtype: 'Book', <b>geoprop: 'locationCreated'</b>,
+  sameAs: 'https://www.wikidata.org/wiki/Q183883'
 })
 </pre>
         <p>
