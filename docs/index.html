@@ -63,14 +63,14 @@
           </li>
         </ol>
         
-        <p>Furthemore, to assist the creation of valid semantic markup. Currently you can choose between two JavaScript objects, one in english and one in german language, which helps you to map user inpuot to valid Schema.org <code>itemtype</code> options. We ship this to help you validate user input you pass on to the core generating the markup for you.</p>
+        <p>Furthermore, to assist everyone in the creation of valid semantic markup, you as a developer can choose between two JavaScript objects (English, German) which helps you to map user input to valid Schema.org type names (Leaflet.annotate's <code>itemtype</code> option).</p>
 
         <h1>Usage</h1>
 
-        <h2>Automatic annnotation</h2>
+        <h2>Annotating overlays: </h2>
 
         <p>
-          Annotation happens automatically whenever you add a Marker, CircleMarker, ImageOverlay or Popup to your L.map and pass them a valid code>itemtype</code> value as an option to Leaflets Standard API:</p>
+          Annotation happens automatically whenever you add a Marker, CircleMarker, ImageOverlay or Popup to your <code>L.map</code> and pass them a valid code>itemtype</code> value as an option to Leaflets Standard API:</p>
 <pre>
 L.marker(coordinates, {
   title: 'Madison Square Garden', <b>itemtype: 'CivicStructure'</b>
@@ -110,7 +110,31 @@ L.geoJson(geojsonData, {
   sameAs: 'https://www.wikidata.org/wiki/Q1036'
 })<b>.annotate()</b>
 </pre>
-        <p>This will markup the GeoJSON document as a map overlay representing the area for the Republic of Uganda. In Wikidata the URI for the concept/entity representing this country is https://www.wikidata.org/wiki/Q1036.</p>
+        <p>
+          This will markup the GeoJSON document as a map overlay representing the area for the Republic of Uganda. In Wikidata the URI for the concept/entity representing this country is https://www.wikidata.org/wiki/Q1036.
+        </p>
+
+        <p>Another example of a semantically annotated GeoJSON overlay where the options used by Leaflet.annnotate to generate the semantic markup are highlighted in bold:</p>
+<pre>
+var statesBoundaries = L.geoJson(geoJsonData, {
+    title: 'Charmingly Inaccurate - United States of America', <b>itemtype: 'Country',
+    description: 'A caricature of the lower 48 United States, '
+      + 'this linework set is recognizable and friendly, but not concerned with ....” '
+      + 'It’s that friend you have who’s always embellishing his stories. You never '
+      + 'mind his lying, though, because the exaggerations make things more fun. '
+      + 'Go ahead, enjoy the story your map is telling. (Version 1.1)',
+    creator: 'Daniel P. Huffmann', publisher: 'Daniel P. Huffmann',
+    published: '10/04/2013', modified: '10/04/2013',
+    created: '3/24/2013', rights: 'Public Domain',
+    derivedFrom: 'Derived from a 1920 broadside map entitled “The Rights of the People—Women are People: Suffrage Victory Map.” Equal Suffrage League of Virginia Papers, Acc. 22002, Library of Virginia.'</b>}).addTo(map)
+statesBoundaries<b>.annotate()</b>
+</pre>
+
+    <h2>API Documentation</h2>
+
+    <p>
+      Please find all 15 options of Leaflet.annotate documented in the API section of the projects <a href="https://github.com/ifl-geovis/Leaflet.annotate#api" title="Link to API Docs">README</a>.
+    </p>
 
       </section>
       <footer>
