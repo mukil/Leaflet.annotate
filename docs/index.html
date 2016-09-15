@@ -33,7 +33,9 @@
         <h1>Introduction</h1>
 
         <p>
-          This plugin extends the options for the LeafletJS Standard API elements <b>Marker</b>, <b>CircleMarker</b>, <b>Popup</b>, <b>ImageOverlay</b> and <b>GeoJSON</b> so you can publish these elements in HTML semantically annotated with machine readable geo markup. While there is quite some effort already around the development of new geospatial data catalogs (which are awesome) this plugin turns the focus onto geographic web maps. Acknowleding that, de-facto, some maps already are data catalogs themselves, they are just not that well represented in HTML so that other programs can extract and re-use the information people collect in them. So to make some of the most important geographic elements to be published by the year 2025 on the web in HTML
+          This plugin extends the options for the LeafletJS Standard API elements <b>Marker</b>, <b>CircleMarker</b>, <b>Popup</b>, <b>ImageOverlay</b> and <b>GeoJSON</b> so you can publish these elements in HTML semantically annotated and with machine readable geo markup. While there is quite some effort already around the development of new geospatial data catalogs (which are awesome) this plugin turns the focus onto geographic web maps. Acknowleding that, de-facto, some maps already are data catalogs themselves, they are just not that well represented in HTML so that other programs can extract and re-use the information people collect in them.
+
+          Semantic markup here means that (a) search engines and other applications will be able to understand what is your map about and (b) which parts of the world your map (through all its elements) deals with (spatial coverage). Using this plugin you will contribute to make some of the most important geographic maps and web map elements published by the year 2025 on the web in HTML
         </p>
 
         <ul>
@@ -41,15 +43,15 @@
             <li>searchable for users through search engines,</li>
             <li>re-usable and interoperable for application developers,</li>
             <li>real collections of linked data and therewith,</li>
-            <li>potentially multilingual and</li>
-            <li>self-contained and reproducible</li>
+            <li>potentially multilingual,</li>
+            <li>self-contained documents and therewith reproducible.</li>
         </ul>
             
         <p>Therefore we wrote this small script, integrating freeing you of caring much about the necessary syntax details.</p>
         
         <p>Your feedback or contributions are very welcome. Please use <a href="/ifl-geovis/Leaflet.annotate">this issue tracker</a> to report any issues you experienced with it.</p>
 
-        <h1>Installation</h1>
+        <h1>Overview &amp; installation</h1>
         
         <p>The source code released contains two different components, one (the core) for generating the semantic markup and the other (an example) for reading and making the markup usable for visitors who want to systematically read and explore the map<p>
         
@@ -77,7 +79,7 @@
         <h2>Automatic Annotation</h2>
 
         <p>
-          Annotation happens automatically whenever you add a Marker, CircleMarker, ImageOverlay or Popup to your <code>L.map</code> and pass them a valid <code>itemtype</code> value as an option to Leaflets Standard API:</p>
+          Annotation happens automatically whenever you add a <b>Marker</b>, <b>CircleMarker</b>, <b>Popup</b> or <b>ImageOverlay</b> to your <code>L.map</code> <em>and</em> pass them a valid <code>itemtype</code> value as an option to Leaflets Standard API:</p>
 <pre>
 L.marker(coordinates, {
   title: 'Madison Square Garden', <b>itemtype: 'CivicStructure'</b>

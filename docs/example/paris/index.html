@@ -18,8 +18,8 @@
 		<script src="../vendor/jquery-2.2.2.min.js"></script>
 
 		<!-- Microdata.js needs to be loaded before Leaflet.annotate.Viewer.js due to a CONSTANT-->
-		<script src="Leaflet.annotate.Microdata.js"></script>
-		<script src="Leaflet.annotate.Viewer.js"></script>
+		<script src="../Leaflet.annotate.Microdata.js"></script>
+		<script src="../Leaflet.annotate.Viewer.js"></script>
 		<script src="wikidata_queries.js"></script>
 
 	</head>
@@ -112,7 +112,7 @@
 				var sculpture = L.circleMarker(coordinates, sculptureMarkerOptions).setRadius(3)
 					.bindPopup(popupContent, { keepInView: true, className: 'sculpture-photo', maxWidth: "auto"})
 				L.Util.setOptions(sculpture, { alt: "Place of a sculpture named " + popupTitle,
-					itemtype: 'CreativeWork', geoprop: 'contentLocation', title: popupTitle })
+					itemtype: 'Sculpture', geoprop: 'contentLocation', title: popupTitle })
 				return sculpture
 				/** L.Marker: var sculpture = L.marker(coordinates, { title: wikidataSculptureData.title.value,
 						itemtype: 'CreativeWork', geoprop: 'contentLocation'
