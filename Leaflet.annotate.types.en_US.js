@@ -1,310 +1,133 @@
 
-/** -----
-    Assistant for building dialogs managing annotation of web map elements.
-    List of valid 'itemtype' values with a display label in English and their resp. 'geoprop' values. ------ **/
+// --- An optimized version of an schema validation tool for building
+// --- dialogs allowing the annotation of web map elements.
 
-// Model: { Type Name (key) : Type Label (English), validProperties: [ "Valid property names for the type" ] }
+var validItemTypesEn = {
+    "Organization": { "label": "Organization", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
 
-    var validItemTypesEn = [
+    "CreativeWork": { "label": "Creative Work", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Article": { "label": "Article", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Blog": { "label": "Blog", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Book": { "label": "Book", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Clip": { "label": "Clip", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Comment": { "label": "Comment", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Conversation": { "label": "Conversation", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "CreativeWorkSeason": { "label": "Creative Work Season", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "CreativeWorkSeries": { "label": "Creative Work Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "DataCatalog": { "label": "Data Catalog", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Dataset": { "label": "Dataset", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "DigitalDocument": { "label": "Digital Document", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Episode": { "label": "Episode", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Game": { "label": "Game", "validProperties":  { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "gameLocation": [] } },
+    "MediaObject": { "label": "Media Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
+    "AudioObject": { "label": "Audio Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
+    "ImageObject": { "label": "Image Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
+    "Map": { "label": "Map", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Movie": { "label": "Movie", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "MusicComposition": { "label": "Music Composition", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "MusicPlaylist": { "label": "Music Playlist", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "MusicRecording": { "label": "Music Recording", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Painting": { "label": "Painting", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Photograph": { "label": "Photograph", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "PublicationIssue": { "label": "Publication Issue", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "PublicationVolume": { "label": "Publication Volume", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Question": { "label": "Question", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Recipe": { "label": "Recipe", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Review": { "label": "Review", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Sculpture": { "label": "Sculpture", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "Series": { "label": "Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "SoftwareApplication": { "label": "Software Application", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "TVSeason": { "label": "TV Season", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "TVSeries": { "label": "TV Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "SoftwareSourceCode": { "label": "Software Source Code", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "VisualArtwork": { "label": "Visual Artwork", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "WebPage": { "label": "Webpage", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "WebSite": { "label": "Website", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
 
-        {
-            "Organization": "Organization",
-            "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] }
-        },
+    "Person": { "label": "Person", "validProperties": { "birthPlace": [], "deathPlace": [], "hasPOS": [], "homeLocation": [], "workLocation": [] } },
 
+    "JobPosting": { "label": "Job Posting", "validProperties": { "jobLocation": [] } },
 
+    "Action": { "label": "Action", "validProperties": { "location": [] } },
 
-        {
-            "CreativeWork": "Creative Work",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Article": "Article",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Blog": "Blog",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Book": "Book",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Clip": "Clip",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Comment": "Comment",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Conversation": "Conversation",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "CreativeWorkSeason": "Creative Work Season",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "CreativeWorkSeries": "Creative Work Series",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "DataCatalog": "Data Catalog",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Dataset": "Dataset",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "DigitalDocument": "Digital Document",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Episode": "Episode",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Game": "Game",
-            "validProperties":  { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "gameLocation": [] }
-        },
-        {
-            "MediaObject": "Media Object",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] }
-        },
-        {
-            "AudioObject": "Audio Object",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] }
-        },
-        {
-            "ImageObject": "Image Object",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] }
-        },
-        {
-            "Map": "Map",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Movie": "Movie",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "MusicComposition": "Music Composition",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "MusicPlaylist": "Music Playlist",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "MusicRecording": "Music Recording",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Painting": "Painting",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Photograph": "Photograph",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "PublicationIssue": "Publication Issue",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "PublicationVolume": "Publication Volume",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Question": "Question",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Recipe": "Recipe",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Review": "Review",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Sculpture": "Sculpture",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "Series": "Series",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "SoftwareApplication": "Software Application",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "TVSeason": "TV Season",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "TVSeries": "TV Series",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "SoftwareSourceCode": "Software Source Code",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "VisualArtwork": "Visual Artwork",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "WebPage": "Webpage",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
-        {
-            "WebSite": "Website",
-            "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] }
-        },
+    "Event": { "label": "Event", "validProperties": { "location": [] } },
+
+    "ExerciseAction": { "label": "Excercise Action", "validProperties": { "fromLocation": [], "toLocation": [] } },
+    "MoveAction": { "label": "Move Action", "validProperties": { "fromLocation": [], "toLocation": [] } },
+    "TransferAction": { "label": "Transfer Action", "validProperties": { "fromLocation": [], "toLocation": [] } },
+    "ServiceChannel": { "label": "Service Channel", "validProperties":  { "serviceLocation": [] } },
+    "RentalCarReservation": { "label": "Rental Car Reservation", "validProperties": { "dropoffLocation": [], "pickupLocation": [] } },
+    "Demand": { "label": "Demand", "validProperties": { "areaServed": [], "availableAtOrFrom": [], "eligibleRegion": [], "ineligibleRegion": [] } },
+    "Offer": { "label": "Offer", "validProperties": { "areaServed": [], "availableAtOrFrom": [], "eligibleRegion": [], "ineligibleRegion": [] } },
+    "Service": { "label": "Service", "validProperties": { "areaServed": [] } },
+    "ContactPoint": { "label": "Contact Point", "validProperties": { "areaServed": [] } },
+    "Place": { "label": "Place", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "Accommodation": { "label": "Accommodation", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "AdministrativeArea": { "label": "Administrative Area", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "City": { "label": "City", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "Country": { "label": "Country", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "State": { "label": "State", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "CivicStructure": { "label": "Civic Structure", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "Airport": { "label": "Airport", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "Aquarium": { "label": "Aquarium", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "Beach": { "label": "Beach", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "Bridge": { "label": "Bridge", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "BusStation": { "label": "Bus Station", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "BusStop": { "label": "Bus Stop", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "Campground": { "label": "Campground", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "Cemetery": { "label": "Cemetery", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "LandmarksOrHistoricalBuildings": { "label": "Landmarks or Historical Buildings", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "Landform": { "label": "Landform", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "LocalBusiness": { "label": "Local Business", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "Residence": { "label": "Residence", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+    "TouristAttraction": { "label": "Tourist Attraction", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } }
+}
+
+var validPlaceProperties = {
+    "areaServed": {},
+    "availableAtOrFrom": {},
+    "birthPlace": {},
+    "containedInPlace": {},
+    "containsPlace": {},
+    "contentLocation": {},
+    "deathPlace": {},
+    "dropoffLocation": {},
+    "eligibleRegion": {},
+    "exerciseCourse": {},
+    "foodEstablishment": {},
+    "foundingLocation": {},
+    "fromLocation": {},
+    "gameLocation": {},
+    "hasPOS": {},
+    "homeLocation": {},
+    "ineligibleRegion": {},
+    "jobLocation": {},
+    "location": {},
+    "locationCreated": {},
+    "pickupLocation": {},
+    "regionsAllowed": {},
+    "serviceLocation": {},
+    "spatialCoverage": {},
+    "toLocation": {},
+    "workLocation": {}
+}
 
 
+function isValidPlaceProperty(geoPropertyName) {
+    return (validPlaceProperties.hasOwnProperty(geoPropertyName))
+}
 
-        {
-            "Person": "Person",
-            "validProperties": { "birthPlace": [], "deathPlace": [], "hasPOS": [], "homeLocation": [], "workLocation": [] }
-        },
-        {
-            "JobPosting": "Job Posting",
-            "validProperties": { "jobLocation": [] }
-        },
+function isValidItemTypeName(typeName) {
+    return (validItemTypesEn.hasOwnProperty(typeName))
+}
 
-
-
-        {
-            "Action": "Action",
-            "validProperties": { "location": [] }
-        },
-        {
-            "Event": "Event",
-            "validProperties": { "location": [] }
-        },
-        {
-            "ExerciseAction": "Excercise Action",
-            "validProperties": { "fromLocation": [], "toLocation": [] }
-        },
-        {        
-            "MoveAction": "Move Action",
-            "validProperties": { "fromLocation": [], "toLocation": [] }
-        },
-        {
-            "TransferAction": "Transfer Action",
-            "validProperties": { "fromLocation": [], "toLocation": [] }
-        },
-        {
-            "ServiceChannel": "Service Channel",
-            "validProperties":  { "serviceLocation": [] }
-        },
-        {
-            "RentalCarReservation": "Rental Car Reservation",
-            "validProperties": { "dropoffLocation": [], "pickupLocation": [] }
-        },
-        {
-            "Demand": "Demand",
-            "validProperties": { "areaServed": [], "availableAtOrFrom": [], "eligibleRegion": [], "ineligibleRegion": [] }
-        },
-        {
-            "Offer": "Offer",
-            "validProperties": { "areaServed": [], "availableAtOrFrom": [], "eligibleRegion": [], "ineligibleRegion": [] }
-        },
-        {
-            "Service": "Service",
-            "validProperties": { "areaServed": [] }
-        },
-        {
-            "ContactPoint": "Contact Point",
-            "validProperties": { "areaServed": [] }
-        },
-
-        // --- All types of Place --- //
-
-        {
-            "Place": "Place",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "Accommodation": "Accommodation",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "AdministrativeArea": "Administrative Area",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "City": "City",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "Country": "Country",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "State": "State",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "CivicStructure": "Civic Structure",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "Airport": "Airport",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "Aquarium": "Aquarium",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "Beach": "Beach",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "Bridge": "Bridge",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "BusStation": "Bus Station",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "BusStop": "Bus Stop",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "Campground": "Campground",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "Cemetery": "Cemetery",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "LandmarksOrHistoricalBuildings": "Landmarks or Historical Buildings",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "Landform": "Landform",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "LocalBusiness": "Local Business",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "Residence": "Residence",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
-        },
-        {
-            "TouristAttraction": "Tourist Attraction",
-            "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] }
+function isValidItemTypeProperty(typeName, geoPropertyName) {
+    if (validItemTypesEn.hasOwnProperty(typeName)) {
+        var itemType = validItemTypesEn[typeName]
+        var props = itemType.validProperties
+        for (var pidx in props) {
+            if (pidx === geoPropertyName) return true
         }
-]
+    }
+    return false
+}
