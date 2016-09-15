@@ -15,7 +15,8 @@
   <body>
     <div class="wrapper">
       <header>
-        <img src="https://raw.githubusercontent.com/mukil/Leaflet.annotate/master/docs/leaflet.annotate-logo-v1.png" title="Shiny Leaflet.annotate logo graphic">
+        <img alt="Leaflet.annotate Logo Graphic" title="Shiny Leaflet.annotate logo graphic"
+          src="https://raw.githubusercontent.com/mukil/Leaflet.annotate/master/docs/leaflet.annotate-logo-v1.png">
         <p>A Leaflet plugin to publish geographic maps in HTML documents machine readable through generating Schema.org in the Microdata Syntax.</p>
         <p class="view">
             <a href="https://github.com/ifl-geovis/Leaflet.annotate">View the Project on GitHub <small>ifl-geovis/Leaflet.annotate</small></a>
@@ -45,7 +46,7 @@
             
         <p>Therefore we wrote this small script, integrating freeing you of caring much about the necessary syntax details.</p>
         
-        <p>This is (as LeafletJS itself) BSD Licensed open source software. Your feedback or contributions are very welcome. Please use <a href="/ifl-geovis/Leaflet.annotate">this issue tracker</a> to report any issues you experienced with it.</p>
+        <p>Your feedback or contributions are very welcome. Please use <a href="/ifl-geovis/Leaflet.annotate">this issue tracker</a> to report any issues you experienced with it.</p>
 
         <h1>Installation</h1>
 
@@ -77,7 +78,7 @@
         <h2>Automatic Annotation</h2>
 
         <p>
-          Annotation happens automatically whenever you add a Marker, CircleMarker, ImageOverlay or Popup to your <code>L.map</code> and pass them a valid code>itemtype</code> value as an option to Leaflets Standard API:</p>
+          Annotation happens automatically whenever you add a Marker, CircleMarker, ImageOverlay or Popup to your <code>L.map</code> and pass them a valid <code>itemtype</code> value as an option to Leaflets Standard API:</p>
 <pre>
 L.marker(coordinates, {
   title: 'Madison Square Garden', <b>itemtype: 'CivicStructure'</b>
@@ -85,7 +86,7 @@ L.marker(coordinates, {
 </pre>
         <p>
           Valid itemtype values are currently all the names of Schema.org terms which allow for at least one Place as one of their properties.
-          Regarding the schema.org type you use you might be required to explicitly specify the desired geoprop option
+          Regarding the schema.org type you use you might be required to explicitly specify the desired <code>geoprop</code> option
         </p>
 <pre>
 L.circleMarker(coordinates, { title: „...“
@@ -126,7 +127,7 @@ L.geoJson(geojsonData, {
         <p>Another example of a semantically annotated GeoJSON overlay where the options used by Leaflet.annnotate to generate the semantic markup are highlighted in bold:</p>
 <pre>
 var statesBoundaries = L.geoJson(geoJsonData, {
-    title: 'Charmingly Inaccurate - United States of America', <b>itemtype: 'Country',
+    title: 'Charmingly Inaccurate - USA', <b>itemtype: 'Country',
     description: 'A caricature of the lower 48 United States, '
       + 'this linework set is recognizable and friendly, but not concerned with ....” '
       + 'It’s that friend you have who’s always embellishing his stories. You never '
@@ -135,14 +136,16 @@ var statesBoundaries = L.geoJson(geoJsonData, {
     creator: 'Daniel P. Huffmann', publisher: 'Daniel P. Huffmann',
     published: '10/04/2013', modified: '10/04/2013',
     created: '3/24/2013', rights: 'Public Domain',
-    derivedFrom: 'Derived from a 1920 broadside map entitled “The Rights of the People—Women are People: Suffrage Victory Map.” Equal Suffrage League of Virginia Papers, Acc. 22002, Library of Virginia.'</b>}).addTo(map)
+    derivedFrom: 'Derived from a 1920 broadside map entitled “The Rights of the People—Women'
+      + 'are People: Suffrage Victory Map.” Equal Suffrage League of Virginia Papers, Acc. 22002, '
+      + 'Library of Virginia.'</b>}).addTo(map)
 statesBoundaries<b>.annotate()</b>
 </pre>
 
     <h2>API Documentation</h2>
 
     <p>
-      Please find all 15 options of Leaflet.annotate documented in the API section of the projects <a href="https://github.com/ifl-geovis/Leaflet.annotate#api" title="Link to API Docs">README</a>.
+      You can find all options with which the Leaflet.annotate plugins extends the Standard API documented in the <a href="https://github.com/ifl-geovis/Leaflet.annotate#api" title="Link to the annotate API Docs">API section of the projects README</a>.
     </p>
 
       </section>
