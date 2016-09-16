@@ -76,10 +76,10 @@
 
         <h1>Example: Photos of sculptures in Paris</h1>
         <p>
-          <a href="/Leaflet.annotate/example/paris/">Browse this example of public sculptures in Paris mapped on a baselayer</a>
+          <a href="/Leaflet.annotate/example/paris/">Browse this example of public sculptures in Paris.</a>
         </p>
         <p>
-          This map is a good example of a so called "map mashup". In it you'll just find geo-referenced pictures representing public sculptures in the city of Paris. All web map elements are annotated as representing a <a href="http://schema.org/Photograph">Photographs</a> depicting a specific <a href="http://schema.org/contentLocation">contentLocation</a>.
+          This map is a good example of a so called "map mashup". In it you'll just find geo-referenced pictures representing public sculptures in the city of Paris. All web map elements are annotated as representing a <a title="Visit the Photography type definition on schema.org" href="http://schema.org/Photograph">Photographs</a> depicting a specific <a title="Check the contentLocation property page on schema.org" href="http://schema.org/contentLocation">contentLocation</a>.
         </p>
         <p>
           Here is the Leaflet code which produces the semantic markup explorable in the example. Bold elements are interpreted by the annotate plugin to produce proper markup.
@@ -96,7 +96,7 @@ L.circleMarker(coordinates, { weight: 2, opacity: 0.6,
           If you copy & paste the <em>generated</em> markup into Googles Structured Data Testing Tool you will find out that it can identify/recognize ~400pictures were composed in this map.
         </p>
         <p>
-          The data for this map is fetched live with SPARQL from <a href="http://query.wikidata.org">query.wikidata.org</a>. Sculptures are shown when they are located in <a href="https://www.wikidata.org/wiki/Q90">Paris</a> (or one of its districts) and have a publicly licensed picture associated in wikmedia commons. The semantic annotation of the <em>CircleMarker</em> elements here happens in the SVG fragment created by Leaflet and, according to the standard, in a <em>metadata</em> element.
+          The data for this map is fetched live with SPARQL from <a href="http://query.wikidata.org">query.wikidata.org</a>. Sculptures are shown when they are located in <a target="_blank" title="Opens new Window showing the city of Paris in Wikidata" href="https://www.wikidata.org/wiki/Q90">Paris</a> (or one of its districts) and have a publicly licensed picture associated in wikmedia commons. The semantic annotation of the <em>CircleMarker</em> elements here happens in the SVG fragment created by Leaflet and, according to the standard, in a <em>metadata</em> element.
         </p>
 
         <h1>Usage</h1>
