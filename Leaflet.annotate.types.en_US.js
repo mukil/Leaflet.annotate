@@ -83,6 +83,67 @@ var validItemTypesEn = {
     "TouristAttraction": { "label": "Tourist Attraction", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } }
 }
 
+function isValidItemTypeName(typeName) {
+    return (validItemTypesEn.hasOwnProperty(typeName))
+}
+
+function isValidItemTypeProperty(typeName, geoPropertyName) {
+    if (validItemTypesEn.hasOwnProperty(typeName)) {
+        var itemType = validItemTypesEn[typeName]
+        var props = itemType.validProperties
+        for (var pidx in props) {
+            if (pidx === geoPropertyName) return true
+        }
+    }
+    return false
+}
+
+var validPlaceTypes = {
+    "Place": {}, "Accommodation": {},
+    "AdministrativeArea": {},
+        "City": {}, "Country": {}, "State": {},
+    "CivicStructure": {},
+        "Airport": {}, "Aquarium": {}, "Beach": { }, "Bridge": { }, "BusStation": { }, "BusStop": { }, "Campground": { }, "Cemetery": { },
+        "Crematorium": {}, "EventVenue": { }, "FireStation": { }, "GovernmentBuilding": { }, "Hospital": { }, "MovieTheater": { }, "Museum": { }, "MusicVenue": { },
+        "Park": {}, "ParkingFacility": { }, "PerformingArtsTheater": { }, "PlaceOfWorship": { }, "Playground": { }, "PoliceStation": { }, "RVPark": { }, "StadiumOrArena": { },
+        "SubwayStation": { }, "TaxiStand": { }, "TrainStation": { }, "Zoo": { },
+    "Landform": {},
+        "BodyOfWater": {}, "Continent": {}, "Mountain": {}, "Volcano": {},
+    "LandmarksOrHistoricalBuildings": { },
+    "LocalBusiness": { },
+        "AnimalShelter": {}, "AutomotiveBusiness": {}, "ChildCare": {},
+        "Dentist": {}, "DryCleaningOrLaundry": {}, "EmergencyService": {},
+        "EmploymentAgency": {},
+        "EntertainmentBusiness": {}, "AdultEntertainment": {}, "AmusementPark": {}, "ArtGallery": {}, "Casion": {}, "ComedyClub": {}, "NightClub": {},
+        "FinancialService": {}, "AccountingService": {}, "AutomatedTeller": {}, "BankOrCreditUnion": {}, "InsuranceAgency": {},
+        "FoodEstablishment": {}, "Bakery": {}, "BarOrPub": {}, "Brewery": {}, "CafeOrCoffeeShop": {}, "FastFoodRestaurant": {}, "IceCreamShop": {}, "Restaurant": {}, "Winery": {}, "Distillery": {},
+        "GovernmentOffice": {}, "PostOffice": {},
+        "HealthAndBeautyBusiness": {},
+        "HomeAndConstructionBusiness": {}, "Electrician": {},
+            "GeneralContractor": {}, "HVACBusiness": {}, "HousePainter": {}, "Locksmith": {}, "MovingCompany": {}, "Plumber": {}, "RoofingContractor": {},
+        "InternetCafe": {},
+        "LegalService": {}, "Attorney": {}, "Notary": {},
+        "Library": {}, "LodgingBusiness": {},
+        "ProfessionalService": {}, "RadioStation": {}, "RealEstateAgent": {},
+        "RecyclingCenter": {}, "SelfStorage": {}, "ShoppingCenter": {},
+        "SportsActivityLocation": {}, "BowlingAlley": {}, "ExerciseGym": {}, "HealthClub": {}, "PublicSwimmingPool": {}, "SkiResort": {}, "SportsClub": {}, "TennisComplex": {},
+        "Store": {},
+            "AutoPartsStore": {}, "BikeStore": {}, "BookStore": {}, "ClothingStore": {}, "ComputerStore": {},
+            "ConvenienceStore": {}, "DepartmentStore": {}, "ElectronicsStore": {}, "Florist": {}, "FurnitureStore": {},
+            "GaredenStore": {}, "GroceryStore": {}, "HardwareStore": {}, "HobbyShop": {}, "HomeGoodsStore": {}, "JewelryStore": {},
+            "LiquorStore": {}, "MensClothingStore": {}, "MobilePhoneStore": {}, "MovieRentalStore": {}, "MusicStore": {},
+            "OfficeEquipmentStore": {}, "OutletStore": {}, "PawnShop": {}, "PetStore": {}, "ShoeStore": {},
+            "SportingGoodsStore": {}, "TireShop": {}, "ToyStore": {}, "WholesaleStore": {},
+        "TelevisionStation": {},
+        "TourstInformationCenter": {}, "TravelAgency": {},
+    "Residence": { },
+    "TouristAttraction" : {}
+}
+
+function hasGeoProperty(typeName) {
+    return (validPlaceTypes.hasOwnProperty(typeName))
+}
+
 var validPlaceProperties = {
     "areaServed": {},
     "availableAtOrFrom": {},
@@ -112,22 +173,6 @@ var validPlaceProperties = {
     "workLocation": {}
 }
 
-
 function isValidPlaceProperty(geoPropertyName) {
     return (validPlaceProperties.hasOwnProperty(geoPropertyName))
-}
-
-function isValidItemTypeName(typeName) {
-    return (validItemTypesEn.hasOwnProperty(typeName))
-}
-
-function isValidItemTypeProperty(typeName, geoPropertyName) {
-    if (validItemTypesEn.hasOwnProperty(typeName)) {
-        var itemType = validItemTypesEn[typeName]
-        var props = itemType.validProperties
-        for (var pidx in props) {
-            if (pidx === geoPropertyName) return true
-        }
-    }
-    return false
 }
