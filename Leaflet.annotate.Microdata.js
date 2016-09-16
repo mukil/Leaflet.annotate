@@ -79,7 +79,7 @@ var Microdata = {
             el.setAttribute(key, value)
         return el
     },
-    _createContainerElement: function(elementName, key, value) {
+    _createGroupingElement: function(elementName, key, value) {
         var el = document.createElement(elementName)
             el.setAttribute(key, value)
         return el
@@ -102,7 +102,7 @@ var Microdata = {
         // console.log("Bulding Overlay Annotations Parent", parentElement, "Has Lat/Lng Pair", hasLatLngValuePair, "Has Bounding Box", hasBoundingBox, this)
         // 1) Annotating "Marker", "Popup" (Point Style) and "Image Overlay" into a new ARTICLE element
         if (!targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
-            metadata = this._buildAnnotationsElement('article', domId, leafletId)
+            metadata = this._buildAnnotationsContainer('article', domId, leafletId)
             this._buildGenericProperties(metadata, this)
             var placeAnnotation = undefined
             if (hasLatLngValuePair && !hasBoundingBox) {
@@ -135,7 +135,7 @@ var Microdata = {
                     var element = groupElements[lg]
                     var containerElement = element._container
                     //console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
-                    metadata = this._buildAnnotationsElement('metadata', domId, element['_leaflet_id'])
+                    metadata = this._buildAnnotationsContainer('metadata', domId, element['_leaflet_id'])
                     this._buildGenericProperties(metadata, this)
                     var place = this._buildGeoAnnotation('g', element, 'shape', geoPropertyName)
                     metadata.appendChild(place)
@@ -145,7 +145,7 @@ var Microdata = {
             } else {
                 // 2.2) Build annotations for an SVG Based Element (ONE WITHOUT MULTIPLE LAYERS)
                 // console.log("Single SVG Element Annotations", this.options.itemtype, "SVG Element" + ", LeafletID", leafletId, this)
-                metadata = this._buildAnnotationsElement('metadata', domId, leafletId)
+                metadata = this._buildAnnotationsContainer('metadata', domId, leafletId)
                 this._buildGenericProperties(metadata, this)
                 var place = this._buildGeoAnnotation('g', this, 'point', geoPropertyName)
                 metadata.appendChild(place)
@@ -156,7 +156,7 @@ var Microdata = {
             }
         }
     },
-    _buildAnnotationsElement: function(elementName, domId, leafletId) {
+    _buildAnnotationsContainer: function(elementName, domId, leafletId) {
         var article = document.createElement(elementName)
         if (domId) article.setAttribute('id', domId)
         article.setAttribute('itemscope','')
@@ -165,7 +165,7 @@ var Microdata = {
         return article
     },
     _buildGenericProperties: function(parentElement, object) {
-        // Schema.org
+        // Maps Leaflet.annotate options to Schema.org and Dublin Core Element Names
         if (object.options.hasOwnProperty('title')) {
             this._appendMetaItempropContent(parentElement, 'name', object.options.title)
         }
@@ -236,17 +236,16 @@ var Microdata = {
             element = document.createElement(element)
         }
         // console.log("Building Geo Annotation", object.options.itemtype, geoType, geoPropertyName)
+        // --- Here we know the entity to annotate is a sub-type of Place (and therewith has the "geo"-property)
         if (hasGeoProperty(object.options.itemtype)) {
-            // --- Here we know the entity to annotate is a sub-type of Place (and therewith has the "geo"-property)
             element.setAttribute('itemprop', geoPropertyName)
             this._buildGeographicIndicators(element, geoType, object)
-        } else if (geoPropertyName) {
-            // --- Here we assume the entity to annotate is NOT a sub-type of Place (and therewith has NOT the "geo"-property)
+        // --- Here we know that the type has a property defined which can handle a "Place" as its value
+        } else if (isValidPlaceProperty(geoPropertyName)) {
             element.setAttribute('itemscope','')
             element.setAttribute('itemtype', 'http://schema.org/Place')
             element.setAttribute('itemprop', geoPropertyName)
-            // the property container of a type can not be a meta element as such is not allowed to have children
-            var geoElement = this._createContainerElement(element.localName, 'itemprop', 'geo')
+            var geoElement = this._createGroupingElement(element.localName, 'itemprop', 'geo')
             this._buildGeographicIndicators(geoElement, geoType, object)
             element.appendChild(geoElement)
 
@@ -361,43 +360,43 @@ var validItemTypesEn = {
     "Organization": { "label": "Organization", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
 
     "CreativeWork": { "label": "Creative Work", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Article": { "label": "Article", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Blog": { "label": "Blog", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Book": { "label": "Book", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Clip": { "label": "Clip", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Comment": { "label": "Comment", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Conversation": { "label": "Conversation", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "CreativeWorkSeason": { "label": "Creative Work Season", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "CreativeWorkSeries": { "label": "Creative Work Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "DataCatalog": { "label": "Data Catalog", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Dataset": { "label": "Dataset", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "DigitalDocument": { "label": "Digital Document", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Episode": { "label": "Episode", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Game": { "label": "Game", "validProperties":  { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "gameLocation": [] } },
-    "MediaObject": { "label": "Media Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
-    "AudioObject": { "label": "Audio Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
-    "ImageObject": { "label": "Image Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
-    "Map": { "label": "Map", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Movie": { "label": "Movie", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "MusicComposition": { "label": "Music Composition", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "MusicPlaylist": { "label": "Music Playlist", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "MusicRecording": { "label": "Music Recording", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Painting": { "label": "Painting", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Photograph": { "label": "Photograph", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "PublicationIssue": { "label": "Publication Issue", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "PublicationVolume": { "label": "Publication Volume", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Question": { "label": "Question", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Recipe": { "label": "Recipe", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Review": { "label": "Review", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Sculpture": { "label": "Sculpture", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "Series": { "label": "Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "SoftwareApplication": { "label": "Software Application", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "TVSeason": { "label": "TV Season", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "TVSeries": { "label": "TV Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "SoftwareSourceCode": { "label": "Software Source Code", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "VisualArtwork": { "label": "Visual Artwork", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "WebPage": { "label": "Webpage", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-    "WebSite": { "label": "Website", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Article": { "label": "Article", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Blog": { "label": "Blog", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Book": { "label": "Book", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Clip": { "label": "Clip", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Comment": { "label": "Comment", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Conversation": { "label": "Conversation", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "CreativeWorkSeason": { "label": "Creative Work Season", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "CreativeWorkSeries": { "label": "Creative Work Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "DataCatalog": { "label": "Data Catalog", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Dataset": { "label": "Dataset", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "DigitalDocument": { "label": "Digital Document", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Episode": { "label": "Episode", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Game": { "label": "Game", "validProperties":  { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "gameLocation": [] } },
+        "MediaObject": { "label": "Media Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
+        "AudioObject": { "label": "Audio Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
+        "ImageObject": { "label": "Image Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
+        "Map": { "label": "Map", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Movie": { "label": "Movie", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "MusicComposition": { "label": "Music Composition", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "MusicPlaylist": { "label": "Music Playlist", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "MusicRecording": { "label": "Music Recording", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Painting": { "label": "Painting", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Photograph": { "label": "Photograph", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "PublicationIssue": { "label": "Publication Issue", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "PublicationVolume": { "label": "Publication Volume", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Question": { "label": "Question", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Recipe": { "label": "Recipe", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Review": { "label": "Review", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Sculpture": { "label": "Sculpture", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Series": { "label": "Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "SoftwareApplication": { "label": "Software Application", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "TVSeason": { "label": "TV Season", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "TVSeries": { "label": "TV Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "SoftwareSourceCode": { "label": "Software Source Code", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "VisualArtwork": { "label": "Visual Artwork", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "WebPage": { "label": "Webpage", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "WebSite": { "label": "Website", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
 
     "Person": { "label": "Person", "validProperties": { "birthPlace": [], "deathPlace": [], "hasPOS": [], "homeLocation": [], "workLocation": [] } },
 
@@ -417,23 +416,127 @@ var validItemTypesEn = {
     "Service": { "label": "Service", "validProperties": { "areaServed": [] } },
     "ContactPoint": { "label": "Contact Point", "validProperties": { "areaServed": [] } },
     "Place": { "label": "Place", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "Accommodation": { "label": "Accommodation", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "AdministrativeArea": { "label": "Administrative Area", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "City": { "label": "City", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "Country": { "label": "Country", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "State": { "label": "State", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "CivicStructure": { "label": "Civic Structure", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "Airport": { "label": "Airport", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "Aquarium": { "label": "Aquarium", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "Beach": { "label": "Beach", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "Bridge": { "label": "Bridge", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "BusStation": { "label": "Bus Station", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "BusStop": { "label": "Bus Stop", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "Campground": { "label": "Campground", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-    "Cemetery": { "label": "Cemetery", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+        "Accommodation": { "label": "Accommodation", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+        "AdministrativeArea": { "label": "Administrative Area", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+            "City": { "label": "City", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+            "Country": { "label": "Country", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+            "State": { "label": "State", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+        "CivicStructure": { "label": "Civic Structure", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+            "Airport": { "label": "Airport", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+            "Aquarium": { "label": "Aquarium", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+            "Beach": { "label": "Beach", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+        "Bridge": { "label": "Bridge", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+        "BusStation": { "label": "Bus Station", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+        "BusStop": { "label": "Bus Stop", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+        "Campground": { "label": "Campground", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+        "Cemetery": { "label": "Cemetery", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+        "Crematorium": { "label": "Crematorium", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "EventVenue": { "label": "EventVenue", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "FireStation": { "label": "FireStation", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "GovernmentBuilding": { "label": "GovernmentBuilding", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "Hospital": { "label": "Hospital", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "MovieTheater": { "label": "MovieTheater", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "Museum": { "label": "Museum", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "MusicVenue": { "label": "MusicVenue", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "Park": { "label": "Park", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "ParkingFacility": { "label": "ParkingFacility", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "PerformingArtsTheater": { "label": "PerformingArtsTheater", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "PlaceOfWorship": { "label": "PlaceOfWorship", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "Playground": { "label": "Playground", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "PoliceStation": { "label": "PoliceStation", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "RVPark": { "label": "RVPark", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "StadiumOrArena": { "label": "StadiumOrArena", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "SubwayStation": { "label": "SubwayStation", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "TaxiStand": { "label": "TaxiStand", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "TrainStation": { "label": "TrainStation", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "Zoo": { "label": "Crematorium", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+
     "LandmarksOrHistoricalBuildings": { "label": "Landmarks or Historical Buildings", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
     "Landform": { "label": "Landform", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+        "BodyOfWater": { "label": "BodyOfWater", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "Continent": { "label": "Continent", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "Mountain": { "label": "Mountain", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
+        "Volcano": { "label": "Volcano", "validProperties": [ "containedInPlace": [], "containsPlace": [], "geo": [] ] },
     "LocalBusiness": { "label": "Local Business", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+        "AnimalShelter": { "label": "Animal Shelter", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+        "AutomotiveBusiness": { "label": "Automotive Business", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+        "ChildCare": { "label": "Child Care", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+        "Dentist": { "label": "Dentist", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+        "DryCleaningOrLaundry": { "label": "Dry, Cleaning Or Laundry", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+        "EmergencyService": { "label": "Emergency Service", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+        "EmploymentAgency": { "label": "Employment Agency", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },        
+        "EntertainmentBusiness": { "label": "Entertainment Business", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+            "AdultEntertainment": { "label": "Adult Entertainment", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+            "AmusementPark": { "label": "Amusement Park", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+            "ArtGallery": { "label": "Art Gallery", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+            "Casino": { "label": "Casino", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+            "ComedyClub": { "label": "Comedy Club", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+            "NightClub": { "label": "Night Club", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] },
+        "FinancialService": {},
+            "AccountingService": {},
+            "AutomatedTeller": {},
+            "BankOrCreditUnion": {},
+            "InsuranceAgency": {},
+        "FoodEstablishment": {},
+            "Bakery": {},
+            "BarOrPub": {},
+            "Brewery": {},
+            "CafeOrCoffeeShop": {},
+            "FastFoodRestaurant": {},
+            "IceCreamShop": {},
+            "Restaurant": {},
+            "Winery": {},
+            "Distillery": {},
+        "GovernmentOffice": {}, "PostOffice": {},
+        "HealthAndBeautyBusiness": {},
+        "HomeAndConstructionBusiness": {},
+            "Electrician": {},
+            "GeneralContractor": {},
+            "HVACBusiness": {},
+            "HousePainter": {},
+            "Locksmith": {},
+            "MovingCompany": {},
+            "Plumber": {},
+            "RoofingContractor": {},
+        "InternetCafe": {},
+        "LegalService": {}, "Attorney": {}, "Notary": {},
+        "Library": {}, "LodgingBusiness": {},
+        "ProfessionalService": {}, "RadioStation": {}, "RealEstateAgent": {},
+        "RecyclingCenter": {}, "SelfStorage": {}, "ShoppingCenter": {},
+        "SportsActivityLocation": {}, "BowlingAlley": {}, "ExerciseGym": {}, "HealthClub": {}, "PublicSwimmingPool": {}, "SkiResort": {}, "SportsClub": {}, "TennisComplex": {},
+        "Store": {},
+            "AutoPartsStore": {},
+            "BikeStore": {},
+            "BookStore": {},
+            "ClothingStore": {},
+            "ComputerStore": {},
+            "ConvenienceStore": {},
+            "DepartmentStore": {},
+            "ElectronicsStore": {},
+            "Florist": {},
+            "FurnitureStore": {},
+            "GaredenStore": {},
+            "GroceryStore": {},
+            "HardwareStore": {},
+            "HobbyShop": {},
+            "HomeGoodsStore": {},
+            "JewelryStore": {},
+            "LiquorStore": {},
+            "MensClothingStore": {},
+            "MobilePhoneStore": {},
+            "MovieRentalStore": {},
+            "MusicStore": {},
+            "OfficeEquipmentStore": {},
+            "OutletStore": {},
+            "PawnShop": {},
+            "PetStore": {},
+            "ShoeStore": {},
+            "SportingGoodsStore": {},
+            "TireShop": {},
+            "ToyStore": {},
+            "WholesaleStore": {},
+        "TelevisionStation": {},
+        "TourstInformationCenter": {}, "TravelAgency": {},
     "Residence": { "label": "Residence", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
     "TouristAttraction": { "label": "Tourist Attraction", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } }
 }
@@ -469,7 +572,7 @@ var validPlaceTypes = {
         "AnimalShelter": {}, "AutomotiveBusiness": {}, "ChildCare": {},
         "Dentist": {}, "DryCleaningOrLaundry": {}, "EmergencyService": {},
         "EmploymentAgency": {},
-        "EntertainmentBusiness": {}, "AdultEntertainment": {}, "AmusementPark": {}, "ArtGallery": {}, "Casion": {}, "ComedyClub": {}, "NightClub": {},
+        "EntertainmentBusiness": {}, "AdultEntertainment": {}, "AmusementPark": {}, "ArtGallery": {}, "Casino": {}, "ComedyClub": {}, "NightClub": {},
         "FinancialService": {}, "AccountingService": {}, "AutomatedTeller": {}, "BankOrCreditUnion": {}, "InsuranceAgency": {},
         "FoodEstablishment": {}, "Bakery": {}, "BarOrPub": {}, "Brewery": {}, "CafeOrCoffeeShop": {}, "FastFoodRestaurant": {}, "IceCreamShop": {}, "Restaurant": {}, "Winery": {}, "Distillery": {},
         "GovernmentOffice": {}, "PostOffice": {},
