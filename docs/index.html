@@ -52,31 +52,27 @@
         <p>Your feedback or contributions are very welcome. Please use <a href="/ifl-geovis/Leaflet.annotate">this issue tracker</a> to report any issues you experienced with it.</p>
 
         <h1>Example Maps</h1>
-        <ul>
-          <li>
-            <a href="/Leaflet.annotate/example/paris/">Public Sculptures in Paris with a Picture in Wikidata</a>
-          <p>
-            In this example i just blatantly highlight data representing public sculptures in the city of Paris. All web map elements are annotated as representing a <a href="http://schema.org/Photograph">Photographs</a>depicting a specific <a href="http://schema.org/contentLocation">contentLocation</a> and are a specific type of <a href="http://schema.org/CreativeWork">CreativeWork</a>.
-          </p>
-          <p>
-            Here is the Leaflet code which produces the semantic markup explorable in the example. Bold elements are interpreted by the annotate plugin to produce proper markup.
-          </p>
-          <pre>
-            var photo = L.circleMarker(coordinates, { keepInView: true,
-              className: 'sculpture-photo', maxWidth: "auto",
-              alt: "Place of a sculpture named " + popupTitle,
-              <b>itemtype: 'Photograph', geoprop: 'contentLocation',
-              url: photoURL, title: 'Picture of ' + popupTitle</b>
-            }).setRadius(3)
-          </pre>
-          <p>
-            If you past the generated markup into Googles Structured Data Testing Tool you will find out that it can identify/recognize ~400pictures were composed in this map.
-          </p>
-          <p>
-            The data for this map is fetched live with SPARQL from <a href="http://query.wikidata.org">query.wikidata.org</a>. Sculptures are shown when they are located in <a href="https://www.wikidata.org/wiki/Q90">Paris</a> (or one of its districts) and have a publicly licensed picture associated in wikmedia commons. The semantic annotation of the <em>CircleMarker</em> elements here happens in the SVG fragment created by Leaflet and, according to the standard, in a <em>metadata</em> element.
-          </p>
-        </li>
-        </ul>
+        <p>
+          <a href="/Leaflet.annotate/example/paris/">Public Sculptures in Paris with a Picture in Wikidata</a>
+          In this first example i just blatantly highlight data representing public sculptures in the city of Paris. All web map elements are annotated as representing a <a href="http://schema.org/Photograph">Photographs</a> depicting a specific <a href="http://schema.org/contentLocation">contentLocation</a>.
+        </p>
+        <p>
+          Here is the Leaflet code which produces the semantic markup explorable in the example. Bold elements are interpreted by the annotate plugin to produce proper markup.
+        </p>
+        <pre>
+var photo = L.circleMarker(coordinates, { keepInView: true,
+className: 'sculpture-photo', maxWidth: "auto",
+alt: "Place of a sculpture named " + popupTitle,
+<b>itemtype: 'Photograph', geoprop: 'contentLocation',
+url: photoURL, title: 'Picture of ' + popupTitle</b>
+}).setRadius(3)
+        </pre>
+        <p>
+          If you copy & paste the <em>generated</em> markup into Googles Structured Data Testing Tool you will find out that it can identify/recognize ~400pictures were composed in this map.
+        </p>
+        <p>
+          The data for this map is fetched live with SPARQL from <a href="http://query.wikidata.org">query.wikidata.org</a>. Sculptures are shown when they are located in <a href="https://www.wikidata.org/wiki/Q90">Paris</a> (or one of its districts) and have a publicly licensed picture associated in wikmedia commons. The semantic annotation of the <em>CircleMarker</em> elements here happens in the SVG fragment created by Leaflet and, according to the standard, in a <em>metadata</em> element.
+        </p>
 
 
         <h1>Overview &amp; installation</h1>
