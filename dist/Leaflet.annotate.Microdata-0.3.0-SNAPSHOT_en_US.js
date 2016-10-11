@@ -236,11 +236,13 @@ var Microdata = {
             element = document.createElement(element)
         }
         // console.log("Building Geo Annotation", object.options.itemtype, geoType, geoPropertyName)
-        // --- Here we know the entity to annotate is a sub-type of Place (and therewith has the "geo"-property)
+        // --- Here we know the entity to annotate has the "geo"-property
         if (hasGeoProperty(object.options.itemtype)) {
             element.setAttribute('itemprop', geoPropertyName)
             this._buildGeographicIndicators(element, geoType, object)
         // --- Here we know that the type has a property defined which can handle a "Place" as its value
+        // --- ### Also allow for geographic annotation with not only Place but, e.g its subtypes, like 
+        // --- "AdministrativeArea" or other types "GeoShape", "GeoCoordinate" or simply "Text"
         } else if (isValidPlaceProperty(geoPropertyName)) {
             element.setAttribute('itemscope','')
             element.setAttribute('itemtype', 'http://schema.org/Place')
@@ -355,6 +357,9 @@ L.ImageOverlay.include({
 
 // --- An optimized version of an schema validation tool for building
 // --- dialogs allowing the annotation of web map elements.
+
+// TODO: Intangible Subtypes. Products and Actions probably not.
+// If you extend this list please make sure each type is listed only once.
 
 var validItemTypesEn = {
     "Organization": { "label": "Organization", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },

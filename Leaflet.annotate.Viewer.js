@@ -28,7 +28,7 @@ L.Control.AnnotationViewer = L.Control.extend({
         // happens after added to map
         var container = L.DomUtil.create('div', 'annotation-viewer search-container')
         this.a = L.DomUtil.create('a', 'leaflet-control-annotation-viewer')
-        this.a.innerHTML = '<img src="readerView-Icon-decentblue-transparent.png" title="Launch Annotation Reader">'
+        this.a.innerHTML = '<img src="css/readerView-Icon-decentblue-transparent.png" title="Launch Annotation Reader">'
         var renderAnnotationViewer = this._toggleAnnotationViewer
         var _context = this
         this.a.onclick = function(e) {
@@ -258,7 +258,7 @@ L.Control.AnnotationViewer = L.Control.extend({
             L.DomEvent.addListener(context.input, 'keyup', context.keyup, context)
             L.DomEvent.addListener(context.form, 'submit', context.submit, context)
         } else {
-            container.children[0].innerHTML = '<img src="readerView-Icon-decentblue-transparent.png" title="Launch Annotation Reader">'
+            container.children[0].innerHTML = '<img src="css/readerView-Icon-decentblue-transparent.png" title="Launch Annotation Reader">'
             var childElements = Array.from(container.children)
             for (var c in childElements) {
                 if (childElements[c].localName === "form" || childElements[c].className.indexOf('type-group-item') != -1) {
