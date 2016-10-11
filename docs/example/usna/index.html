@@ -15,20 +15,14 @@
 		<link rel="stylesheet" href="css/example.css" />
 		<link rel="stylesheet" href="css/viewer-style.css" />
 
-	</head>
-
-	<body>
-
-		<script src="../vendor/Leaflet-0.7.7/leaflet.js"></script>
-		<script src="../vendor/jquery-2.2.2.min.js"></script>
+		<script defer src="../vendor/Leaflet-0.7.7/leaflet.js"></script>
+		<script defer src="../vendor/jquery-2.2.2.min.js"></script>
 
 		<!-- Microdata.js needs to be loaded before Leaflet.annotate.Viewer.js due to a CONSTANT-->
-		<script src="../Leaflet.annotate.Microdata-0.3.0-SNAPSHOT_en_US.min.js"></script>
-		<script src="../Leaflet.annotate.Viewer-0.3.0-SNAPSHOT.min.js"></script>
+		<script defer src="../Leaflet.annotate.Microdata-0.3.0-SNAPSHOT_en_US.min.js"></script>
+		<script defer src="../Leaflet.annotate.Viewer-0.3.0-SNAPSHOT.min.js"></script>
 
-		<div id="map"></div>
-
-		<script type="text/javascript">
+		<script defer type="text/javascript">
 
 			var tileLayerURL = 'https://api.tiles.mapbox.com/v4/maltwisney.91ae9b43/{z}/{x}/{y}.png?access_token=pk.eyJ1IjoibWFsdHdpc25leSIsImEiOiJlODg3M2M5YzFhY2Y2NWMzMmE0Nzk1YWNjMWYwN2U0ZCJ9.b_4gukx7cUR4-spxHbj_Kw'
 
@@ -105,6 +99,12 @@
 			adjust_map_view()
 
 		</script>
+
+	</head>
+
+	<body>
+
+		<div id="map"></div>
 
 	</body>
 </html>
