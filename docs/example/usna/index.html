@@ -11,9 +11,23 @@
 		<meta name="description" content="A dummy map showing how to use the Leaflet.annotate plugin. Annotates 
 		geographic web map elements in Schema.org and Dublin Core.">
 
-		<link rel="stylesheet" href="../vendor/Leaflet-0.7.7/leaflet.css" />
-		<link rel="stylesheet" href="css/example.css" />
-		<link rel="stylesheet" href="css/viewer-style.css" />
+		<script type="text/javascript">
+
+			loadStyleSheetFile('../vendor/Leaflet-0.7.7/leaflet.css')
+			loadStyleSheetFile('css/example.css')
+			loadStyleSheetFile('css/viewer-style.css')
+
+			function loadStyleSheetFile(cssFileName) {
+				// Copy & Paste from Stackoverflow:
+				// http://stackoverflow.com/questions/19374843/css-delivery-optimization-how-to-defer-css-loading#19374984
+				// Function contributed by http://stackoverflow.com/users/2456038/rafasashi
+  		        var stylesheet = document.createElement('link')
+					stylesheet.href = cssFileName
+					stylesheet.rel = 'stylesheet'
+					stylesheet.type = 'text/css'
+				document.getElementsByTagName('head')[0].appendChild(stylesheet)
+          	}
+		</script>
 
 		<script defer src="../vendor/Leaflet-0.7.7/leaflet.js" type="text/javascript"></script>
 		<script defer src="../vendor/jquery-2.2.2.min.js" type="text/javascript"></script>
@@ -32,3 +46,9 @@
 
 	</body>
 </html>
+
+<noscript>
+	<link rel="stylesheet" href="../vendor/Leaflet-0.7.7/leaflet.css" />
+	<link rel="stylesheet" href="css/example.css" />
+	<link rel="stylesheet" href="css/viewer-style.css" />
+</noscript>
