@@ -118,7 +118,11 @@ Answers to the following questions are implemented in this extension:
 
 To annotate SVG Elements we introduce a `metadata` Element next to the respective `path`. In practice both are often grouped within a `g` element. All Schema.org and Dublin Core based annotation values are attributes of a `meta` element.
 
-Maps rendered in the **Internet Explorer** along with _VML_ are currently **not supported** when deploying Leaflet.annnotate. HTML `canvas` based rendering is also not supported, in fact, a `canvas` based approach for rendering geographic we maps is exactly the opposite of how Leaflet.annotate tries to representing geographical web maps in HTML.
+Maps annotated with this plugin are currently just tested to work with Internet Explorer 11 (Windows 7), Chromium 52.0.2743.x (Ubuntu 14.04, 64 Bit) and Firefox 49.0 (Ubuntu 14.04, 64 Bit). Most other versions of these browser should therefore work too. Safari is yet untested but should work fine too.
+
+HTML `canvas` based rendering is also not supported, in fact, a `canvas` based approach for rendering geographic we maps is exactly the opposite of how Leaflet.annotate tries to representing geographical web maps in HTML.
+
+Important: If you use JavaScript frameworks which manage the DOM for you, such as for example AngularJS, you (most probably) can not make use of this Leaflet extension.
 
 ### Release History
 
