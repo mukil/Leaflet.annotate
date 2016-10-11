@@ -14,7 +14,7 @@ Furthermore (as it defines an API) it allows developers to build all kinds of cr
 Advances the markup of your geographic web map according to standards and the geospatial domain present in the public Schema.org vocabulary. This makes your web map accessible. This implementation hooks into the standard LeafletJS API enabling you to improve your markup when using _Marker_, _CircleMarker_ or _GeoJSON_ elements from Leaflet. To use it include the following script tag in your HTML document:
 
 ```
-<script src="Leaflet.annotate.Microdata.js"></script>
+<script src="Leaflet.annotate.Microdata-0.3.0_en_US.min.js"></script>
 ```
 
 To annotate single map elements please check out the API documentation below. Basically your LeafletJS standard `options` object now can handle a simple `itemtype`. The plugin expects the value of such an itemtype be the name of a Schema.org type, e.g. _City_, or _Organisation_. All itemtypes which allow (by their type definition) you the expression of a property with a geographical extent or location as their value/s, are supported.
@@ -26,7 +26,7 @@ The AnnotationViewer is a new user dialog aimed at improving the experience for 
 The following script included in this repository ships it (Icon: `?`) to your document:
 
 ```
-<script src="Leaflet.annotate.Viewer.js"></script>
+<script src="Leaflet.annotate.Viewer-0.3.0.min.js"></script>
 ```
 
 And to use this control you must explicitly add it to your map, like any other custom Leaflet Control.
@@ -71,7 +71,7 @@ Note: Contrary to the standard specification an option (`key`) can be annotated 
 
 Include the following script from this repository in your HTML file:
 ```
-<script src="Leaflet.annotate.Microdata.js"></script>
+<script src="Leaflet.annotate.Microdata-0.3.0_en_US.min.js"></script>
 ```
 
 After that, if you pass `itemtype` as an option to your map element during creation, it is configured for annotation. Annnotation will happen if you add the map element to your Leaflet `map` object.
