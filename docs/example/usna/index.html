@@ -8,23 +8,18 @@
 		<meta charset="utf-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<meta name="author" content="Malte Reißig, IfL Leipzig">
+    	<meta name="description" content="A dummy map showing how to use the Leaflet.annotate plugin. Annotates geographic web map elements in Schema.org and Dublin Core.">
 
-		<link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
-		<!-- link rel="stylesheet" href="vendor/Leaflet-0.7.7/dist/leaflet.css" /-->
+        <link rel="stylesheet" href="../vendor/Leaflet-0.7.7/leaflet.css" />
 		<link rel="stylesheet" href="css/example.css" />
-		<!-- link rel="stylesheet" href="css/foundation.min.css" /-->
 		<link rel="stylesheet" href="css/viewer-style.css" />
 
-		<script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
-		<script src="https://code.jquery.com/jquery-2.2.3.min.js"
-				integrity="sha256-a23g1Nt4dtEYOj7bR+vTu7+T8VP13humZFBJNIYoEJo=" crossorigin="anonymous"></script>
-		<!-- script src="vendor/Leaflet-0.7.7/dist/leaflet-src.js"></script-->
-		<!-- script src="vendor/jquery-2.2.2.min.js"></script-->
+		<script src="../vendor/Leaflet-0.7.7/leaflet.js"></script>
+		<script src="../vendor/jquery-2.2.2.min.js"></script>
 
 		<!-- Microdata.js needs to be loaded before Leaflet.annotate.Viewer.js due to a CONSTANT-->
-		<script src="Leaflet.annotate.Microdata.js"></script>
-		<script src="Leaflet.annotate.Viewer.js"></script>
-		<script src="wikidata_queries.js"></script>
+		<script src="../Leaflet.annotate.Microdata-0.3.0-SNAPSHOT_en_US.min.js"></script>
+		<script src="../Leaflet.annotate.Viewer-0.3.0-SNAPSHOT.min.js"></script>
 
 	</head>
 
@@ -107,17 +102,6 @@
 
 			setup_map()
 			adjust_map_view()
-			wd.load_public_sculptures_in_paris(function(sculpturesInParis) {
-				console.log("Wikidata SPARQL Query Successfull", sculpturesInParis)
-				for (var scidx in sculpturesInParis.results.bindings) {
-					var wikidataSculptureData = sculpturesInParis.results.bindings[scidx]
-					if (wikidataSculptureData.coord) {
-						console.log("Public Sculpture Geocoded:", sculpturesInParis.results.bindings[scidx].title)
-					}
-				}
-			}, function(error) {
-				console.warn("Wikidata SPARQL Query FAILED", error)
-			})
 
 		</script>
 

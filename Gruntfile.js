@@ -13,23 +13,23 @@ module.exports = function(grunt) {
             js_en_US: {
                 files: {
                     'dist/Leaflet.annotate.Microdata-<%= pkg.version %>_en_US.js': [
-                        'Leaflet.annotate.Microdata.js',
-                        'Leaflet.annotate.types.en_US.js'
+                        'src/Leaflet.annotate.Microdata.js',
+                        'src/Leaflet.annotate.types.en_US.js'
                     ]
                 }
             },
             js_de_DE: {
                 files: {
                     'dist/Leaflet.annotate.Microdata-<%= pkg.version %>_de_DE.js': [
-                        'Leaflet.annotate.Microdata.js',
-                        'Leaflet.annotate.types.de_DE.js'
+                        'src/Leaflet.annotate.Microdata.js',
+                        'src/Leaflet.annotate.types.de_DE.js'
                     ]
                 }
             },
             js_annotate_Viewer: {
                 files: {
                     'dist/Leaflet.annotate.Viewer-<%= pkg.version %>.js': [
-                        'Leaflet.annotate.Viewer.js'
+                        'src/Leaflet.annotate.Viewer.js'
                     ]
                 }
             }
@@ -76,19 +76,27 @@ module.exports = function(grunt) {
                 dest: 'docs/example/Leaflet.annotate.Viewer-<%= pkg.version %>.min.js'
             },
             paris_example_viewerCSS: {
-                src: 'css/viewer-style.css',
+                src: 'src/css/viewer-style.css',
                 dest: 'docs/example/paris/css/viewer-style.css'
             },
             paris_example_viewerIcon: {
-                src: 'css/readerView-Icon-decentblue-transparent.png',
+                src: 'src/css/readerView-Icon-decentblue-transparent.png',
                 dest: 'docs/example/paris/css/readerView-Icon-decentblue-transparent.png'
             },
+            usna_example_viewerCSS: {
+                src: 'src/css/viewer-style.css',
+                dest: 'docs/example/usna/css/viewer-style.css'
+            },
+            usna_example_viewerIcon: {
+                src: 'src/css/readerView-Icon-decentblue-transparent.png',
+                dest: 'docs/example/usna/css/readerView-Icon-decentblue-transparent.png'
+            },
             dist_viewerIcon: {
-                src: 'css/readerView-Icon-decentblue-transparent.png',
+                src: 'src/css/readerView-Icon-decentblue-transparent.png',
                 dest: 'dist/css/readerView-Icon-decentblue-transparent.png'
             },
             dist_viewerCSS: {
-                src: 'css/viewer-style.css',
+                src: 'src/css/viewer-style.css',
                 dest: 'dist/css/viewer-style.css'
             },
             dist_readme: {
@@ -105,6 +113,8 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-uglify')
     grunt.loadNpmTasks('grunt-contrib-concat')
     grunt.loadNpmTasks('grunt-contrib-copy')
-    grunt.registerTask('default', ['concat', 'uglify', 'copy'])
+
+    grunt.registerTask('default', ['concat'])
+    grunt.registerTask('build', ['concat', 'uglify', 'copy'])
 
 }

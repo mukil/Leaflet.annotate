@@ -1,0 +1,35 @@
+
+body {
+    margin: 0px;
+    padding: 0px;
+}
+
+#map {
+    width: 100%; height: 100px;
+    margin-top: 0px;
+}
+
+.leaflet-popup-pane article {
+	transform: none !important;
+}
+
+.leaflet-control-container .annotation-viewer a.leaflet-control-annotation-viewer,
+.leaflet-bar,
+.leaflet-popup-content-wrapper {
+	border-radius: 0px;
+}
+
+/** Public Sculptures in Peris Example **/
+
+.leaflet-popup.sculpture-photo img {
+	max-width: 280px !important;
+	height: auto;
+}
+
+.leaflet-popup.sculpture-photo h3 {
+	margin-bottom: 0px;
+}
+
+.leaflet-popup.sculpture-photo {
+	min-width: 320px;
+}
