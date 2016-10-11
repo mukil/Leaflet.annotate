@@ -4,6 +4,8 @@
  * by Rene Rubalcava who published it on his blog (http://odoe.net/blog/custom-leaflet-control/).
  */
 
+var SCHEMA_ORG = "http://schema.org/"
+
 // --- Client Side Model of all nodes annotated in the current DOM ---- //
 var articleElements = []
 var metaElements = []
