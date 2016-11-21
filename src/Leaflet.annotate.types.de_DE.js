@@ -5,61 +5,61 @@
 // TODO: Intangible Subtypes. Products and Actions probably not.
 // If you extend this list please make sure each type is listed only once.
 
-var validItemTypesEn = {
-    "Organization": { "label": "Organization", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-        "Airline": { "label": "Airline", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-        "Corporation": { "label": "Corporation", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-        "EducationalOrganization": { "label": "Educational Organization", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-            "CollegeOrUniversity": { "label": "College or University", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-            "ElementarySchool": { "label": "Elementary School", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-            "HighSchool": { "label": "High School", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-            "MiddleSchool": { "label": "Middle School", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-            "Preschool": { "label": "Preschool", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-            "School": { "label": "School", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-        "GovernmentalOrganization": { "label": "Governmental Organization", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-        "MedicalOrganization": { "label": "Medical Organization", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-        "NGO": { "label": "Non-Governmental Organization", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-        "PerformingGroup": { "label": "Performing Group", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
-        "SportsOrganization": { "label": "Sports Organization", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+var validItemTypesDe = {
+    "Organization": { "label": "Organisation", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+        "Airline": { "label": "Fluglinie", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+        "Corporation": { "label": "Konzern", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+        "EducationalOrganization": { "label": "Bildungsorganisation", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+            "CollegeOrUniversity": { "label": "Hochschule oder Universität", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+            "ElementarySchool": { "label": "Grundschule", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+            "HighSchool": { "label": "Oberschule", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+            "MiddleSchool": { "label": "Mittlere Schule", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+            "Preschool": { "label": "Vorschule", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+            "School": { "label": "Schule", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+        "GovernmentalOrganization": { "label": "Regierungsorganisation", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+        "MedicalOrganization": { "label": "Gesundheitsorganisation", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+        "NGO": { "label": "Nicht-Regierungs Organisation", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+        "PerformingGroup": { "label": "Künstlergruppe", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
+        "SportsOrganization": { "label": "Sport Organisation", "validProperties": { "areaServed": [], "foundingLocation": [], "hasPOS": [], "location": [] } },
 
-    "CreativeWork": { "label": "Creative Work", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Article": { "label": "Article", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+    "CreativeWork": { "label": "Werk", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Article": { "label": "Artikel", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
         "Blog": { "label": "Blog", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Book": { "label": "Book", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Book": { "label": "Buch", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
         "Clip": { "label": "Clip", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Comment": { "label": "Comment", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Conversation": { "label": "Conversation", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "CreativeWorkSeason": { "label": "Creative Work Season", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "CreativeWorkSeries": { "label": "Creative Work Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "DataCatalog": { "label": "Data Catalog", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Dataset": { "label": "Dataset", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "DigitalDocument": { "label": "Digital Document", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Comment": { "label": "Kommentar", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Conversation": { "label": "Unterhaltung", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "CreativeWorkSeason": { "label": "Werk Staffel", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "CreativeWorkSeries": { "label": "Werk Serie", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "DataCatalog": { "label": "Datenkatalog", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Dataset": { "label": "Datensatz", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "DigitalDocument": { "label": "Digitales Dokument", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
         "Episode": { "label": "Episode", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Game": { "label": "Game", "validProperties":  { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "gameLocation": [] } },
-        "MediaObject": { "label": "Media Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
-        "AudioObject": { "label": "Audio Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
-        "ImageObject": { "label": "Image Object", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
-        "Map": { "label": "Map", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Movie": { "label": "Movie", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "MusicComposition": { "label": "Music Composition", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "MusicPlaylist": { "label": "Music Playlist", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "MusicRecording": { "label": "Music Recording", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Painting": { "label": "Painting", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Photograph": { "label": "Photograph", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "PublicationIssue": { "label": "Publication Issue", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "PublicationVolume": { "label": "Publication Volume", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Question": { "label": "Question", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Recipe": { "label": "Recipe", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Review": { "label": "Review", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Sculpture": { "label": "Sculpture", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "Series": { "label": "Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "SoftwareApplication": { "label": "Software Application", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "TVSeason": { "label": "TV Season", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "TVSeries": { "label": "TV Series", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "SoftwareSourceCode": { "label": "Software Source Code", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "VisualArtwork": { "label": "Visual Artwork", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Game": { "label": "Spiel", "validProperties":  { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "gameLocation": [] } },
+        "MediaObject": { "label": "Medieninhalt", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
+        "AudioObject": { "label": "Audioinhalt", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
+        "ImageObject": { "label": "Bildinhalt", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [], "regionsAllowed": [] } },
+        "Map": { "label": "Karte", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Movie": { "label": "Film", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "MusicComposition": { "label": "Musikalische Komposition", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "MusicPlaylist": { "label": "Playliste", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "MusicRecording": { "label": "Musikalische Aufnahme", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Painting": { "label": "Gemaltes Bild", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Photograph": { "label": "Photographie", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "PublicationIssue": { "label": "Veröffentlichung Nr.", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "PublicationVolume": { "label": "Veröffentlichung Band", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Question": { "label": "Frage", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Recipe": { "label": "Rezept", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Review": { "label": "Rezension", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Sculpture": { "label": "Skulptur", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "Series": { "label": "Serie", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "SoftwareApplication": { "label": "Software Anwendung", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "TVSeason": { "label": "TV Staffel", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "TVSeries": { "label": "TV Serie", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "SoftwareSourceCode": { "label": "Software Quellcode", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "VisualArtwork": { "label": "Visuelles Kunstwerk", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
         "WebPage": { "label": "Webpage", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
-        "WebSite": { "label": "Website", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
+        "WebSite": { "label": "Webseite", "validProperties": { "contentLocation": [], "locationCreated": [], "spatialCoverage": [] } },
 
     "Person": { "label": "Person", "validProperties": { "birthPlace": [], "deathPlace": [], "hasPOS": [], "homeLocation": [], "workLocation": [] } },
 
@@ -258,12 +258,12 @@ var validItemTypesEn = {
 }
 
 function isValidItemTypeName(typeName) {
-    return (validItemTypesEn.hasOwnProperty(typeName))
+    return (validItemTypesDe.hasOwnProperty(typeName))
 }
 
 function isValidItemTypeProperty(typeName, geoPropertyName) {
-    if (validItemTypesEn.hasOwnProperty(typeName)) {
-        var itemType = validItemTypesEn[typeName]
+    if (validItemTypesDe.hasOwnProperty(typeName)) {
+        var itemType = validItemTypesDe[typeName]
         var props = itemType.validProperties
         for (var pidx in props) {
             if (pidx === geoPropertyName) return true
