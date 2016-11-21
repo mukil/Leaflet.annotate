@@ -13,26 +13,30 @@ module.exports = function(grunt) {
             js_en_US: {
                 files: {
                     'dist/Leaflet.annotate.Microdata-<%= pkg.version %>_en_US.js': [
+                        'src/util/anonymous_function_start.js',
                         'src/Leaflet.annotate.Microdata.js',
-                        'src/Leaflet.annotate.types.en_US.js'
+                        'src/Leaflet.annotate.types.en_US.js',
+                        'src/util/anonymous_function_end.js'
                     ]
                 }
             },
             js_de_DE: {
                 files: {
                     'dist/Leaflet.annotate.Microdata-<%= pkg.version %>_de_DE.js': [
+                        'src/util/anonymous_function_start.js',
                         'src/Leaflet.annotate.Microdata.js',
-                        'src/Leaflet.annotate.types.de_DE.js'
+                        'src/Leaflet.annotate.types.de_DE.js',
+                        'src/util/anonymous_function_end.js'
                     ]
                 }
-            },
+            }/**,
             js_annotate_Viewer: {
                 files: {
                     'dist/Leaflet.annotate.Viewer-<%= pkg.version %>.js': [
                         'src/Leaflet.annotate.Viewer.js'
                     ]
                 }
-            }
+            } **/
         },
         uglify: {
             js_en_US: {
@@ -82,10 +86,6 @@ module.exports = function(grunt) {
             paris_example_viewerIcon: {
                 src: 'src/css/readerView-Icon-decentblue-transparent.png',
                 dest: 'docs/example/paris/css/readerView-Icon-decentblue-transparent.png'
-            },
-            usna_example_viewerCSS: {
-                src: 'src/css/viewer-style.css',
-                dest: 'docs/example/usna/css/viewer-style.css'
             },
             usna_example_viewerIcon: {
                 src: 'src/css/readerView-Icon-decentblue-transparent.png',

@@ -18,7 +18,7 @@
       <header>
         <img alt="Leaflet.annotate Logo Graphic" title="Shiny Leaflet.annotate logo graphic"
           src="https://raw.githubusercontent.com/mukil/Leaflet.annotate/master/docs/leaflet.annotate-logo-v1.png">
-        <p>A Leaflet plugin to publish geographic maps in HTML documents machine readable through generating Schema.org in the Microdata Syntax.</p>
+        <p>A Leaflet plugin to publish geographic maps in HTML as machine readable documents through integrating Schema.org and Dublin Core Metadata Elements in the Microdata Syntax.</p>
         <p class="view">
             <a href="https://github.com/ifl-geovis/Leaflet.annotate">View the Project on GitHub <small>ifl-geovis/Leaflet.annotate</small></a>
         </p>
@@ -33,19 +33,28 @@
         <h1>Introduction</h1>
 
         <p>
-          This plugin extends the options for the LeafletJS Standard API elements <b>Marker</b>, <b>CircleMarker</b>, <b>Popup</b>, <b>ImageOverlay</b> and <b>GeoJSON</b> so you can publish these map elements in HTML semantically annotated and therewith machine readable web maps. While there is quite some effort already around the development of new geospatial data catalogs (which are awesome) this plugin turns the focus onto geographic web maps. Acknowleding that, de-facto, some maps already are data catalogs themselves, they are just not that well represented in HTML so that other programs can extract and re-use the information people collect in them.</p>
+          This plugin extends the options for the LeafletJS Standard API elements <b>Marker</b>, <b>CircleMarker</b>, <b>Popup</b>, <b>ImageOverlay</b> and <b>GeoJSON</b> so you can publish these map elements in HTML semantically annotated &dash; and therewith machine readable web maps. While there is quite some effort already around the development of new geospatial data catalogs (which are awesome) this plugin turns the focus onto geographic web maps. Acknowleding that, de-facto, some maps already are data catalogs themselves, they are just not that well represented in HTML so that other programs can extract and re-use the information people collect in them.</p>
 
-          <p>Using this plugin you will not only to contribute to research of digital cartography but also make search engines and other applications (a) understand what is your map about, (b) what elements it is made of and (c) which parts of the world it explicitly deals with. Everything from just analyzing your maps representation in HTML.
+        <p>
+          Using this plugin you will not only to contribute to research of digital cartography but also make search engines and other applications (a) understand what is your map about, (b) what elements it is made of and (c) which parts of the world it explicitly deals with. Everything from just analyzing your maps representation in HTML.
         </p>
 
+        <p>
+          Leaflet.annotate aims to ship the foundations for transforming the open source web mapping library LeafletJS into a semantic authoring environment for spatial data on the web. Users of Leaflet.annotate can focus on annotating the contents they want to map (or encode) as the knowledge about which cartographic specialities are in effect and which geographic markup fits best is already coded in Leaflet.
+        </p>
+
+        <h3>Your web map elements when published with semantic markup can become geo-referenced "resource descriptions", which in turn are:</h3>
         <ul>
             <li>identifiable and addressable for others,</li>
-            <li>searchable for users through search engines,</li>
-            <li>re-usable and interoperable for application developers,</li>
-            <li>real collections of linked data and therewith,</li>
-            <li>potentially multilingual,</li>
-            <li>self-contained documents and therewith reproducible.</li>
+            <li>discoverable for users through search engines,</li>
+            <li>interoperable items for other application developers,</li>
+            <li>collections of linked data and therewith and</li>
+            <li>potentially multilingual without much additional effort.</li>
         </ul>
+        <!--p>
+          When we code our semantic markup for geographic web map right into HTML and we drive this a little bit further, our web maps can become "self-contained" documents. This would be great news for cartographic, but also spatial science and computing research as therefore the ability to archive and reproduce digital and especially ephemeral web maps as research data would be significantly advanced.
+        </p-->
+        <!--p>Furthermorem, not only how we can produce geographic web maps is changed but how we will read and experience them will change too.</p-->
             
         <p>Therefore we wrote this small script, integrating freeing you of caring much about the necessary syntax details.</p>
         

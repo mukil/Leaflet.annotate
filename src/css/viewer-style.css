@@ -7,7 +7,7 @@
 .annotation-viewer input { font-size: 16px; }
 .annotation-viewer .list-group { overflow-y: scroll;}
 .annotation-viewer .metadata-group {
-    position: relative; border-top: 1px solid #eee; 
+    position: relative; border-top: 1px solid #eee;
     overflow-y: scroll; padding-top: 10px;
 }
 .annotation-viewer .metadata-group .metadata-field {

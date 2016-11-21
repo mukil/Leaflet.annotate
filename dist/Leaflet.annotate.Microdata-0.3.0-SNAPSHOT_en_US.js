@@ -1,4 +1,7 @@
 
+(function() {
+
+
 // --- Implementation for building annnotations in Microdata Syntax
 
 var SCHEMA_ORG = "http://schema.org/"
@@ -810,3 +813,6 @@ var validPlaceProperties = {
 function isValidPlaceProperty(geoPropertyName) {
     return (validPlaceProperties.hasOwnProperty(geoPropertyName))
 }
+
+
+})()
