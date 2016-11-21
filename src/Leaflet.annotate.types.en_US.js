@@ -109,7 +109,7 @@ var validItemTypesEn = {
 
     "Event": { "label": "Event", "validProperties": { "location": [] } },
 
-    "ExerciseAction": { "label": "Excercise Action", "validProperties": { "fromLocation": [], "toLocation": [] } },
+    "ExerciseAction": { "label": "Exercise Action", "validProperties": { "fromLocation": [], "toLocation": [] } },
     "MoveAction": { "label": "Move Action", "validProperties": { "fromLocation": [], "toLocation": [] } },
     "TransferAction": { "label": "Transfer Action", "validProperties": { "fromLocation": [], "toLocation": [] } },
 
@@ -194,7 +194,7 @@ var validItemTypesEn = {
                 "Electrician": { "label": "Electrician", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
                 "GeneralContractor": { "label": "General Contractor", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
                 "HVACBusiness": { "label": "HVAC Business", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-                "HousePainter": { "label": "House Painer", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+                "HousePainter": { "label": "House Painter", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
                 "Locksmith": { "label": "Locksmith", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
                 "MovingCompany": { "label": "Moving Company", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
                 "Plumber": { "label": "Plumber", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
@@ -251,7 +251,7 @@ var validItemTypesEn = {
                 "ToyStore": { "label": "Toy Store", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
                 "WholesaleStore": { "label": "Wholesale Store", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
             "TelevisionStation": { "label": "Television Station", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
-            "TourstInformationCenter": { "label": "Tourst Information Center", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
+            "TourstInformationCenter": { "label": "Tourist Information Center", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
             "TravelAgency": { "label": "Travel Agency", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
         "Residence": { "label": "Residence", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } },
         "TouristAttraction": { "label": "Tourist Attraction", "validProperties": { "containedInPlace": [], "containsPlace": [], "geo": [] } }
