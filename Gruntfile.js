@@ -29,14 +29,35 @@ module.exports = function(grunt) {
                         'src/util/anonymous_function_end.js'
                     ]
                 }
-            }/**,
+            },
+            js_util_Microdata: {
+                files: {
+                    'dist/util/Leaflet.annotate.Microdata-<%= pkg.version %>.js': [
+                        'src/Leaflet.annotate.Microdata.js'
+                    ]
+                }
+            },
+            js_util_en_EN: {
+                files: {
+                    'dist/util/Leaflet.annotate.types_en_US-<%= pkg.version %>.js': [
+                        'src/Leaflet.annotate.types.en_US.js'
+                    ]
+                }
+            },
+            js_util_de_DE: {
+                files: {
+                    'dist/util/Leaflet.annotate.types_de_DE-<%= pkg.version %>.js': [
+                        'src/Leaflet.annotate.types.de_DE.js'
+                    ]
+                }
+            },
             js_annotate_Viewer: {
                 files: {
-                    'dist/Leaflet.annotate.Viewer-<%= pkg.version %>.js': [
+                    'dist/util/Leaflet.annotate.Viewer-<%= pkg.version %>.js': [
                         'src/Leaflet.annotate.Viewer.js'
                     ]
                 }
-            } **/
+            }
         },
         uglify: {
             js_en_US: {
@@ -59,13 +80,43 @@ module.exports = function(grunt) {
                     ]
                 }
             },
+            js_util_Microdata: {
+                options: {
+                    banner: bannerString
+                },
+                files: {
+                    'dist/util/Leaflet.annotate.Microdata-<%= pkg.version %>.min.js': [
+                        'dist/util/Leaflet.annotate.Microdata-<%= pkg.version %>.js'
+                    ]
+                }
+            },
+            js_util_de_DE: {
+                options: {
+                    banner: bannerString
+                },
+                files: {
+                    'dist/util/Leaflet.annotate.types_de_DE-<%= pkg.version %>.min.js': [
+                        'dist/util/Leaflet.annotate.types_de_DE-<%= pkg.version %>.js'
+                    ]
+                }
+            },
+            js_util_en_US: {
+                options: {
+                    banner: bannerString
+                },
+                files: {
+                    'dist/util/Leaflet.annotate.types_en_US-<%= pkg.version %>.min.js': [
+                        'dist/util/Leaflet.annotate.types_en_US-<%= pkg.version %>.js'
+                    ]
+                }
+            },
             js_viewer: {
                 options: {
                     banner: bannerString
                 },
                 files: {
-                    'dist/Leaflet.annotate.Viewer-<%= pkg.version %>.min.js': [
-                        'dist/Leaflet.annotate.Viewer-<%= pkg.version %>.js'
+                    'dist/util/Leaflet.annotate.Viewer-<%= pkg.version %>.min.js': [
+                        'dist/util/Leaflet.annotate.Viewer-<%= pkg.version %>.js'
                     ]
                 }
             }
