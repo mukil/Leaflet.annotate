@@ -57,6 +57,28 @@ module.exports = function(grunt) {
                         'src/Leaflet.annotate.Viewer.js'
                     ]
                 }
+            },
+            js_annotate_complete_de_DE: {
+                files: {
+                    'dist/Leaflet.annotate.complete_de_DE-<%= pkg.version %>.js': [
+                        'src/util/anonymous_function_start.js',
+                        'src/Leaflet.annotate.Microdata.js',
+                        'src/Leaflet.annotate.types.de_DE.js',
+                        'src/util/anonymous_function_end.js',
+                        'src/Leaflet.annotate.Viewer.js'
+                    ]
+                }
+            },
+            js_annotate_complete_en_US: {
+                files: {
+                    'dist/Leaflet.annotate.complete_en_US-<%= pkg.version %>.js': [
+                        'src/util/anonymous_function_start.js',
+                        'src/Leaflet.annotate.Microdata.js',
+                        'src/Leaflet.annotate.types.en_US.js',
+                        'src/util/anonymous_function_end.js',
+                        'src/Leaflet.annotate.Viewer.js'
+                    ]
+                }
             }
         },
         uglify: {
@@ -110,6 +132,26 @@ module.exports = function(grunt) {
                     ]
                 }
             },
+            js_annotate_complete_de_DE: {
+                options: {
+                    banner: bannerString
+                },
+                files: {
+                    'dist/Leaflet.annotate.complete_de_DE-<%= pkg.version %>.min.js': [
+                        'dist/Leaflet.annotate.complete_de_DE-<%= pkg.version %>.js'
+                    ]
+                }
+            },
+            js_annotate_complete_en_US: {
+                options: {
+                    banner: bannerString
+                },
+                files: {
+                    'dist/Leaflet.annotate.complete_en_US-<%= pkg.version %>.min.js': [
+                        'dist/Leaflet.annotate.complete_en_US-<%= pkg.version %>.js'
+                    ]
+                }
+            },
             js_viewer: {
                 options: {
                     banner: bannerString
@@ -122,11 +164,11 @@ module.exports = function(grunt) {
             }
         },
         copy: {
-            paris_example_Microdata: {
+            example_Microdata: {
                 src: 'dist/Leaflet.annotate.Microdata-<%= pkg.version %>_en_US.min.js',
                 dest: 'docs/example/Leaflet.annotate.Microdata-<%= pkg.version %>_en_US.min.js'
             },
-            paris_example_Viewer: {
+            example_Viewer: {
                 src: 'dist/Leaflet.annotate.Viewer-<%= pkg.version %>.min.js',
                 dest: 'docs/example/Leaflet.annotate.Viewer-<%= pkg.version %>.min.js'
             },

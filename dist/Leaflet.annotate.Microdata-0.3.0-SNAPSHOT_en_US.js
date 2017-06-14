@@ -77,9 +77,21 @@ var Microdata = {
         }
         return array
     },
-    _createMetaElement: function(key, value) {
-        var el = document.createElement('meta')
+    _createMetaElement: function(key, value, namespaceSVG) {
+        var el = undefined
+        if (namespaceSVG) {
+            el = el = document.createElement('desc')
             el.setAttribute(key, value)
+        } else {
+            el = document.createElement('meta')
+            el.setAttribute(key, value)
+        }
+        return el
+    },
+    _createSVGTitleElement: function(key, value) {
+        var el = document.createElement('title')
+            el.setAttribute(key, value)
+            el.innerText = value
         return el
     },
     _createGroupingElement: function(elementName, key, value) {
@@ -106,12 +118,12 @@ var Microdata = {
         // 1) Annotating "Marker", "Popup" (Point Style) and "Image Overlay" into a new ARTICLE element
         if (!targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
             metadata = this._buildAnnotationsContainer('article', domId, leafletId)
-            this._buildGenericProperties(metadata, this)
+            this._buildGenericProperties(metadata, this, targetIsSVGGroup)
             var placeAnnotation = undefined
             if (hasLatLngValuePair && !hasBoundingBox) {
-                placeAnnotation = this._buildGeoAnnotation('div', this, 'point', geoPropertyName)
+                placeAnnotation = this._buildGeoAnnotation('div', this, 'point', geoPropertyName, targetIsSVGGroup)
             } else if (hasBoundingBox) {
-                placeAnnotation = this._buildGeoAnnotation('div', this, 'box', geoPropertyName)
+                placeAnnotation = this._buildGeoAnnotation('div', this, 'box', geoPropertyName, targetIsSVGGroup)
             } else {
                 console.log("Invalid argument provided: Neither a BoundingBox nor a Coordinate Pair could be detected to build a geographic annotation.")
                 console.warn("Skipping semantic annotation of the following Leaflet item due to a previous error", this)
@@ -137,10 +149,10 @@ var Microdata = {
                 for (var lg in groupElements) {
                     var element = groupElements[lg]
                     var containerElement = element._container
-                    //console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
+                    var place = this._buildGeoAnnotation('g', element, 'shape', geoPropertyName, targetIsSVGGroup)
+                    // console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
                     metadata = this._buildAnnotationsContainer('metadata', domId, element['_leaflet_id'])
-                    this._buildGenericProperties(metadata, this)
-                    var place = this._buildGeoAnnotation('g', element, 'shape', geoPropertyName)
+                    this._buildGenericProperties(metadata, this, targetIsSVGGroup)
                     metadata.appendChild(place)
                     containerElement.appendChild(metadata)
                 }
@@ -148,9 +160,9 @@ var Microdata = {
             } else {
                 // 2.2) Build annotations for an SVG Based Element (ONE WITHOUT MULTIPLE LAYERS)
                 // console.log("Single SVG Element Annotations", this.options.itemtype, "SVG Element" + ", LeafletID", leafletId, this)
+                var place = this._buildGeoAnnotation('g', this, 'point', geoPropertyName, targetIsSVGGroup)
                 metadata = this._buildAnnotationsContainer('metadata', domId, leafletId)
-                this._buildGenericProperties(metadata, this)
-                var place = this._buildGeoAnnotation('g', this, 'point', geoPropertyName)
+                this._buildGenericProperties(metadata, this, targetIsSVGGroup)
                 metadata.appendChild(place)
             }
             if (metadata) {
@@ -167,74 +179,79 @@ var Microdata = {
         article.setAttribute('data-internal-leaflet-id', leafletId)
         return article
     },
-    _buildGenericProperties: function(parentElement, object) {
+    _buildGenericProperties: function(parentElement, object, namespaceSVG) {
         // Maps Leaflet.annotate options to Schema.org and Dublin Core Element Names
         if (object.options.hasOwnProperty('title')) {
-            this._appendMetaItempropContent(parentElement, 'name', object.options.title)
+            this._appendMetaItempropContent(parentElement, 'name', object.options.title, namespaceSVG)
         }
         if (object.options.hasOwnProperty('description')) {
-            this._appendMetaItempropContent(parentElement, 'description', object.options.description)
+            this._appendMetaItempropContent(parentElement, 'description', object.options.description, namespaceSVG)
         }
         if (object.options.hasOwnProperty('url')) {
-            this._appendMetaItempropContent(parentElement, 'url', object.options.url)
+            this._appendMetaItempropContent(parentElement, 'url', object.options.url, namespaceSVG)
         }
         if (object.options.hasOwnProperty('sameAs')) {
-            this._appendMetaItempropContent(parentElement, 'sameAs', object.options.sameAs)
+            this._appendMetaItempropContent(parentElement, 'sameAs', object.options.sameAs, namespaceSVG)
         }
         if (object.options.hasOwnProperty('alternateName')) {
-            this._appendMetaItempropContent(parentElement, 'alternateName', object.options.alternateName)
+            this._appendMetaItempropContent(parentElement, 'alternateName', object.options.alternateName, namespaceSVG)
         }
         if (object.options.hasOwnProperty('image')) {
-            this._appendMetaItempropContent(parentElement, 'image', object.options.image)
+            this._appendMetaItempropContent(parentElement, 'image', object.options.image, namespaceSVG)
         }
         // Dublin Core Legacy Namespace: http://purl.org/dc/elements/1.1 "dc:xyz"
         // Without: Title, Description, Subject, Type and Coverage) and a Duplicate with Thing: sameAs == identifier
         if (object.options.hasOwnProperty('creator')) {
-            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/creator', object.options.creator)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/creator', object.options.creator, namespaceSVG)
         }
         if (object.options.hasOwnProperty('contributor')) {
-            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/contributor', object.options.contributor)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/contributor', object.options.contributor, namespaceSVG)
         }
         if (object.options.hasOwnProperty('publisher')) {
-            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/publisher', object.options.publisher)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/publisher', object.options.publisher, namespaceSVG)
         }
         if (object.options.hasOwnProperty('published')) {
-            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/date', object.options.published)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/date', object.options.published, namespaceSVG)
         }
         if (object.options.hasOwnProperty('identifier')) {
-            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/identifier', object.options.identifier)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/identifier', object.options.identifier, namespaceSVG)
         }
         if (object.options.hasOwnProperty('rights')) {
-            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/rights', object.options.rights)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/rights', object.options.rights, namespaceSVG)
         }
         if (object.options.hasOwnProperty('derivedFrom')) {
-            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/source', object.options.derivedFrom)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/source', object.options.derivedFrom, namespaceSVG)
         }
         if (object.options.hasOwnProperty('format')) {
-            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/format', object.options.format)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/format', object.options.format, namespaceSVG)
         }
         if (object.options.hasOwnProperty('language')) {
-            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/language', object.options.language)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/elements/1.1/language', object.options.language, namespaceSVG)
         }
         // Terms Namespace http://purl.org/dc/terms/    "dcterms:xyz"
         if (object.options.hasOwnProperty('created')) {
-            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/terms/created', object.options.created)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/terms/created', object.options.created, namespaceSVG)
         }
         if (object.options.hasOwnProperty('modified')) {
-            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/terms/modified', object.options.modified)
+            this._appendMetaNameContent(parentElement, 'http://purl.org/dc/terms/modified', object.options.modified, namespaceSVG)
         }
     },
-    _appendMetaNameContent: function(parent, elementName, elementTextContent) {
-        var valueElement = this._createMetaElement('name', elementName)
-            valueElement.setAttribute('content', elementTextContent)
+    _appendMetaNameContent: function(parent, elementName, elementTextContent, namespaceSVG) {
+        var valueElement = this._createMetaElement('name', elementName, namespaceSVG)
+            valueElement.setAttribute('content', elementTextContent, namespaceSVG)
         parent.appendChild(valueElement)
     },
-    _appendMetaItempropContent: function(parent, elementName, elementTextContent) {
-        var valueElement = this._createMetaElement('itemprop', elementName)
+    _appendMetaItempropContent: function(parent, elementName, elementTextContent, namespaceSVG) {
+        var valueElement = undefined
+        if (elementName === 'name' && namespaceSVG) {
+            valueElement = this._createSVGTitleElement(elementName, elementTextContent)
+        } else {
+            valueElement = this._createMetaElement('itemprop', elementName, namespaceSVG)
             valueElement.setAttribute('content', elementTextContent)
-        parent.appendChild(valueElement)
+        }
+        if (valueElement) parent.appendChild(valueElement)
     },
-    _buildGeoAnnotation: function(element, object, geoType, geoPropertyName) {
+    _buildGeoAnnotation: function(element, object, geoType, geoPropertyName, namespaceSVG) {
         if (typeof element != 'object') {
             element = document.createElement(element)
         }
@@ -242,7 +259,7 @@ var Microdata = {
         // --- Here we know the entity to annotate has the "geo"-property
         if (hasGeoProperty(object.options.itemtype)) {
             element.setAttribute('itemprop', geoPropertyName)
-            this._buildGeographicIndicators(element, geoType, object)
+            this._buildGeographicIndicators(element, geoType, object, namespaceSVG)
         // --- Here we know that the type has a property defined which can handle a "Place" as its value
         // --- ### Also allow for geographic annotation with not only Place but, e.g its subtypes, like 
         // --- "AdministrativeArea" or other types "GeoShape", "GeoCoordinate" or simply "Text"
@@ -251,7 +268,7 @@ var Microdata = {
             element.setAttribute('itemtype', 'http://schema.org/Place')
             element.setAttribute('itemprop', geoPropertyName)
             var geoElement = this._createGroupingElement(element.localName, 'itemprop', 'geo')
-            this._buildGeographicIndicators(geoElement, geoType, object)
+            this._buildGeographicIndicators(geoElement, geoType, object, namespaceSVG)
             element.appendChild(geoElement)
 
         } else {
@@ -259,26 +276,26 @@ var Microdata = {
         }
         return element
     },
-    _buildGeographicIndicators: function (element, type, object) {
+    _buildGeographicIndicators: function (element, type, object, namespaceSVG) {
         if (type === "shape") {
             element.setAttribute('itemtype', 'http://schema.org/GeoShape')
             element.setAttribute('itemscope', '')
-            var polygon = this._createMetaElement('itemprop', 'polygon')
+            var polygon = this._createMetaElement('itemprop', 'polygon', namespaceSVG)
                 polygon.setAttribute('content', this._buildPolygonArray(object._latlngs))
             element.appendChild(polygon)
         } else if (type === "point") {
             element.setAttribute('itemtype', 'http://schema.org/GeoCoordinates')
             element.setAttribute('itemscope', '')
-            var latitude = this._createMetaElement('itemprop', 'latitude')
+            var latitude = this._createMetaElement('itemprop', 'latitude', namespaceSVG)
                 latitude.setAttribute('content', object._latlng.lat)
-            var longitude = this._createMetaElement('itemprop', 'longitude')
+            var longitude = this._createMetaElement('itemprop', 'longitude', namespaceSVG)
                 longitude.setAttribute('content', object._latlng.lng)
             element.appendChild(latitude)
             element.appendChild(longitude)
         } else if (type === "box") {
             element.setAttribute('itemtype', 'http://schema.org/GeoShape')
             element.setAttribute('itemscope', '')
-            var polygon = this._createMetaElement('itemprop', 'box')
+            var polygon = this._createMetaElement('itemprop', 'box', namespaceSVG)
                 polygon.setAttribute('content', object._bounds._southWest.lat +"," + object._bounds._southWest.lng + " "
                     + object._bounds._northEast.lat + "," + object._bounds._northEast.lng)
             element.appendChild(polygon)
