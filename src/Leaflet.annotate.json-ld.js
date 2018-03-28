@@ -3,6 +3,8 @@
 
 var SCHEMA_ORG = "http://schema.org/"
 
+var annotationsContainer = undefined
+
 var JSONLD = {
     /**
      * This is called via the "addInitHook" leaflet provides us, for each Leaflet item we translate.
@@ -11,23 +13,24 @@ var JSONLD = {
      */
     annotate: function() {
         var target = this._getTargetDOMElement()
+        var itemAnnotations = undefined
         // 1) Check if Leaflet already created the corresponding DOM Element
         if (target) {
             // 1.1) Build annotations for all items we already know the DOM element
-            this._buildAnnotations(target)
+            itemAnnotations = this._buildAnnotations(target)
         } else {
             // 1.2) Register listeners for when this is done
             this.on('add', function() { // Marker
                 target = this._getTargetDOMElement()
-                this._buildAnnotations(target)
+                itemAnnotations = this._buildAnnotations(target)
             })
             this.on('open', function() { // Opening Popup
                 target = this._getTargetDOMElement()
-                this._buildAnnotations(target)
+                itemAnnotations = this._buildAnnotations(target)
             })
             this.on('load', function(e) { // When Image Overlay Element is Available
                 target = this._getTargetDOMElement()
-                this._buildAnnotations(target)
+                itemAnnotations = this._buildAnnotations(target)
             })
             this.on('close', function() { // Closing Popup
                 var previousContainer = []
@@ -35,6 +38,8 @@ var JSONLD = {
                 this._container = previousContainer[0]
             })
         }
+        // ### Insert the newly created annotations element into or JSON-LD Context Graph
+        annotationsContainer.innerText += itemAnnotations
         return this
     },
     _findPopupContainerElement: function(element, result) {
@@ -103,6 +108,7 @@ var JSONLD = {
         }
         var domElement = targets[0]
         // read in options["annotation"]
+        var metadata = undefined
         var itemType = this.options.itemtype
         var geoproperty = (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo"
         var name = this.options.title
@@ -129,24 +135,10 @@ var JSONLD = {
 
         }
 
-        /**
-        if (Object.prototype.toString.call(targets) !== '[object Array]') {
-            targets = [targets]
-        }
-        var metadata = undefined
-        var domObject = targets[0]domElement
-        var parentElement = domObject.parentNode
-        var geoPropertyName = (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo"
-        var domId = (this.options.hasOwnProperty('domId')) ? this.options.domId : undefined
-        var targetIsSVGGroup = (domObject.tagName === 'g') ? true : false
-        var hasLatLngValuePair = this.hasOwnProperty('_latlng')
-        var hasBoundingBox = this.hasOwnProperty('_bounds')
-        var hasLayers = this.hasOwnProperty('_layers')
-        var leafletId = this['_leaflet_id']
-        // Useful for debugging when adding support for new items, such as L.ImageOverlay here
+        /** Useful for debugging when adding support for new items, such as L.ImageOverlay here
         // console.log("Bulding Overlay Annotations Parent", parentElement, "Has Lat/Lng Pair", hasLatLngValuePair, "Has Bounding Box", hasBoundingBox, this)
         // 1) Annotating "Marker", "Popup" (Point Style) and "Image Overlay" into a new ARTICLE element
-        if (!targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
+        if (this.options.hasOwnProperty('itemtype')) {
             metadata = this._buildAnnotationsContainer('article', domId, leafletId)
             this._buildGenericProperties(metadata, this, targetIsSVGGroup)
             var placeAnnotation = undefined
@@ -159,17 +151,6 @@ var JSONLD = {
                 console.warn("Skipping semantic annotation of the following Leaflet item due to a previous error", this)
                 return
             }
-            // Place the newly created Element into either ...
-            // a) its existing container
-            metadata.appendChild(placeAnnotation)
-            metadata.appendChild(domObject)
-            // Note: If Parent DOM Element is NOT the "Overlay" or "Marker" Pane clear it up. ### Double check this for all Leaflet items we annotate
-            if (parentElement.className.indexOf("overlay-pane") == -1 && parentElement.className.indexOf("marker-pane") == -1) {
-                parentElement.innerHTML = ''
-            }
-            // b) .. or just append it to the overlay-pane DOM
-            parentElement.appendChild(metadata)
-            this.options._annotated = true
         // 2.) Annotations into SVG Metadata Element, currently just for geoJSON or circleMarker overlays
         } else if (targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
             if (hasLayers) {
@@ -195,11 +176,11 @@ var JSONLD = {
                 this._buildGenericProperties(metadata, this, targetIsSVGGroup)
                 metadata.appendChild(place)
             }
-            if (metadata) {
-                domObject.appendChild(metadata)
-                this.options._annotated = true
-            }
         }**/
+        if (metadata) {
+            this.options._annotated = true
+        }
+        return metadata
     },
     _buildAnnotationsContainer: function(elementName, domId, leafletId) {
         var article = document.createElement(elementName)
@@ -341,6 +322,7 @@ L.Marker.include(JSONLD)
 L.Marker.addInitHook(function () { this.annotate() })
 L.Marker.include({
     _getTargetDOMElement: function() {
+        console.log("Inspecting Marker Target Element", this)
         return this._icon
     },
     onRemove: function(map) {
@@ -356,9 +338,11 @@ L.CircleMarker.include(JSONLD)
 L.CircleMarker.addInitHook(function () { this.annotate() })
 L.CircleMarker.include({
     _getTargetDOMElement: function() {
-        var results = []
-        this._findContainerElements(this, results)
-        return results.length > 0 ? results[0] : null
+        if (this.hasOwnProperty('_renderer')) { // Popup Container is initialized
+            // console.log("Inspecting CircleMarker Target Element", this._renderer._container)
+            return this._renderer._container
+        }
+        return undefined
     }
 
 })
@@ -370,9 +354,12 @@ L.Popup.addInitHook(function () { this.annotate() })
 var superPopupOnRemove = L.Popup.prototype.onRemove
 L.Popup.include({
     _getTargetDOMElement: function() {
-        if (this.hasOwnProperty('_container')) { // Popup Container is initialized
-            return this._container
-        }
+        /*
+        if (this.hasOwnProperty('_source')) { // Popup Container is initialized
+            console.log("Inspecting Popup Target Element", this._source)
+            return this._source._renderer._container
+        } **/
+        return undefined
     },
     onRemove: function(map) {
         if (this.options._annotated) {
@@ -387,6 +374,7 @@ L.LayerGroup.include(JSONLD)
 L.LayerGroup.addInitHook(function () {  this.annotate() })
 L.LayerGroup.include({
     _getTargetDOMElement: function() {
+        console.log("Inspecting LayerGroup/GeoJSON Target Element", this)
         var results = []
         this._findContainerElements(this, results)
         return results.length > 0 ? results[0] : null
@@ -398,8 +386,19 @@ L.ImageOverlay.include(JSONLD)
 L.ImageOverlay.addInitHook(function () { this.annotate() })
 L.ImageOverlay.include({
     _getTargetDOMElement: function() {
+        console.log("Inspecting ImageOverlay Target Element", this)
         if (this.hasOwnProperty('_image')) { // Image Overlay Container is initialized
             return this._image
         }
     }
 })
+
+function buildAnnotationsContainer() {
+    annotationsContainer = document.createElement('script')
+    annotationsContainer.setAttribute('type', 'application/ld+json')
+    annotationsContainer.setAttribute('defer', true)
+    console.log('created script container', annotationsContainer)
+    document.head.appendChild(annotationsContainer)
+}
+
+buildAnnotationsContainer()
