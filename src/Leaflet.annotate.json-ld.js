@@ -109,78 +109,89 @@ var JSONLD = {
         var domElement = targets[0]
         // read in options["annotation"]
         var metadata = undefined
-        var itemType = this.options.itemtype
-        var geoproperty = (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo"
-        var name = this.options.title
-        var url = this.options.url
-        var alternateName = this.options.alt
-        // Utilities for inspecting Leaflet items
-        var hasLatLngValuePair = this.hasOwnProperty('_latlng')
-        var hasBoundingBox = this.hasOwnProperty('_bounds')
-        var hasLayers = this.hasOwnProperty('_layers')
-        var leafletId = this['_leaflet_id']
+        var item = {
+            type: this.options.itemtype,
+            geoproperty: (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo",
+            name: this.options.title,
+            url: this.options.url,
+            alternateName: this.options.alt,
+            hasLatLngValuePair: this.hasOwnProperty('_latlng'),
+            hasBoundingBox: this.hasOwnProperty('_bounds'),
+            hasLayers: this.hasOwnProperty('_layers'),
+            leafletId: this['_leaflet_id']
+        }
         // check item type
         if (this instanceof L.Marker) {
-            console.log("build annotations for Marker:", itemType, this._latlng, alternateName, domElement)
+            console.log("build annotations for Marker:", item.type, this._latlng, item.alternateName, domElement)
+            if (item.type) {
+                this._buildSimpleAnnotations(metadata, item, this)
+            }
         } else if (this instanceof L.CircleMarker) {
-            console.log("build annotations for CircleMarker:", itemType, this._latlng, alternateName, domElement)
+            console.log("build annotations for CircleMarker:", item.type, this._latlng, item.alternateName, domElement)
+            if (item.type) {
+                this._buildPathAnnotations(metadata, item, this)
+            }
         } else if (this instanceof L.GeoJSON) {
-            console.log("build annotations for GeoJSON:", itemType, this._latlng, alternateName, domElement)
-
+            console.log("build annotations for GeoJSON:", item.type, this._latlng, item.alternateName, domElement)
+            if (item.type) {
+                this._buildPathAnnotations(metadata, item, this)
+            }
         } else if (this instanceof L.Popup) {
-            console.log("build annotations for Popup:", itemType, this._latlng, alternateName, domElement)
-
+            console.log("build annotations for Popup:", item.type, this._latlng, item.alternateName, domElement)
+            if (item.type) {
+                this._buildSimpleAnnotations(metadata, item, this)
+            }
         } else if (this instanceof L.ImageOverlay) {
-            console.log("build annotations for ImageOverlay:", itemType, this._latlng, alternateName, domElement)
-
+            console.log("build annotations for ImageOverlay:", item.type, this._latlng, item.alternateName, domElement)
+            if (item.type) {
+                this._buildSimpleAnnotations(metadata, item, this)
+            }
         }
-
-        /** Useful for debugging when adding support for new items, such as L.ImageOverlay here
-        // console.log("Bulding Overlay Annotations Parent", parentElement, "Has Lat/Lng Pair", hasLatLngValuePair, "Has Bounding Box", hasBoundingBox, this)
-        // 1) Annotating "Marker", "Popup" (Point Style) and "Image Overlay" into a new ARTICLE element
-        if (this.options.hasOwnProperty('itemtype')) {
-            metadata = this._buildAnnotationsContainer('article', domId, leafletId)
-            this._buildGenericProperties(metadata, this, targetIsSVGGroup)
-            var placeAnnotation = undefined
-            if (hasLatLngValuePair && !hasBoundingBox) {
-                placeAnnotation = this._buildGeoAnnotation('div', this, 'point', geoPropertyName, targetIsSVGGroup)
-            } else if (hasBoundingBox) {
-                placeAnnotation = this._buildGeoAnnotation('div', this, 'box', geoPropertyName, targetIsSVGGroup)
-            } else {
-                console.log("Invalid argument provided: Neither a BoundingBox nor a Coordinate Pair could be detected to build a geographic annotation.")
-                console.warn("Skipping semantic annotation of the following Leaflet item due to a previous error", this)
-                return
-            }
-        // 2.) Annotations into SVG Metadata Element, currently just for geoJSON or circleMarker overlays
-        } else if (targetIsSVGGroup && this.options.hasOwnProperty('itemtype')) {
-            if (hasLayers) {
-                // 2.1) Build annotations an SVG Element which is going to represent MANY LAYERS
-                var groupElements = []
-                this._findSVGGroupElements(this, groupElements)
-                for (var lg in groupElements) {
-                    var element = groupElements[lg]
-                    var containerElement = element._container
-                    var place = this._buildGeoAnnotation('g', element, 'shape', geoPropertyName, targetIsSVGGroup)
-                    // console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
-                    metadata = this._buildAnnotationsContainer('metadata', domId, element['_leaflet_id'])
-                    this._buildGenericProperties(metadata, this, targetIsSVGGroup)
-                    metadata.appendChild(place)
-                    containerElement.appendChild(metadata)
-                }
-                metadata = undefined // notes that metadata elements have been already appended to the DOM
-            } else {
-                // 2.2) Build annotations for an SVG Based Element (ONE WITHOUT MULTIPLE LAYERS)
-                // console.log("Single SVG Element Annotations", this.options.itemtype, "SVG Element" + ", LeafletID", leafletId, this)
-                var place = this._buildGeoAnnotation('g', this, 'point', geoPropertyName, targetIsSVGGroup)
-                metadata = this._buildAnnotationsContainer('metadata', domId, leafletId)
-                this._buildGenericProperties(metadata, this, targetIsSVGGroup)
-                metadata.appendChild(place)
-            }
-        }**/
         if (metadata) {
             this.options._annotated = true
         }
         return metadata
+    },
+    _buildSimpleAnnotations: function(metadata, item, that) {
+        // 1) Annotating "Marker", "Popup" (Point Style) and "Image Overlay" into a new ARTICLE element
+        /** metadata = this._buildAnnotationsContainer('article', domId, leafletId)
+        this._buildGenericProperties(metadata, this, targetIsSVGGroup)
+        var placeAnnotation = undefined
+        if (hasLatLngValuePair && !hasBoundingBox) {
+            placeAnnotation = this._buildGeoAnnotation('div', this, 'point', geoPropertyName, targetIsSVGGroup)
+        } else if (hasBoundingBox) {
+            placeAnnotation = this._buildGeoAnnotation('div', this, 'box', geoPropertyName, targetIsSVGGroup)
+        } else {
+            console.log("Invalid argument provided: Neither a BoundingBox nor a Coordinate Pair could be detected to build a geographic annotation.")
+            console.warn("Skipping semantic annotation of the following Leaflet item due to a previous error", this)
+            return
+        }**/
+    },
+    _buildPathAnnotations: function(metadata, item, that) {
+        // 2.) Annotations of GeoJSON or circleMarker overlays
+        /** if (item.hasLayers) {
+            // 2.1) Build annotations an SVG Element which is going to represent MANY LAYERS
+            var groupElements = []
+            this._findSVGGroupElements(this, groupElements)
+            for (var lg in groupElements) {
+                var element = groupElements[lg]
+                var containerElement = element._container
+                var place = this._buildGeoAnnotation('g', element, 'shape', geoPropertyName, targetIsSVGGroup)
+                // console.log("   SVG Leaflet Geometry Group, LeafletID", element['_leaflet_id'], element)
+                metadata = this._buildAnnotationsContainer('metadata', domId, element['_leaflet_id'])
+                this._buildGenericProperties(metadata, this, targetIsSVGGroup)
+                metadata.appendChild(place)
+                containerElement.appendChild(metadata)
+            }
+            metadata = undefined // notes that metadata elements have been already appended to the DOM
+        } else {
+            // 2.2) Build annotations for an SVG Based Element (ONE WITHOUT MULTIPLE LAYERS)
+            // console.log("Single SVG Element Annotations", this.options.itemtype, "SVG Element" + ", LeafletID", leafletId, this)
+            var place = this._buildGeoAnnotation('g', this, 'point', geoPropertyName, targetIsSVGGroup)
+            metadata = this._buildAnnotationsContainer('metadata', domId, leafletId)
+            this._buildGenericProperties(metadata, this, targetIsSVGGroup)
+            metadata.appendChild(place)
+        } **/
     },
     _buildAnnotationsContainer: function(elementName, domId, leafletId) {
         var article = document.createElement(elementName)
