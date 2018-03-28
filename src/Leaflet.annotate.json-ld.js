@@ -1,9 +1,9 @@
 
-// --- Implementation for building annnotations in Microdata Syntax
+// --- Implementation for building annnotations in JSONLD Syntax
 
 var SCHEMA_ORG = "http://schema.org/"
 
-var Microdata = {
+var JSONLD = {
     /**
      * This is called via the "addInitHook" leaflet provides us, for each Leaflet item we translate.
      * This either annotates an element directly when it is added to the map or listens to the
@@ -97,24 +97,35 @@ var Microdata = {
         return el
     },
     _buildAnnotations: function(targets) {
+        // Aquire DOM element for item (may be obsolete)
+        if (Object.prototype.toString.call(targets) !== '[object Array]') {
+            targets = [targets]
+        }
+        var domElement = targets[0]
+        // read in options["annotation"]
         var itemType = this.options.itemtype
-        var geoproperty = this.options.geoprop
+        var geoproperty = (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo"
         var name = this.options.title
         var url = this.options.url
         var alternateName = this.options.alt
-        //
+        // Utilities for inspecting Leaflet items
+        var hasLatLngValuePair = this.hasOwnProperty('_latlng')
+        var hasBoundingBox = this.hasOwnProperty('_bounds')
+        var hasLayers = this.hasOwnProperty('_layers')
+        var leafletId = this['_leaflet_id']
+        // check item type
         if (this instanceof L.Marker) {
-            console.log("build annotations for Marker:", itemType, this._latlng, alternateName)
+            console.log("build annotations for Marker:", itemType, this._latlng, alternateName, domElement)
         } else if (this instanceof L.CircleMarker) {
-            console.log("build annotations for CircleMarker:", itemType, this._latlng, alternateName)
+            console.log("build annotations for CircleMarker:", itemType, this._latlng, alternateName, domElement)
         } else if (this instanceof L.GeoJSON) {
-            console.log("build annotations for GeoJSON:", itemType, this._latlng, alternateName)
+            console.log("build annotations for GeoJSON:", itemType, this._latlng, alternateName, domElement)
 
         } else if (this instanceof L.Popup) {
-            console.log("build annotations for Popup:", itemType, this._latlng, alternateName)
+            console.log("build annotations for Popup:", itemType, this._latlng, alternateName, domElement)
 
         } else if (this instanceof L.ImageOverlay) {
-            console.log("build annotations for ImageOverlay:", itemType, this._latlng, alternateName)
+            console.log("build annotations for ImageOverlay:", itemType, this._latlng, alternateName, domElement)
 
         }
 
@@ -123,7 +134,7 @@ var Microdata = {
             targets = [targets]
         }
         var metadata = undefined
-        var domObject = targets[0]
+        var domObject = targets[0]domElement
         var parentElement = domObject.parentNode
         var geoPropertyName = (this.options.hasOwnProperty('geoprop')) ? this.options.geoprop : "geo"
         var domId = (this.options.hasOwnProperty('domId')) ? this.options.domId : undefined
@@ -326,7 +337,7 @@ var Microdata = {
 
 // ---- Simple Marker ---- //
 var superMarkerOnRemove = L.Marker.prototype.onRemove
-L.Marker.include(Microdata)
+L.Marker.include(JSONLD)
 L.Marker.addInitHook(function () { this.annotate() })
 L.Marker.include({
     _getTargetDOMElement: function() {
@@ -341,7 +352,7 @@ L.Marker.include({
 })
 
 // ---- Circle Marker ---- //
-L.CircleMarker.include(Microdata)
+L.CircleMarker.include(JSONLD)
 L.CircleMarker.addInitHook(function () { this.annotate() })
 L.CircleMarker.include({
     _getTargetDOMElement: function() {
@@ -354,7 +365,7 @@ L.CircleMarker.include({
 
 // ---- Popup Item ---- //
 
-L.Popup.include(Microdata)
+L.Popup.include(JSONLD)
 L.Popup.addInitHook(function () { this.annotate() })
 var superPopupOnRemove = L.Popup.prototype.onRemove
 L.Popup.include({
@@ -372,7 +383,7 @@ L.Popup.include({
 })
 
 // ---- Layer Group (GeoJSON Layer) ---- //
-L.LayerGroup.include(Microdata)
+L.LayerGroup.include(JSONLD)
 L.LayerGroup.addInitHook(function () {  this.annotate() })
 L.LayerGroup.include({
     _getTargetDOMElement: function() {
@@ -383,7 +394,7 @@ L.LayerGroup.include({
 })
 
 // ---- Image Overlay ---- //
-L.ImageOverlay.include(Microdata)
+L.ImageOverlay.include(JSONLD)
 L.ImageOverlay.addInitHook(function () { this.annotate() })
 L.ImageOverlay.include({
     _getTargetDOMElement: function() {
