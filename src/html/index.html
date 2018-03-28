@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+
+		<title>Public Sculptures in Paris on Wikidata</title>
+
+		<meta charset="utf-8"/>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<meta name="author" content="Malte Reißig, büro für Informationsarbeit">
+    	<meta name="description" content="Example map for the Leaflet.annotate plugin. Annotated single web map elements with the semantic markup vocabularies Schema.org and Dublin Core. Data on public sculptures in Paris, Franace queried live from wikidata.">
+
+		<style>
+
+			body {  margin: 0px; padding: 0px; }
+			#map {  width: 100%; height: 100px; margin-top: 0px; }
+
+			.leaflet-popup-pane article { transform: none !important; }
+			.leaflet-control-container .annotation-viewer a.leaflet-control-annotation-viewer,
+			.leaflet-bar,
+			.leaflet-popup-content-wrapper { border-radius: 0px; }
+
+			/** Public Sculptures in Paris Example **/
+			.leaflet-popup.sculpture-photo img { max-width: 280px !important; height: auto; }
+			.leaflet-popup.sculpture-photo h3 { margin-bottom: 0px; }
+			.leaflet-popup.sculpture-photo { min-width: 320px; }
+
+		</style>
+
+		<link rel="stylesheet" href="/Leaflet.annotate/example/vendor/Leaflet-1.3.1/leaflet.css" />
+		<!--link rel="stylesheet" href="/Leaflet.annotate/css/viewer-style.css" /-->
+
+		<script defer src="/Leaflet.annotate/example/vendor/Leaflet-1.3.1/leaflet.js"></script>
+		<script defer src="/Leaflet.annotate/example/vendor/jquery-2.2.2.min.js"></script>
+
+		<!-- Microdata.js needs to be loaded before Leaflet.annotate.Viewer.js due to a CONSTANT-->
+		<script defer src="/Leaflet.annotate/Leaflet.annotate.Microdata.js"></script>
+		<script defer src="/Leaflet.annotate/Leaflet.annotate.types.de_DE.js"></script>
+		<!--script defer src="/Leaflet.annotate/Leaflet.annotate.types.en_US.js"></script-->
+
+		<script defer src="/Leaflet.annotate/example/wikidata_queries.js"></script>
+		<script defer src="/Leaflet.annotate/example/example_page.js" onload="setup_map()"></script>
+
+	</head>
+
+	<body>
+
+		<div id="map"></div>
+
+	</body>
+
+</html>

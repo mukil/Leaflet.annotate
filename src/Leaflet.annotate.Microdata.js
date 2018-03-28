@@ -97,6 +97,28 @@ var Microdata = {
         return el
     },
     _buildAnnotations: function(targets) {
+        var itemType = this.options.itemtype
+        var geoproperty = this.options.geoprop
+        var name = this.options.title
+        var url = this.options.url
+        var alternateName = this.options.alt
+        //
+        if (this instanceof L.Marker) {
+            console.log("build annotations for Marker:", itemType, this._latlng, alternateName)
+        } else if (this instanceof L.CircleMarker) {
+            console.log("build annotations for CircleMarker:", itemType, this._latlng, alternateName)
+        } else if (this instanceof L.GeoJSON) {
+            console.log("build annotations for GeoJSON:", itemType, this._latlng, alternateName)
+
+        } else if (this instanceof L.Popup) {
+            console.log("build annotations for Popup:", itemType, this._latlng, alternateName)
+
+        } else if (this instanceof L.ImageOverlay) {
+            console.log("build annotations for ImageOverlay:", itemType, this._latlng, alternateName)
+
+        }
+
+        /**
         if (Object.prototype.toString.call(targets) !== '[object Array]') {
             targets = [targets]
         }
@@ -166,7 +188,7 @@ var Microdata = {
                 domObject.appendChild(metadata)
                 this.options._annotated = true
             }
-        }
+        }**/
     },
     _buildAnnotationsContainer: function(elementName, domId, leafletId) {
         var article = document.createElement(elementName)
